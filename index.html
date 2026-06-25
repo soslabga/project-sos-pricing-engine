@@ -241,6 +241,19 @@
       <div class="card" style="margin-top:16px;"><h2>검토 과제</h2><div id="researchTable"></div></div>
     </section>
 
+    <section class="section" data-tab="Reservation System">
+      <div class="card">
+        <h2>무인 예약 시스템</h2>
+        <div class="note" style="margin-bottom:14px;">패스트파이브·스파크플러스처럼 상담 인력이 예약을 받아주는 구조가 아니라, 고객이 직접 공간을 고르고 결제하고 출입권을 받는 시스템을 전제로 합니다.</div>
+        <div id="reservationSystemTable"></div>
+      </div>
+      <div class="grid cols2" style="margin-top:16px;">
+        <div class="card"><h2>고객 예약 흐름</h2><div id="customerFlowTable"></div></div>
+        <div class="card"><h2>관리자 자동화 흐름</h2><div id="adminFlowTable"></div></div>
+      </div>
+      <div class="card" style="margin-top:16px;"><h2>시스템 구축 범위</h2><div id="systemBuildTable"></div></div>
+    </section>
+
     <section class="section" data-tab="Scenario Analysis">
       <div class="card"><h2>시나리오 분석</h2><div id="scenarioTable"></div></div>
     </section>
@@ -486,7 +499,7 @@
       document.getElementById("modelOverview").innerHTML = `<div class="model-strip">
         <div class="model-box"><strong>매입형 프로젝트룸 운영모델</strong><span>공유오피스 상주 좌석이 아니라 TFT, PMO, 고객 공동개발팀이 반일~수개월 단위로 쓰는 프로젝트 수행 공간입니다.</span></div>
         <div class="model-box"><strong>매매 우선</strong><span>임대료 상승과 재계약 리스크를 줄이고 월 환산 매입 점유비와 자산가치 상승 가능성을 함께 봅니다.</span></div>
-        <div class="model-box"><strong>원가절감 우선</strong><span>공간 표준화, 온라인 예약·결제, 무인 출입, 옵션형 장비로 고정비와 관리 포인트를 줄입니다.</span></div>
+        <div class="model-box"><strong>무인 예약 시스템</strong><span>상담 인력이 예약을 받지 않고 고객이 직접 공간 선택, 결제, 출입권 발급까지 완료합니다.</span></div>
         <div class="model-box"><strong>가격 검증</strong><span>여의도 스파크플러스와 판교 패스트파이브 가격을 입력해 SOS 가격 경쟁력을 직접 비교합니다.</span></div>
       </div>`;
       document.getElementById("headline").innerHTML = `매입 점유비 ${won(c.effectiveOccupancyCost)}<br><span style="color:var(--cyan)">BEP·경쟁가 자동 검증</span>`;
@@ -500,7 +513,7 @@
       document.getElementById("modelConcept").innerHTML = table(["구분","표준 모델 원칙"], [
         ["입력", "계약면적 또는 전용면적, 매매가, 금융비용, 월 관리비로 1차 검토"],
         ["공간", "2인실은 경쟁력이 낮아 제외하고 4인실 이상 프로젝트룸 중심으로 구성"],
-        ["운영", "온라인 판매, 셀프 예약, QR 출입, 표준 룸 모듈로 1인 운영이 가능하게 설계"],
+        ["운영", "상담 예약을 없애고 셀프 예약, 온라인 결제, QR 출입, 표준 룸 모듈로 1인 운영이 가능하게 설계"],
         ["원가", "인테리어 표준화, 중고/표준 가구, 장비 렌탈, 컵·종이컵 미제공, 크레딧 미제공"],
         ["가격", "낮춘 월 고정비 + 공실률 + 기업이윤을 반영하고 공유오피스 대비 하한가로 가격 방어"],
         ["판정", "매입 월 환산 점유비, BEP, 공유오피스 대비 절감률, 1인 운영 가능 여부로 매입 판단"]
@@ -510,6 +523,7 @@
         ["시공", "고급 인테리어, 지점별 맞춤 공사", "표준 마감재, 반복 가능한 모듈, 기존 설비 최대 활용"],
         ["가구", "맞춤 제작 가구, 과잉 수납", "표준 책상·의자, 중고/렌탈 우선, 교체 쉬운 부품"],
         ["운영", "상주 안내, 전화 예약, 현장 결제", "온라인 예약·결제, QR 출입, 자동 정산"],
+        ["예약", "사람이 일정 확인, 견적, 확정 처리", "실시간 재고, 자동 견적, 선결제, 자동 확정"],
         ["판매", "오프라인 영업 인력, 광고비", "검색/소개/입주사 전환 중심 직접판매"],
         ["소모품", "컵, 종이컵, 무료 크레딧, 과잉 비품", "필수 비품만 제공, 입주사 할인 예약으로 대체"],
         ["장비", "모든 룸 고정 화상회의 장비", "필요 룸만 설치하거나 옵션형 렌탈"],
@@ -757,8 +771,8 @@
         ["소모품", "컵 제공 없음. 종이컵도 제공하지 않아 운영비와 관리 포인트 축소"]
       ]);
       document.getElementById("reservationPolicyTable").innerHTML = table(["항목","정책"], [
-        ["운영 시스템", "예약, 출입, 정산, 입주사 할인 로직은 운영시스템으로 묶어 특허출원 검토"],
-        ["토즈 분석", "토즈 예약시스템의 예약 흐름, 시간 단위, 결제, 취소, 지점별 재고 노출 방식 분석 필요"],
+        ["운영 시스템", "예약, 결제, 출입, 정산, 입주사 할인 로직은 하나의 무인 운영시스템으로 묶어 특허출원 검토"],
+        ["토즈 분석", "토즈 예약시스템의 실시간 재고, 시간 단위, 결제, 취소, 지점별 노출 방식 분석 필요"],
         ["외부 개방", "회의실 또는 미팅룸은 외부 고객에게도 개방 가능"],
         ["크레딧", "크레딧 제공 없음"],
         ["입주사 혜택", "입주사는 할인된 가격으로 예약 가능"],
