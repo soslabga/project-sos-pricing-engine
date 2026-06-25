@@ -101,6 +101,10 @@
         <div class="card"><h2>비용 구조</h2><div id="costModelSummary"></div></div>
         <div class="card"><h2>손익 구조</h2><div id="profitModelSummary"></div></div>
       </div>
+      <div class="grid cols2" style="margin-bottom:16px;">
+        <div class="card"><h2>상세 매출 시뮬레이션</h2><div id="revenueSimulationDetail"></div></div>
+        <div class="card"><h2>상세 비용 산식</h2><div id="costSimulationDetail"></div></div>
+      </div>
       <div class="card" style="margin-bottom:16px;">
         <h2>임대 선택 시 10년 보호권 체크</h2>
         <div id="leaseProtectionSummary"></div>
@@ -549,27 +553,16 @@
       ]);
       document.getElementById("revenueModelSummary").innerHTML =
         table(["매출 항목","산식 및 기준"], [
-          ["룸 판매 기준", `${c.totalRooms}개 룸 · 월 판매가능 ${fmt(c.availableHours)}시간 · 공실률 ${100-n("targetUtilization")}% 반영`],
-          ["상품 판매 믹스", "반일 30% · 1일 30% · 1주 20% · 1개월 20%"],
-          ["룸 매출 합계", won(sim.roomRevenue)],
-          ["공용오피스 매출", `${c.openOfficeSeats}석 · ${fmt(c.openOfficeSellableHours)}시간 × ${won(c.openOfficeHourly)} = ${won(sim.openOfficeRevenue)}`],
+          ["룸 매출", won(sim.roomRevenue)],
+          ["공용오피스 매출", won(sim.openOfficeRevenue)],
+          ["공실률 반영", `룸 공실률 ${100-n("targetUtilization")}% · 공용오피스 공실률 ${100-n("openOfficeUtilization")}%`],
           ["월 시뮬레이션 매출", won(sim.totalRevenue)]
-        ]) +
-        `<div style="height:12px"></div>` +
-        table(["룸 타입","수량","월 가능시간","공실 반영 판매시간","공실률","반일 매출","1일 매출","1주 매출","1개월 매출","월 매출"], sim.rows.concat([
-          ["공용오피스", `${c.openOfficeSeats}석`, `${fmt(c.openOfficeAvailableHours)}시간`, `${fmt(c.openOfficeSellableHours)}시간`, `${100-n("openOfficeUtilization")}%`, "-", "-", "-", "-", won(sim.openOfficeRevenue)]
-        ]));
+        ]);
       document.getElementById("costModelSummary").innerHTML = table(["비용 항목","산식 및 월 비용"], [
-        ["매입 점유비", `이자 ${won(c.monthlyInterest)} + 취득비 월환산 ${won(c.monthlyAcquisitionCost)} + 보유비 ${won(c.monthlyHoldingCost)} - 자산가치 반영 ${won(c.monthlyAssetUpside)} = ${won(c.effectiveOccupancyCost)}`],
+        ["매입 점유비", won(c.effectiveOccupancyCost)],
         ["관리비", won(n("maintenance"))],
-        ["운영인력", `${c.managerCount}명 × ${won(n("managerUnitCost"))} = ${won(c.managerCost)}`],
-        ["청소관리", `면적 ${won(c.cleaningAreaCost)} + 좌석 ${won(c.cleaningDeskCost)} = ${won(c.cleaningCost)}`],
-        ["예약/QR 시스템", won(n("softwareCost"))],
-        ["OA/화상회의장비", won(n("equipmentCost"))],
-        ["필수 소모품", won(n("consumablesCost"))],
-        ["마케팅", won(n("marketingCost"))],
-        ["기타 운영비", won(n("operationCost"))],
-        ["인테리어 월환산", `${won(c.totalInitialInvestment)} ÷ ${c.investmentMonths}개월 = ${won(c.monthlyInvestment)}`],
+        ["운영비", won(c.operatingCost)],
+        ["인테리어 월환산", won(c.monthlyInvestment)],
         ["월 고정비", won(c.fixedCost)]
       ]);
       document.getElementById("profitModelSummary").innerHTML = table(["손익 항목","산식 및 금액"], [
@@ -580,6 +573,27 @@
         ["예상 영업이익률", pct(sim.totalRevenue ? targetProfit/sim.totalRevenue : 0)],
         ["BEP 필요 매출", won(bepRevenue)],
         ["BEP 대비 매출 여유", won(sim.totalRevenue - bepRevenue)]
+      ]);
+      document.getElementById("revenueSimulationDetail").innerHTML =
+        table(["기준","내용"], [
+          ["룸 판매 기준", `${c.totalRooms}개 룸 · 월 판매가능 ${fmt(c.availableHours)}시간 · 목표 판매 ${fmt(c.pricingHours)}시간`],
+          ["상품 판매 믹스", "반일 30% · 1일 30% · 1주 20% · 1개월 20%"],
+          ["공실률", `룸 ${100-n("targetUtilization")}% · 공용오피스 ${100-n("openOfficeUtilization")}%`]
+        ]) +
+        `<div style="height:12px"></div>` +
+        table(["룸 타입","수량","월 가능시간","공실 반영 판매시간","공실률","반일 매출","1일 매출","1주 매출","1개월 매출","월 매출"], sim.rows.concat([
+          ["공용오피스", `${c.openOfficeSeats}석`, `${fmt(c.openOfficeAvailableHours)}시간`, `${fmt(c.openOfficeSellableHours)}시간`, `${100-n("openOfficeUtilization")}%`, "-", "-", "-", "-", won(sim.openOfficeRevenue)]
+        ]));
+      document.getElementById("costSimulationDetail").innerHTML = table(["비용 항목","상세 산식"], [
+        ["매입 점유비", `이자 ${won(c.monthlyInterest)} + 취득비 월환산 ${won(c.monthlyAcquisitionCost)} + 보유비 ${won(c.monthlyHoldingCost)} - 자산가치 반영 ${won(c.monthlyAssetUpside)} = ${won(c.effectiveOccupancyCost)}`],
+        ["운영인력", `${c.managerCount}명 × ${won(n("managerUnitCost"))} = ${won(c.managerCost)}`],
+        ["청소관리", `면적 ${won(c.cleaningAreaCost)} + 좌석 ${won(c.cleaningDeskCost)} = ${won(c.cleaningCost)}`],
+        ["예약/QR 시스템", won(n("softwareCost"))],
+        ["OA/화상회의장비", won(n("equipmentCost"))],
+        ["필수 소모품", won(n("consumablesCost"))],
+        ["마케팅", won(n("marketingCost"))],
+        ["기타 운영비", won(n("operationCost"))],
+        ["인테리어 월환산", `${won(c.totalInitialInvestment)} ÷ ${c.investmentMonths}개월 = ${won(c.monthlyInvestment)}`]
       ]);
       document.getElementById("leaseProtectionSummary").innerHTML = table(["항목","확인 내용"], [
         ["핵심", "상가 임대차는 임차인이 계약갱신을 요구할 수 있으나, 전체 임대차기간은 최초 임대차기간 포함 10년을 넘지 못합니다."],
