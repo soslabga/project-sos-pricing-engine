@@ -1,8 +1,7 @@
 services:
   - type: web
     name: project-sos-pricing-engine
-    runtime: static
-    repo: https://github.com/soslabga/project-sos-pricing-engine
+    env: static
     branch: main
     buildCommand: ""
     staticPublishPath: .
