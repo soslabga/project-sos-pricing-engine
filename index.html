@@ -923,6 +923,7 @@
       };
     }
     function renderCompetitorComparison(c) {
+      try {
       // SOS 여의도 가상 시나리오 (파크원타워 임대료 기준)
       const yeoSOS = calcFor({
         spaceCostMode: 1,
@@ -940,34 +941,34 @@
 
       // 경쟁사 고정 가격
       const spSeat = n("sparkplusYeouidoSeat");
-      const ffSeat = n("fastfivePangyoSeat");
+      // 패스트파이브 실제 룸 가격 (정가 × 할인율)
+      const ffDisc = 1 - n("fastfivePangyoDiscountRate") / 100;
+      const ff4room  = Math.round(n("fastfivePangyo4room")  * ffDisc);
+      const ff7room  = Math.round(n("fastfivePangyo7room")  * ffDisc);
+      const ff10room = Math.round(n("fastfivePangyo10room") * ffDisc);
 
-      // 색상 헬퍼: SOS 판교가 낮으면 초록
-      const cl = (sos, comp) => comp > 0 && sos < comp ? 'style="color:var(--green);font-weight:900;"' : comp > 0 && sos > comp ? 'style="color:var(--red);font-weight:900;"' : '';
-      const fw = v => `<span ${cl(v,0)}>${won(v)}</span>`;
-
-      const rows = [
-        // 항목, SOS판교, SOS여의도*, 스파크플러스여의도, 패스트파이브판교
-        ["월 공간비 (임대+관리)", won(c.effectiveOccupancyCost), won(yeoSOS.effectiveOccupancyCost), `${won(spSeat)}<small style="color:var(--gray)">/석</small>`, `${won(ffSeat)}<small style="color:var(--gray)">/석</small>`],
-        ["BEP 가동률", pct(c.bepUtil), pct(yeoSOS.bepUtil), "N/A", "N/A"],
-        ["4인실 반일 (4h)", won(pa(r4p,4,.88,0)), won(pa(r4y,4,.88,0)), won(n("sparkplusYeouidoMeetingHalf")), won(n("fastfivePangyoMeetingHalf"))],
-        ["4인실 1개월 (4석)", won(pa(r4p,160,.48,1)), won(pa(r4y,160,.48,1)), won(spSeat*4), won(ffSeat*4)],
-        ["6인실 1개월 (6석)", won(pa(r6p,160,.48,1)), won(pa(r6y,160,.48,1)), won(spSeat*6), won(ffSeat*6)],
-      ];
-
-      // 절감률 행 추가 (스파크플러스·패스트파이브 대비 SOS 판교)
+      // 절감률 헬퍼
       function savPct(sos, comp) {
         if (!comp || !sos) return "-";
         const s = ((1 - sos/comp)*100).toFixed(1);
         return `<span style="color:${s>0?'var(--green)':'var(--red)'};">${s>0?'-':''}${Math.abs(s)}%</span>`;
       }
+
       const r4half_sos = pa(r4p,4,.88,0), r4mo_sos = pa(r4p,160,.48,1), r6mo_sos = pa(r6p,160,.48,1);
+
+      const rows = [
+        // 항목, SOS판교, SOS여의도*, 스파크플러스여의도, 패스트파이브판교
+        ["월 공간비 (임대+관리)", won(c.spaceCost), won(yeoSOS.spaceCost), `${won(spSeat)}<small style="color:var(--gray)">/석</small>`, "—"],
+        ["BEP 가동률", pct(c.bepUtil), pct(yeoSOS.bepUtil), "N/A", "N/A"],
+        ["4인실 반일 (4h)", won(r4half_sos), won(pa(r4y,4,.88,0)), won(n("sparkplusYeouidoMeetingHalf")), won(n("fastfivePangyoMeetingHalf"))],
+        ["4인실 1개월", won(r4mo_sos), won(pa(r4y,160,.48,1)), won(n("sparkplusR5month"))+"<small style='color:#aaa'> (5인실)</small>", won(ff4room)+"<small style='color:#aaa'> (할인가)</small>"],
+        ["6인실 1개월", won(r6mo_sos), won(pa(r6y,160,.48,1)), won(n("sparkplusR8month"))+"<small style='color:#aaa'> (8인실)</small>", won(ff7room)+"<small style='color:#aaa'> (7인실 할인가)</small>"],
+      ];
+
       const savRows = [
-        ["↳ vs 스파크플러스 절감", "-", "-",
-          savPct(r4half_sos, n("sparkplusYeouidoMeetingHalf")),
-          savPct(r4half_sos, n("fastfivePangyoMeetingHalf"))],
-        ["↳ 4인실 1개월 절감", "-", "-", savPct(r4mo_sos, spSeat*4), savPct(r4mo_sos, ffSeat*4)],
-        ["↳ 6인실 1개월 절감", "-", "-", savPct(r6mo_sos, spSeat*6), savPct(r6mo_sos, ffSeat*6)],
+        ["↳ 반일 절감률", "-", "-", savPct(r4half_sos, n("sparkplusYeouidoMeetingHalf")), savPct(r4half_sos, n("fastfivePangyoMeetingHalf"))],
+        ["↳ 4인실 월 절감률", "-", "-", savPct(r4mo_sos, n("sparkplusR5month")), savPct(r4mo_sos, ff4room)],
+        ["↳ 6인실 월 절감률", "-", "-", savPct(r6mo_sos, n("sparkplusR8month")), savPct(r6mo_sos, ff7room)],
       ];
 
       const headers = ["항목", "SOS 판교 (실제)", "SOS 여의도*", "스파크플러스 여의도", "패스트파이브 판교"];
@@ -1039,15 +1040,20 @@
       if (competitorTopEl) competitorTopEl.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
         <thead><tr>${["항목","SOS 판교","스파크플러스 여의도 (실계약)","패스트파이브 판교"].map(h=>`<th style="background:var(--navy);color:#fff;padding:7px 10px;text-align:${h==='항목'?'left':'center'};">${h}</th>`).join("")}</tr></thead>
         <tbody>${[
-          ["4인실/5인실 1개월",won(r4mo_sos),`${won(spR5)}<small style='color:#aaa'> (538호 5인실)</small>`,won(ffSeat*4)],
-          ["6인실/8인실 1개월",won(r6mo_sos),`${won(spR8)}<small style='color:#aaa'> (424호 8인실)</small>`,won(ffSeat*6)],
-          ["최소룸/2인실 1개월",won(r4mo_sos),`${won(spR2)}<small style='color:#aaa'> (432호 2인실)</small>`,won(ffSeat*2)],
+          ["4인실 1개월",won(r4mo_sos),`${won(spR5)}<small style='color:#aaa'> (538호 5인실)</small>`,`${won(ff4room)}<small style='color:#aaa'> (4인실 할인가)</small>`],
+          ["6인실 1개월",won(r6mo_sos),`${won(spR8)}<small style='color:#aaa'> (424호 8인실)</small>`,`${won(ff7room)}<small style='color:#aaa'> (7인실 할인가)</small>`],
+          ["최소룸/2인실 1개월",won(r4mo_sos),`${won(spR2)}<small style='color:#aaa'> (432호 2인실)</small>`,"—<small style='color:#aaa'> (2인실 없음)</small>"],
           ["4인실 반일",won(r4half_sos),won(n("sparkplusYeouidoMeetingHalf")),won(n("fastfivePangyoMeetingHalf"))],
         ].map((r,i)=>`<tr style="background:${i%2===0?'#fff':'#f8f9fb'};">${r.map((v,j)=>`<td style="padding:7px 10px;border-bottom:1px solid var(--line);text-align:${j===0?'left':'center'};">${v}</td>`).join("")}</tr>`).join("")}</tbody>
       </table>`;
 
       const miniEl = document.getElementById("competitorComparisonMini");
-      if (miniEl) miniEl.innerHTML = `<div style="font-size:13px;"><strong>4인실 1개월:</strong> SOS 판교 ${won(r4mo_sos)} vs 스파크플러스 여의도 5인실 ${won(spR5)} / 패스트파이브 판교 ${won(ffSeat*4)}</div>`;
+      if (miniEl) miniEl.innerHTML = `<div style="font-size:13px;"><strong>4인실 1개월:</strong> SOS 판교 ${won(r4mo_sos)} vs 스파크플러스 여의도 5인실 ${won(spR5)} / 패스트파이브 판교 4인실 ${won(ff4room)}</div>`;
+      } catch(e) {
+        const el = document.getElementById("competitorComparisonTop");
+        if (el) el.innerHTML = `<div style="color:red;padding:10px;">렌더링 오류: ${e.message}</div>`;
+        console.error("renderCompetitorComparison error:", e);
+      }
     }
     function calcFor(overrides) {
       const old = { ...state };
