@@ -97,6 +97,7 @@
         <div class="card"><h2>비용 구조</h2><div id="costModelSummary"></div></div>
         <div class="card"><h2>손익 구조</h2><div id="profitModelSummary"></div></div>
       </div>
+      <div class="card" style="margin-bottom:16px;"><h2>스파크플러스·패스트파이브 가격 비교</h2><div id="competitorComparisonTop"></div></div>
       <div class="card" style="margin-bottom:16px;"><h2>상세 매출 시뮬레이션</h2><div id="revenueSimulationDetail"></div></div>
       <div class="card" style="margin-bottom:16px;"><h2>상세 비용 산식</h2><div id="costSimulationDetail"></div></div>
       <div class="card" style="margin-bottom:16px;">
@@ -163,7 +164,7 @@
     <section class="section" data-tab="Competitor Comparison">
       <div class="card">
         <h2>여의도 스파크플러스·판교 패스트파이브 가격 비교</h2>
-        <div class="note" style="margin-bottom:14px;">사용자가 확인한 가격을 Input의 고급 설정에 입력하면, SOS 주력 상품과 경쟁사 월 좌석가·회의실 가격을 같은 기준으로 비교합니다.</div>
+        <div class="note" style="margin-bottom:14px;">기본값 기준으로 스파크플러스 여의도와 패스트파이브 판교의 월 좌석가·회의실 가격을 같은 기준으로 비교합니다.</div>
         <div id="competitorComparisonTable"></div>
       </div>
     </section>
@@ -849,6 +850,8 @@
       const rows = competitorRows();
       const competitorMiniEl = document.getElementById("competitorComparisonMini");
       if (competitorMiniEl) competitorMiniEl.innerHTML = table(headers, rows.filter(r=>r[1] === "월 좌석"));
+      const competitorTopEl = document.getElementById("competitorComparisonTop");
+      if (competitorTopEl) competitorTopEl.innerHTML = table(headers, rows);
       document.getElementById("competitorComparisonTable").innerHTML = table(headers, rows);
     }
     function calcFor(overrides) {
@@ -1081,7 +1084,7 @@
     }
     function renderTabs() {
       const visibleTabs = [
-        "Dashboard", "Input", "Space Planning", "Cost Structure", "Pricing",
+        "Dashboard", "Space Planning", "Cost Structure", "Pricing",
         "Competitor Comparison", "Site Profitability", "Purchase Test", "Reservation System", "Marketing Strategy"
       ];
       const labels = {
