@@ -413,7 +413,7 @@
         exclusive, revenueArea, commonArea, rooms, totalRooms, usedRevenueArea, openOfficeArea, openOfficeSeats,
         roomSeats, totalCapacity, managerCount, oneManagerPossible, managerCost, cleaningRate, cleaningAreaCost, cleaningDeskCost, cleaningCost,
         loanAmount, equityAmount, monthlyInterest, acquisitionCost, monthlyAcquisitionCost, monthlyHoldingCost, monthlyAssetUpside, purchaseOccupancyCost, effectiveOccupancyCost, maxOccupancyCost, rentSaving, purchaseStatus,
-        operatingCost, fixedCostBeforeInvestment, initialInteriorCost, totalInitialInvestment, monthlyInvestment, investmentMonths, totalUseMonths, contractStatus, financialStatus, fixedCost, requiredProfit, requiredRevenue, requiredVariableCost,
+        operatingCost, fixedCostBeforeInvestment, initialInteriorCost, totalInitialInvestment, monthlyInvestment, investmentMonths, totalUseMonths, contractStatus, financialStatus, fixedCost, requiredProfit, requiredRevenue, requiredVariableCost, contributionRate, baseHourly, rawWeightedHourly, pricingScale,
         availableHours, pricingHours, breakEvenHourly, pricing, weightedHourly, openOfficeHourly,
         openOfficeAvailableHours, openOfficeSellableHours, bepUtil, revenueAtTarget, maxOccupancyCost, status
       };
@@ -636,6 +636,19 @@
           ["상품 판매 믹스", "반일 30% · 1일 30% · 1주 20% · 1개월 20%"],
           ["판매율", `룸 이용률 ${n("targetUtilization")}%`],
           ["최소 보조공간", "대기, 임시 작업, 입주사 편의 목적의 비매출 공간. 별도 과금하지 않음"]
+        ]) +
+        `<div style="height:12px"></div>` +
+        table(["단가 도출 단계","산식","값"], [
+          ["월 고정비", "매입 점유비 + 관리비 + 운영비 + 월 환산 투자비", won(c.fixedCost)],
+          ["변동비율", "매출 발생 시 차감되는 결제/소모/운영 변동비", `${n("variableCostRatio")}%`],
+          ["목표 영업이익률", "매출에서 고정비와 변동비를 차감한 뒤 남겨야 할 이익률", `${n("targetMargin")}%`],
+          ["공헌이익률", `1 - ${n("variableCostRatio")}% - ${n("targetMargin")}%`, pct(c.contributionRate)],
+          ["필요 월매출", `${won(c.fixedCost)} ÷ ${pct(c.contributionRate)}`, won(c.requiredRevenue)],
+          ["공실률 반영 판매시간", `${fmt(c.availableHours)}시간 × ${n("targetUtilization")}%`, `${fmt(c.pricingHours)}시간`],
+          ["기준 시간단가", `${won(c.requiredRevenue)} ÷ ${fmt(c.pricingHours)}시간`, won(c.baseHourly)],
+          ["룸별 보정", "기준 시간단가 × 면적 보정 × 인원 보정 × VC 프리미엄", "룸별 단가 차등"],
+          ["기간 할인", "반일 88% · 1일 80% · 1주 62% · 1개월 48%", "기간이 길수록 시간단가 인하"],
+          ["최종 단가", "산출가와 공유오피스 월 좌석가 하한 중 높은 값, 1,000원 단위 올림", "가격표 및 매출 시뮬레이션 반영"]
         ]) +
         `<div style="height:12px"></div>` +
         table(["룸","수량","상품","단가","예상 판매량","이용률","월 매출"], sim.detailRows);
