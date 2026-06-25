@@ -506,8 +506,7 @@
         ["월 고정비", won(c.fixedCost)],
         ["월 변동비", won(c.revenueAtTarget*n("variableCostRatio")/100)],
         ["예상 영업이익", won(c.revenueAtTarget - c.fixedCost - c.revenueAtTarget*n("variableCostRatio")/100)],
-        ["BEP 가동률", pct(c.bepUtil)],
-        ["투자 판단", c.status==="Green" ? "진행 가능" : c.status==="Yellow" ? "조건부 검토" : "재검토 필요"]
+        ["BEP 가동률", pct(c.bepUtil)]
       ]);
       document.getElementById("revenueModelSummary").innerHTML = table(["항목","금액/기준"], [
         ["룸 목표 매출", won(c.weightedHourly*c.pricingHours)],
