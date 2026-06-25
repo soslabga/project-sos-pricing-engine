@@ -539,13 +539,13 @@
       const leaseProfit = sim.totalRevenue - leaseFixedCost - targetVariable;
       const leaseBepRevenue = leaseFixedCost / Math.max(.01, 1 - n("variableCostRatio")/100);
       document.getElementById("modelOverview").innerHTML = `<div class="model-strip">
-        <div class="model-box"><strong>핵심 전제</strong><span>이 모델의 경쟁력은 매출 확대보다 원가 절감에 있습니다. 불필요한 서비스와 인력을 제거해 낮은 BEP를 만드는 구조입니다.</span></div>
+        <div class="model-box"><strong>핵심 전제</strong><span>목표는 최소 인력으로 효율적으로 운영하는 것입니다. 예약, 결제, 출입, 정산을 시스템화해 관리 포인트를 줄입니다.</span></div>
         <div class="model-box"><strong>매출 구조</strong><span>4인실 이상 프로젝트룸을 반일~수개월 단위로 판매하고, 입주사 할인 예약과 외부 예약을 병행합니다.</span></div>
-        <div class="model-box"><strong>비용 구조</strong><span>매입 또는 장기점유 비용, 관리비, 1인 운영 인건비, 청소비, 최소 시스템비가 핵심 비용입니다.</span></div>
+        <div class="model-box"><strong>비용 구조</strong><span>매입 또는 장기점유 비용, 관리비, 1인 운영 인건비, 청소비, 최소 시스템비만 핵심 비용으로 관리합니다.</span></div>
         <div class="model-box"><strong>손익 판단</strong><span>월 고정비를 낮춰 BEP 가동률을 낮추고, 경쟁사 대비 낮은 가격에서도 영업이익이 남는지 검증합니다.</span></div>
       </div>`;
       document.getElementById("headline").innerHTML = `월 시뮬레이션 매출 ${won(sim.totalRevenue)}<br><span style="color:var(--cyan)">예상 영업이익 ${won(targetProfit)}</span>`;
-      document.getElementById("oneLine").innerHTML = "Project SOS는 공간 운영에서 불필요한 고정비를 제거해 BEP를 낮추고, 공유오피스 대비 낮은 가격에서도 이익을 남기는 원가절감형 사업 모델입니다.";
+      document.getElementById("oneLine").innerHTML = "Project SOS는 최소 인력 운영을 전제로 예약·결제·출입·정산을 자동화하고, 불필요한 서비스 비용을 제거해 BEP를 낮추는 원가절감형 사업 모델입니다.";
       document.getElementById("executiveSummary").innerHTML = kpiList([
         ["월 시뮬레이션 매출", won(sim.totalRevenue)],
         ["월 고정비", won(c.fixedCost)],
@@ -868,7 +868,7 @@
     }
     function renderOperatingPolicy(c) {
       document.getElementById("operationPolicyTable").innerHTML = table(["항목","운영 기준"], [
-        ["운영 방향", "매매 우선. 임대료 상승과 재계약 리스크를 줄이고 장기적으로 자산가치를 확보"],
+        ["운영 방향", "최소 인력으로 효율적으로 운영. 예약, 결제, 출입, 정산, 리포트를 시스템화"],
         ["조건 비교", "월 환산 매입 점유비가 비교용 임대료보다 낮고 BEP가 60% 이하인지 확인"],
         ["2인실", "경쟁력 없음. 자동 공간구성에서 제외하고 4인실 이상 프로젝트룸 중심"],
         ["관리 포인트", "한 명이 관리 가능하도록 룸 수, 현장 응대, 소모품, 청소 동선을 단순화"],
