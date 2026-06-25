@@ -521,6 +521,7 @@
             won(prices[i]),
             `${revenues[i].salesCount.toFixed(1)}회`,
             `${n("targetUtilization")}%`,
+            `${won(prices[i])} × ${revenues[i].salesCount.toFixed(1)}회`,
             won(revenues[i].amount)
           ]);
         });
@@ -546,6 +547,7 @@
           "0원",
           "-",
           "-",
+          "0원",
           "0원"
         ]);
       }
@@ -592,9 +594,10 @@
           r.name, r.util, won(r.revenue), won(r.variable), won(r.profit), pct(r.margin)
         ])) +
         `<div style="height:12px"></div>` +
-        table(["단계","기준 단가","예상 판매량","매출 산식","변동비 산식","영업이익 산식"], stageRows.map(r=>[
+        table(["단계","기준 단가","이용률","예상 판매량","매출 산식","변동비 산식","영업이익 산식"], stageRows.map(r=>[
           r.name,
           won(c.weightedHourly),
+          r.util,
           `${fmt(c.availableHours * (Number(r.util.replace("%",""))/100))}시간`,
           `${won(c.weightedHourly)} × ${fmt(c.availableHours)}시간 × ${r.util} = ${won(r.revenue)}`,
           `${won(r.revenue)} × ${n("variableCostRatio")}% = ${won(r.variable)}`,
@@ -682,7 +685,7 @@
           ["최종 단가", "산출가와 공유오피스 월 좌석가 하한 중 높은 값, 1,000원 단위 올림", "가격표 및 매출 시뮬레이션 반영"]
         ]) +
         `<div style="height:12px"></div>` +
-        table(["룸","수량","상품","단가","예상 판매량","이용률","월 매출"], sim.detailRows);
+        table(["룸","수량","상품","단가","예상 판매량","이용률","월 매출 산식","월 매출"], sim.detailRows);
       document.getElementById("leaseProtectionSummary").innerHTML = table(["항목","확인 내용"], [
         ["핵심", "상가 임대차는 임차인이 계약갱신을 요구할 수 있으나, 전체 임대차기간은 최초 임대차기간 포함 10년을 넘지 못합니다."],
         ["요구 시점", "임대차기간 만료 6개월 전부터 1개월 전까지 계약갱신요구권 행사가 필요합니다."],
