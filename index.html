@@ -514,14 +514,15 @@
           return { salesCount, amount };
         });
         mix.forEach((m,i)=>{
+          const salesUnit = m.months ? "월 계약" : "회";
           detailRows.push([
             r.name,
             `${r.count}개`,
             m.label,
             won(prices[i]),
-            `${revenues[i].salesCount.toFixed(1)}회`,
+            `${revenues[i].salesCount.toFixed(1)}${salesUnit}`,
             `${n("targetUtilization")}%`,
-            `${won(prices[i])} × ${revenues[i].salesCount.toFixed(1)}회`,
+            `${won(prices[i])} × ${revenues[i].salesCount.toFixed(1)}${salesUnit}`,
             won(revenues[i].amount)
           ]);
         });
@@ -590,18 +591,16 @@
       document.getElementById("headline").innerHTML = `목표 단계 월 매출 ${won(headlineStage.revenue)}<br><span style="color:var(--cyan)">목표 단계 영업이익 ${won(headlineStage.profit)}</span>`;
       document.getElementById("oneLine").innerHTML = "Project SOS는 최소 인력 운영을 전제로 예약·결제·출입·정산을 자동화하고, 불필요한 서비스 비용을 제거해 BEP를 낮추는 원가절감형 사업 모델입니다.";
       document.getElementById("executiveSummary").innerHTML =
-        table(["단계","이용률","월 매출","월 변동비","영업이익","이익률"], stageRows.map(r=>[
-          r.name, r.util, won(r.revenue), won(r.variable), won(r.profit), pct(r.margin)
-        ])) +
-        `<div style="height:12px"></div>` +
-        table(["단계","기준 단가","이용률","예상 판매량","매출 산식","변동비 산식","영업이익 산식"], stageRows.map(r=>[
+        table(["단계","이용률","기준 단가","예상 판매량","매출 산식","월 매출","월 변동비","영업이익","이익률"], stageRows.map(r=>[
           r.name,
-          won(c.weightedHourly),
           r.util,
+          won(c.weightedHourly),
           `${fmt(c.availableHours * (Number(r.util.replace("%",""))/100))}시간`,
           `${won(c.weightedHourly)} × ${fmt(c.availableHours)}시간 × ${r.util} = ${won(r.revenue)}`,
-          `${won(r.revenue)} × ${n("variableCostRatio")}% = ${won(r.variable)}`,
-          `${won(r.revenue)} - ${won(c.fixedCost)} - ${won(r.variable)} = ${won(r.profit)}`
+          won(r.revenue),
+          won(r.variable),
+          won(r.profit),
+          pct(r.margin)
         ]));
       document.getElementById("revenueModelSummary").innerHTML =
         kpiList([
