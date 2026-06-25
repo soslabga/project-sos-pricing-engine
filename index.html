@@ -497,7 +497,7 @@
             m.label,
             won(prices[i]),
             `${revenues[i].salesCount.toFixed(1)}회`,
-            `${100-n("targetUtilization")}%`,
+            `${n("targetUtilization")}%`,
             won(revenues[i].amount)
           ]);
         });
@@ -522,7 +522,7 @@
           "시간제",
           won(c.openOfficeHourly),
           `${fmt(c.openOfficeSellableHours)}시간`,
-          `${100-n("openOfficeUtilization")}%`,
+          `${n("openOfficeUtilization")}%`,
           won(openOfficeRevenue)
         ]);
       }
@@ -557,7 +557,7 @@
         kpiList([
           ["룸 매출", won(sim.roomRevenue)],
           ["공용오피스 매출", won(sim.openOfficeRevenue)],
-          ["공실률 반영", `룸 공실률 ${100-n("targetUtilization")}% · 공용오피스 공실률 ${100-n("openOfficeUtilization")}%`],
+          ["판매율 가정", `룸 이용률 ${n("targetUtilization")}% · 공용오피스 이용률 ${n("openOfficeUtilization")}%`],
           ["월 시뮬레이션 매출", won(sim.totalRevenue)]
         ]);
       document.getElementById("costModelSummary").innerHTML = kpiList([
@@ -598,10 +598,10 @@
         table(["기준","내용"], [
           ["룸 판매 기준", `${c.totalRooms}개 룸 · 월 판매가능 ${fmt(c.availableHours)}시간 · 목표 판매 ${fmt(c.pricingHours)}시간`],
           ["상품 판매 믹스", "반일 30% · 1일 30% · 1주 20% · 1개월 20%"],
-          ["공실률", `룸 ${100-n("targetUtilization")}% · 공용오피스 ${100-n("openOfficeUtilization")}%`]
+          ["판매율", `룸 이용률 ${n("targetUtilization")}% · 공용오피스 이용률 ${n("openOfficeUtilization")}%`]
         ]) +
         `<div style="height:12px"></div>` +
-        table(["룸/좌석","수량","상품","단가","예상 판매량","공실률","월 매출"], sim.detailRows);
+        table(["룸/좌석","수량","상품","단가","예상 판매량","이용률","월 매출"], sim.detailRows);
       document.getElementById("leaseProtectionSummary").innerHTML = table(["항목","확인 내용"], [
         ["핵심", "상가 임대차는 임차인이 계약갱신을 요구할 수 있으나, 전체 임대차기간은 최초 임대차기간 포함 10년을 넘지 못합니다."],
         ["요구 시점", "임대차기간 만료 6개월 전부터 1개월 전까지 계약갱신요구권 행사가 필요합니다."],
