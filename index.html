@@ -100,23 +100,20 @@
         <div class="card"><h2>비용 구조 <span style="font-size:13px;font-weight:500;color:var(--gray);">— 무엇이 비용인가</span></h2><div id="costModelSummary" style="margin-top:10px;"></div></div>
         <div class="card"><h2>손익 요약 <span style="font-size:13px;font-weight:500;color:var(--gray);">— 언제 흑자인가</span></h2><div id="profitModelSummary" style="margin-top:10px;"></div></div>
       </div>
-      <!-- ④ 단계별 손익표 -->
+      <!-- ④ 이용률별 손익 시뮬레이션 -->
       <div class="card" style="margin-bottom:16px;">
         <h2>이용률별 손익 시뮬레이션</h2>
-        <div style="color:var(--gray);font-size:13px;margin-bottom:12px;">이용률이 높아질수록 영업이익이 늘어납니다. 녹색이 흑자, 빨간색이 적자 구간입니다.</div>
+        <div style="color:var(--gray);font-size:13px;margin-bottom:12px;">판매 믹스(반일 45%·1일 35%·1주 15%·월 5%) 및 기간 할인 적용 기준. 녹색이 흑자, 빨간색이 적자입니다.</div>
         <div id="executiveSummary"></div>
       </div>
-      <!-- ⑤ 경쟁사 가격 비교 -->
+      <!-- ⑤ 상세 매출·비용 구조 -->
+      <div class="grid cols2" style="margin-bottom:16px;">
+        <div class="card"><h2>상세 매출 구조</h2><div id="revenueSimulationDetail" style="margin-top:10px;"></div></div>
+        <div class="card"><h2>상세 비용 구조</h2><div id="costSimulationDetail" style="margin-top:10px;"></div></div>
+      </div>
+      <!-- ⑥ 경쟁사 가격 비교 -->
       <div class="card" style="margin-bottom:16px;"><h2>경쟁사 대비 가격 포지션</h2><div id="competitorComparisonTop"></div></div>
-      <!-- ⑥ 상세 내용 접기 -->
-      <details class="card" style="margin-bottom:10px;">
-        <summary style="font-weight:900;color:var(--navy);cursor:pointer;font-size:15px;">상세 매출 시뮬레이션 보기</summary>
-        <div id="revenueSimulationDetail" style="margin-top:14px;"></div>
-      </details>
-      <details class="card" style="margin-bottom:10px;">
-        <summary style="font-weight:900;color:var(--navy);cursor:pointer;font-size:15px;">상세 비용 내역 보기</summary>
-        <div id="costSimulationDetail" style="margin-top:14px;"></div>
-      </details>
+      <!-- ⑦ 접이식 상세 -->
       <details class="card" style="margin-bottom:10px;">
         <summary style="font-weight:900;color:var(--navy);cursor:pointer;font-size:15px;">비즈니스 모델 상세</summary>
         <div id="modelConcept" style="margin-top:14px;"></div>
@@ -612,9 +609,10 @@
           </div>
         </div>`;
 
-      // ② KPI 카드 4개
-      const bepUtilPct = Math.round(c.bepUtil * 100);
-      const bepCard = bepUtilPct <= 40 ? "good" : bepUtilPct <= 55 ? "warn" : "bad";
+      // ② KPI 카드 4개 (흑자전환 이용률 = sim.totalRevenue 기준 비례 계산)
+      const revenuePerUtil = sim.totalRevenue / (n("targetUtilization") / 100);
+      const bepUtilPct = Math.round(bepRevenue / revenuePerUtil * 100);
+      const bepCard = bepUtilPct <= 45 ? "good" : bepUtilPct <= 60 ? "warn" : "bad";
       document.getElementById("kpiCards").innerHTML = `
         <div class="metric warn">
           <div class="label">월 고정비</div>
@@ -690,19 +688,23 @@
           </div>
         </div>`;
 
-      // ④ 단계별 손익표 (산식 컬럼 제거, 색상 추가)
-      const stageRows = profitStageRows(c);
-      const stageHtml = stageRows.map(r=>{
-        const isProfit = r.profit >= 0;
+      // ④ 이용률별 손익 시뮬레이션 (sim.totalRevenue 기준 비례 계산 → 손익요약과 수치 일치)
+      const baseUtil = n("targetUtilization") / 100;
+      const stageHtml = stages.map(st=>{
+        const revenue = sim.totalRevenue * st.util / baseUtil;
+        const variable = revenue * n("variableCostRatio") / 100;
+        const profit = revenue - c.fixedCost - variable;
+        const margin = revenue ? profit / revenue : 0;
+        const isProfit = profit >= 0;
         const rowStyle = isProfit ? "background:#f0fdf8;" : "background:#fff5f5;";
         const profitStyle = isProfit ? "color:var(--green);font-weight:900;" : "color:var(--red);font-weight:900;";
         return `<tr style="${rowStyle}">
-          <td>${r.name}</td>
-          <td style="text-align:right;">${r.util}</td>
-          <td style="text-align:right;">${won(r.revenue)}</td>
-          <td style="text-align:right;">${won(r.fixedCost)}</td>
-          <td style="text-align:right;${profitStyle}">${won(r.profit)}</td>
-          <td style="text-align:right;${profitStyle}">${pct(r.margin)}</td>
+          <td style="padding:9px 10px;">${st.name}</td>
+          <td style="text-align:right;padding:9px 10px;">${Math.round(st.util*100)}%</td>
+          <td style="text-align:right;padding:9px 10px;">${won(revenue)}</td>
+          <td style="text-align:right;padding:9px 10px;">${won(c.fixedCost)}</td>
+          <td style="text-align:right;padding:9px 10px;${profitStyle}">${won(profit)}</td>
+          <td style="text-align:right;padding:9px 10px;${profitStyle}">${pct(margin)}</td>
         </tr>`;
       }).join("");
       document.getElementById("executiveSummary").innerHTML =
