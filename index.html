@@ -260,9 +260,9 @@
       revenueRatio:88, commonRatio:12, storageRatio:2, corridorRatio:6, oaZoneArea:1,
       spaceCostMode:0, rent:53300000, deposit:533000000, maintenance:7500000, purchasePrice:10000000000, loanRatio:70, annualInterestRate:4.5, equityOpportunityRate:4.0, depositOpportunityRate:4.0, propertyTaxMonthly:2500000, acquisitionCostRatio:0, annualHoldingCostRatio:0, assetUpsideRatio:0, managerUnitCost:3500000,
       interiorPerPyeong:650000, furnitureCost:50000000, initialEquipmentCost:10000000, systemBuildCost:30000000, openingCost:5000000, restorationReserveTotal:30000000, fitoutFreeMonths:1.5,
-      softwareCost:700000, equipmentCost:800000, consumablesCost:400000, utilityCost:700000, insuranceSecurityCost:300000, taxAccountingCost:300000, repairReserveCost:500000, operationCost:800000, marketingCost:2000000, employmentBurdenCost:340000, partTimeCost:900000, cleaningDeskUnitCost:5000,
+      softwareCost:700000, equipmentCost:800000, consumablesCost:400000, utilityCost:700000, insuranceSecurityCost:300000, taxAccountingCost:300000, repairReserveCost:500000, operationCost:800000, marketingCost:2000000, employmentBurdenCost:340000, partTimeCost:0, cleaningDeskUnitCost:5000,
       initialLeaseMonths:24, extensionOptionMonths:0, leaseProtectionAvailable:1, interiorRecoveryMonths:120, rentIncreaseCap:1, subleaseAllowed:0, serviceAllowed:1, restorationClear:1,
-      operatingDays:22, hoursPerDay:10, targetUtilization:60,
+      operatingDays:22, hoursPerDay:9, targetUtilization:60,
       targetMargin:35, variableCostRatio:8,
       coworkingMonthlyPerSeat:550000, targetOperatingMargin:20,
       monthlyCoworkingFloor:60,
@@ -363,7 +363,7 @@
       const oneManagerPossible = managerCount <= 1;
       const managerCost = managerCount * n("managerUnitCost");
       const isLeaseMode = n("spaceCostMode") >= 1;
-      const investmentMonths = isLeaseMode ? Math.max(1, n("initialLeaseMonths")) : n("leaseProtectionAvailable") >= 1 ? Math.max(1, n("interiorRecoveryMonths")) : 48;
+      const investmentMonths = n("leaseProtectionAvailable") >= 1 ? Math.max(1, n("interiorRecoveryMonths")) : isLeaseMode ? Math.max(1, n("initialLeaseMonths")) : 48;
       const initialInteriorCost = exclusive * n("interiorPerPyeong");
       const fitoutPeriodCost = isLeaseMode ? (n("rent") + n("maintenance")) * n("fitoutFreeMonths") : 0;
       const restorationReserve = isLeaseMode ? n("restorationReserveTotal") : 0;
@@ -591,17 +591,28 @@
       </div>`;
       const stageRows = profitStageRows(c);
       document.getElementById("executiveSummary").innerHTML =
-        table(["단계","이용률","기준 단가","예상 판매량","매출 산식","월 매출","월 변동비","영업이익","이익률"], stageRows.map(r=>[
+        table(["단계","이용률","예상 판매시간","월 매출","월 고정비","월 변동비","영업이익 산식","영업이익","이익률"], stageRows.map(r=>[
           r.name,
           r.util,
-          won(c.weightedHourly),
           `${fmt(c.availableHours * (Number(r.util.replace("%",""))/100))}시간`,
-          `${won(c.weightedHourly)} × ${fmt(c.availableHours)}시간 × ${r.util} = ${won(r.revenue)}`,
           won(r.revenue),
+          won(r.fixedCost),
           won(r.variable),
+          `${won(r.revenue)} - ${won(r.fixedCost)} - ${won(r.variable)}`,
           won(r.profit),
           pct(r.margin)
-        ]));
+        ])) +
+        `<h3 style="margin-top:18px;">기준단가 산정공식</h3>` +
+        table(["항목","산식","금액"], [
+          ["월 고정비", "공간비 + 관리비 + 운영비 + 월 환산 투자비", won(c.fixedCost)],
+          ["목표 변동비", `필요 월매출 × ${n("variableCostRatio")}%`, won(c.requiredVariableCost)],
+          ["목표 영업이익", `필요 월매출 × ${n("targetMargin")}%`, won(c.requiredProfit)],
+          ["필요 월매출", `월 고정비 ÷ (1 - 변동비율 ${n("variableCostRatio")}% - 목표이익률 ${n("targetMargin")}%)`, won(c.requiredRevenue)],
+          ["월 판매가능 시간", `${c.totalRooms}개 룸 × ${n("operatingDays")}일 × ${n("hoursPerDay")}시간`, `${fmt(c.availableHours)}시간`],
+          ["목표 판매시간", `${fmt(c.availableHours)}시간 × 목표 이용률 ${n("targetUtilization")}%`, `${fmt(c.pricingHours)}시간`],
+          ["기준 시간단가", `${won(c.requiredRevenue)} ÷ ${fmt(c.pricingHours)}시간`, won(c.baseHourly)],
+          ["최종 기준단가", "원가 기준 시간단가를 룸 크기·VC 여부·시장 하한가에 맞춰 보정", won(c.weightedHourly)]
+        ]);
       document.getElementById("revenueModelSummary").innerHTML =
         kpiList([
           ["룸 매출", won(sim.roomRevenue)],
