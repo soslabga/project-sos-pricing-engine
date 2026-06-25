@@ -285,7 +285,7 @@
       fastfivePangyo4room:3090000, fastfivePangyo7room:4060000, fastfivePangyo10room:5590000,
       fastfivePangyoDiscountRate:28,
       yeouidoPurchasePrice:7200000000, yeouidoRent:30843000, yeouidoMaintenance:11385000,
-      pangyoPurchasePrice:4600000000, pangyoRent:53300000, pangyoMaintenance:3134060
+      pangyoPurchasePrice:4600000000, pangyoRent:18284000, pangyoMaintenance:3134060
     };
     let state = { ...defaults };
     let areaMode = "contract";
@@ -1057,13 +1057,14 @@
       return c;
     }
     function renderSiteProfitability() {
-      // 판교: 매입(spaceCostMode=0), 46억
+      // 판교: 임차 기준 (동일 조건 비교용)
       const pangyo = calcFor({
-        spaceCostMode: 0,
-        purchasePrice: n("pangyoPurchasePrice"),
-        maintenance: n("pangyoMaintenance")
+        spaceCostMode: 1,
+        rent: n("pangyoRent"),
+        maintenance: n("pangyoMaintenance"),
+        deposit: n("pangyoRent") * 10
       });
-      // 여의도: 임차(spaceCostMode=1), 파크원타워 임대료 기준
+      // 여의도: 임차 기준, 파크원타워 임대료
       const yeouido = calcFor({
         spaceCostMode: 1,
         rent: n("yeouidoRent"),
@@ -1097,13 +1098,13 @@
         ["목표 영업이익",         won(pangyoProfit),                      won(yeouidoProfit)],
       ];
       const costHtml = `
-        <h3 style="font-size:14px;font-weight:900;color:var(--navy);margin:0 0 8px;">SOS 판교(매입) vs SOS 여의도(임차) — 비용 구조 비교</h3>
-        <div style="font-size:12px;color:var(--gray);margin-bottom:10px;">동일 면적(103.5평)·동일 룸 구성 기준 | 여의도 임대료: 파크원타워 기준 ${won(n("yeouidoRent"))}/월</div>
+        <h3 style="font-size:14px;font-weight:900;color:var(--navy);margin:0 0 8px;">SOS 판교(임차) vs SOS 여의도(임차) — 동일 조건 비용 비교</h3>
+        <div style="font-size:12px;color:var(--gray);margin-bottom:10px;">동일 면적(103.5평)·동일 룸 구성·임차 기준 | 판교 임대료 ${won(n("pangyoRent"))}/월 vs 여의도(파크원타워) ${won(n("yeouidoRent"))}/월</div>
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
           <thead><tr>
             <th style="background:var(--navy);color:#fff;padding:9px 10px;text-align:left;">항목</th>
-            <th style="background:#1a5c2a;color:#fff;padding:9px 10px;text-align:center;">SOS 판교 (매입, 46억)</th>
-            <th style="background:#7a3a00;color:#fff;padding:9px 10px;text-align:center;">SOS 여의도 (임차, 가상)</th>
+            <th style="background:#1a5c2a;color:#fff;padding:9px 10px;text-align:center;">SOS 판교 (임차 가정)</th>
+            <th style="background:#7a3a00;color:#fff;padding:9px 10px;text-align:center;">SOS 여의도 (임차 가정)</th>
           </tr></thead>
           <tbody>${costRows.map((r,i)=>`<tr style="background:${i%2===0?'#fff':'#f8f9fb'};">
             <td style="padding:8px 10px;border-bottom:1px solid var(--line);font-weight:900;color:var(--navy);">${r[0]}</td>
