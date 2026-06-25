@@ -122,36 +122,6 @@
         <h2>원가절감 설계</h2>
         <div id="costReductionTable"></div>
       </div>
-      <div class="metric-grid" id="metrics"></div>
-      <div class="card" style="margin-top:16px;">
-        <h2>월 비용 구성</h2>
-        <div id="costSummary"></div>
-      </div>
-      <div class="grid cols2" style="margin-top:16px;">
-        <div class="card"><h2>룸 믹스</h2><div id="roomBars"></div></div>
-        <div class="card"><h2>단계별 손익</h2><div id="profitBars"></div></div>
-      </div>
-      <div class="card" style="margin-top:16px;">
-        <h2>룸별 대표 이용료</h2>
-        <div id="miniPricing"></div>
-      </div>
-      <div class="card" style="margin-top:16px;">
-        <h2>1개월 기준 비용 비교</h2>
-        <div id="monthlyComparisonMini"></div>
-      </div>
-      <div class="card" style="margin-top:16px;">
-        <h2>여의도·판교 경쟁사 비교</h2>
-        <div id="competitorComparisonMini"></div>
-      </div>
-      <div class="card" style="margin-top:16px;">
-        <h2>공실률별 권장 가격</h2>
-        <div id="vacancyPricingMini"></div>
-      </div>
-      <div class="card" style="margin-top:16px;">
-        <h2>글로벌 모델 확장 체크포인트</h2>
-        <div class="note" style="margin-bottom:14px;">국내 표준모델은 유지하고, 해외 적용 시 나라마다 달라지는 변수만 체크해 반영합니다.</div>
-        <div id="globalChecklist"></div>
-      </div>
     </section>
 
     <section class="section" data-tab="Input">
@@ -675,7 +645,8 @@
       tiles.push(`<div class="tile" style="background:#394657">공용/OA<small>공용 ${py(c.commonArea)} · 세단기/복합기</small></div>`);
       document.getElementById("floorPlan").innerHTML = tiles.join("");
       document.getElementById("floorSummary").textContent = `룸 ${py(c.usedRevenueArea)} · 공용오피스 ${py(c.openOfficeArea)} · 별도 공용 ${py(c.commonArea)}`;
-      document.getElementById("metrics").innerHTML = [
+      const metricsEl = document.getElementById("metrics");
+      if (metricsEl) metricsEl.innerHTML = [
         metric("전용면적", py(c.exclusive), `계약면적 ${py(n("contractArea"))}`),
         metric("월 고정비", won(c.fixedCost), `매입 점유비 ${won(c.effectiveOccupancyCost)} · 운영인력 ${c.managerCount}명 포함`),
         metric("추천 구성", `${c.totalRooms}개 룸`, `룸 ${c.roomSeats}명 + 공용 ${c.openOfficeSeats}석`),
@@ -691,21 +662,25 @@
         metric("매입 조건", c.purchaseStatus==="Green" ? "우선" : c.purchaseStatus==="Yellow" ? "조건 확인" : "재협상", `임대 대비 ${won(c.rentSaving)} 절감`, c.purchaseStatus==="Green"?"good":c.purchaseStatus==="Yellow"?"warn":"bad"),
         metric("1인 운영", c.oneManagerPossible ? "가능" : "불가", "관리 포인트 축소 필요", c.oneManagerPossible?"good":"bad")
       ].join("");
-      document.getElementById("roomBars").innerHTML = c.rooms.map(r=>{
+      const roomBarsEl = document.getElementById("roomBars");
+      if (roomBarsEl) roomBarsEl.innerHTML = c.rooms.map(r=>{
         const width = Math.min(100, r.count / Math.max(1,...c.rooms.map(x=>x.count)) * 100);
         return `<div class="bar-row"><b>${r.name}</b><div class="bar-bg"><div class="bar" style="width:${width}%"></div></div><span>${r.count}개</span></div>`;
       }).join("");
-      document.getElementById("profitBars").innerHTML = stages.map(st=>{
+      const profitBarsEl = document.getElementById("profitBars");
+      if (profitBarsEl) profitBarsEl.innerHTML = stages.map(st=>{
         const revenue = c.weightedHourly*c.availableHours*st.util + c.openOfficeHourly*c.openOfficeAvailableHours*n("openOfficeUtilization")/100;
         const profit = revenue - c.fixedCost - revenue*n("variableCostRatio")/100;
         const width = Math.min(100, Math.abs(profit)/Math.max(1,c.fixedCost)*100);
         const color = profit>=0 ? "linear-gradient(90deg,var(--green),var(--cyan))" : "linear-gradient(90deg,var(--red),var(--orange))";
         return `<div class="bar-row"><b>${st.name} ${Math.round(st.util*100)}%</b><div class="bar-bg"><div class="bar" style="width:${width}%;background:${color}"></div></div><span>${won(profit)}</span></div>`;
       }).join("");
-      document.getElementById("miniPricing").innerHTML = table(["룸 타입","반일","1일","1주","1개월","3개월"], c.pricing.filter(r=>r.count>0).map(r=>[
+      const miniPricingEl = document.getElementById("miniPricing");
+      if (miniPricingEl) miniPricingEl.innerHTML = table(["룸 타입","반일","1일","1주","1개월","3개월"], c.pricing.filter(r=>r.count>0).map(r=>[
         r.name, won(r.hourly*4*.88), won(r.hourly*8*.80), won(r.hourly*40*.62), won(r.hourly*160*.48), won(r.hourly*480*.39)
       ]));
-      document.getElementById("globalChecklist").innerHTML = table(["구분","국가별 확인 변수","모델 반영 방식"], [
+      const globalChecklistEl = document.getElementById("globalChecklist");
+      if (globalChecklistEl) globalChecklistEl.innerHTML = table(["구분","국가별 확인 변수","모델 반영 방식"], [
         ["매매가", "현지 매매가/금리/보유비", "월 환산 점유비와 입지지수 수정"],
         ["인건비", "운영인력 평균임금", "운영인력 1인 월 인건비 수정"],
         ["공유오피스 가격", "월 좌석가/회의실 가격", "공유오피스 대비 절감률 비교"],
@@ -751,7 +726,8 @@
     function renderMonthlyComparison(c) {
       const headers = ["룸","기준 인원","시간제 환산 1개월","공유오피스 대비 하한","최종 SOS 1개월","공유오피스 월 비용","절감액","절감률"];
       const rows = monthlyComparisonRows(c);
-      document.getElementById("monthlyComparisonMini").innerHTML = table(headers, rows.filter(r=>r[0]==="2인실" || r[0]==="4인실" || r[0]==="4인실 VC"));
+      const monthlyMiniEl = document.getElementById("monthlyComparisonMini");
+      if (monthlyMiniEl) monthlyMiniEl.innerHTML = table(headers, rows.filter(r=>r[0]==="2인실" || r[0]==="4인실" || r[0]==="4인실 VC"));
       document.getElementById("monthlyComparisonTable").innerHTML = table(headers, rows);
     }
     function competitorRows(c) {
@@ -778,7 +754,8 @@
     function renderCompetitorComparison(c) {
       const headers = ["비교 대상","상품","기준","SOS","경쟁사","차액","절감률","판정"];
       const rows = competitorRows(c);
-      document.getElementById("competitorComparisonMini").innerHTML = table(headers, rows.filter(r=>r[1] === "월 좌석"));
+      const competitorMiniEl = document.getElementById("competitorComparisonMini");
+      if (competitorMiniEl) competitorMiniEl.innerHTML = table(headers, rows.filter(r=>r[1] === "월 좌석"));
       document.getElementById("competitorComparisonTable").innerHTML = table(headers, rows);
     }
     function calcFor(overrides) {
@@ -837,7 +814,8 @@
         ];
       });
       const headers = ["공실률","목표 이용률","2인실 1개월","4인실 반일","4인실 1개월","BEP 가동률"];
-      document.getElementById("vacancyPricingMini").innerHTML = table(headers, rows);
+      const vacancyMiniEl = document.getElementById("vacancyPricingMini");
+      if (vacancyMiniEl) vacancyMiniEl.innerHTML = table(headers, rows);
       document.getElementById("vacancyPricingTable").innerHTML = table(headers, rows);
     }
     function costRows(c) {
@@ -858,7 +836,8 @@
       ];
     }
     function renderCosts(c) {
-      document.getElementById("costSummary").innerHTML = table(["비용 항목","월 비용"], [
+      const costSummaryEl = document.getElementById("costSummary");
+      if (costSummaryEl) costSummaryEl.innerHTML = table(["비용 항목","월 비용"], [
         ["매입 점유비", won(c.effectiveOccupancyCost)], ["관리비", won(n("maintenance"))],
         ["운영인력", won(c.managerCost)], ["청소관리", won(c.cleaningCost)],
         ["홍보비", won(n("marketingCost"))], ["월 환산 투자비", won(c.monthlyInvestment)],
