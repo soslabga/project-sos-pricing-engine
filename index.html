@@ -173,7 +173,7 @@
     <section class="section" data-tab="Cost Structure">
       <div class="card">
         <h2>비용 구조</h2>
-        <div class="note" style="margin-bottom:14px;">가격은 실질 월 고정비에 기업이윤을 붙이고, 보수 목표 이용시간으로 나누어 산출합니다. 불필요한 상주 서비스와 과도한 인테리어 비용은 제외합니다.</div>
+        <div class="note" style="margin-bottom:14px;">이 탭은 운영 원가와 초기 구축비만 봅니다. 매매가, 대출, 이자, 보유비는 Purchase Test와 Site Profitability에서 별도로 판단합니다.</div>
         <div id="costStructureTable"></div>
       </div>
     </section>
@@ -497,10 +497,10 @@
     function renderDashboard(c) {
       const statusText = c.status==="Green" ? "입점 가능" : c.status==="Yellow" ? "조건부 검토" : "입점 부적합";
       document.getElementById("modelOverview").innerHTML = `<div class="model-strip">
-        <div class="model-box"><strong>매입형 프로젝트룸 운영모델</strong><span>공유오피스 상주 좌석이 아니라 TFT, PMO, 고객 공동개발팀이 반일~수개월 단위로 쓰는 프로젝트 수행 공간입니다.</span></div>
-        <div class="model-box"><strong>매매 우선</strong><span>임대료 상승과 재계약 리스크를 줄이고 월 환산 매입 점유비와 자산가치 상승 가능성을 함께 봅니다.</span></div>
-        <div class="model-box"><strong>무인 예약 시스템</strong><span>상담 인력이 예약을 받지 않고 고객이 직접 공간 선택, 결제, 출입권 발급까지 완료합니다.</span></div>
-        <div class="model-box"><strong>가격 검증</strong><span>여의도 스파크플러스와 판교 패스트파이브 가격을 입력해 SOS 가격 경쟁력을 직접 비교합니다.</span></div>
+        <div class="model-box"><strong>왜 해야 하나</strong><span>기업은 상주 오피스보다 짧고, 회의실보다 긴 프로젝트 공간이 필요합니다. Project SOS는 이 중간 수요를 낮은 원가로 잡는 모델입니다.</span></div>
+        <div class="model-box"><strong>무엇을 파나</strong><span>좌석 멤버십이 아니라 TFT, PMO, 고객 공동개발팀이 반일~수개월 단위로 쓰는 프로젝트 수행 공간을 팝니다.</span></div>
+        <div class="model-box"><strong>어떻게 싸게 하나</strong><span>2인실, 고급 라운지, 상주 응대, 무료 크레딧, 컵 제공을 빼고 무인 예약·결제·출입으로 운영비를 낮춥니다.</span></div>
+        <div class="model-box"><strong>누구와 싸우나</strong><span>여의도 스파크플러스, 판교 패스트파이브, 토즈 회의실 대관과 비교합니다. 가격은 낮추고 이용기간은 더 유연하게 가져갑니다.</span></div>
       </div>`;
       document.getElementById("headline").innerHTML = `매입 점유비 ${won(c.effectiveOccupancyCost)}<br><span style="color:var(--cyan)">BEP·경쟁가 자동 검증</span>`;
       document.getElementById("oneLine").innerHTML = "면적, 매매가, 금융비용, 관리비를 입력하면 매입 적합성, 공간구성, 가격, 경쟁사 대비 절감률이 즉시 계산됩니다.";
@@ -511,6 +511,11 @@
         ["사업 판단", "10년 보호권은 임대 리스크를 줄이지만 소유권 확보가 아니므로, 매매 조건과 임대 조건을 월 점유비·BEP·자산가치 기준으로 비교해야 합니다."]
       ]);
       document.getElementById("modelConcept").innerHTML = table(["구분","표준 모델 원칙"], [
+        ["사업 정의", "공유오피스 좌석 상품과 회의실 대관 사이의 공백을 메우는 프로젝트룸 운영 모델"],
+        ["핵심 고객", "단기 TFT, PMO, 외부 컨설팅팀, 고객 공동개발팀, 임시 프로젝트 조직"],
+        ["해야 하는 이유", "공유오피스는 월 좌석 중심이라 비싸고, 회의실은 장기 작업공간으로 부족함. Project SOS는 필요한 기능만 남겨 가격을 낮춤"],
+        ["특장점", "매매/장기점유 기반 비용 안정화, 10년 보호 가능 시 인테리어비 장기 회수, 무인 예약 시스템, 1인 운영, 원가절감형 공간 표준화"],
+        ["경쟁자", "스파크플러스·패스트파이브는 상주 좌석/오피스 중심, 토즈는 회의실 중심. SOS는 반일~수개월 프로젝트 수행 공간 중심"],
         ["입력", "계약면적 또는 전용면적, 매매가, 금융비용, 월 관리비로 1차 검토"],
         ["공간", "2인실은 경쟁력이 낮아 제외하고 4인실 이상 프로젝트룸 중심으로 구성"],
         ["운영", "상담 예약을 없애고 셀프 예약, 온라인 결제, QR 출입, 표준 룸 모듈로 1인 운영이 가능하게 설계"],
@@ -709,10 +714,7 @@
     }
     function costRows(c) {
       return [
-        ["매매가", won(n("purchasePrice"))], ["대출금", won(c.loanAmount)], ["투입 자기자본", won(c.equityAmount)],
-        ["월 이자비용", won(c.monthlyInterest)], ["월 환산 취득비", won(c.monthlyAcquisitionCost)],
-        ["월 보유비", won(c.monthlyHoldingCost)], ["월 자산가치 상승 반영", `-${won(c.monthlyAssetUpside)}`],
-        ["월 환산 매입 점유비", won(c.effectiveOccupancyCost)], ["비교용 월 임대료", won(n("rent"))], ["월 관리비", won(n("maintenance"))],
+        ["월 관리비", won(n("maintenance"))],
         ["운영 인원", `${c.managerCount}명`], ["운영인력 인건비", won(c.managerCost)],
         ["평당 청소관리비", `${won(c.cleaningRate)} / 평`], ["면적 기준 청소비", won(c.cleaningAreaCost)],
         ["좌석 기준 청소비", won(c.cleaningDeskCost)], ["청소관리비 합계", won(c.cleaningCost)],
@@ -720,12 +722,10 @@
         ["필수 소모품", won(n("consumablesCost"))], ["월 홍보비", won(n("marketingCost"))], ["기타 필수 운영비", won(n("operationCost"))],
         ["월 운영비 합계", won(c.operatingCost)], ["초기 인테리어비", won(c.initialInteriorCost)],
         ["초기투자비 합계", won(c.totalInitialInvestment)], ["월 환산 투자비", `${won(c.monthlyInvestment)} / ${c.investmentMonths}개월`],
-        ["투자비 제외 월 고정비", won(c.fixedCostBeforeInvestment)],
-        ["월 고정비", won(c.fixedCost)], ["기업이윤", won(c.requiredProfit)], ["필요 월매출", won(c.requiredRevenue)],
+        ["운영 원가 기준 월 비용", won(n("maintenance") + c.operatingCost + c.monthlyInvestment)],
         ["목표 이용률", `${n("targetUtilization")}%`], ["가격 반영 공실률", `${100-n("targetUtilization")}%`],
         ["전체 판매 가능 시간", `${fmt(c.availableHours)}시간`], ["공실 반영 판매시간", `${fmt(c.pricingHours)}시간`],
-        ["실질 평당 월 고정비", `${won(c.fixedCost / Math.max(1,c.exclusive))} / 평`],
-        ["가격 산식", "(월 고정비 + 기업이윤) / 보수 목표 이용시간"], ["시간당 BEP 원가", won(c.breakEvenHourly)],
+        ["가격 산식", "운영 원가 + Purchase Test 점유비 + 기업이윤을 보수 목표 이용시간으로 나누어 산출"],
         ["원가절감 항목", "2인실, 과도한 회의실, 고급 라운지, 별도 보안인력, 컨시어지, 무료 크레딧, 컵/종이컵 제공 제외"]
       ];
     }
@@ -843,8 +843,23 @@
       render();
     }
     function renderTabs() {
-      const names = [...document.querySelectorAll(".section")].map(s=>s.dataset.tab);
-      document.getElementById("tabs").innerHTML = names.map((name,i)=>`<button class="tab ${i===0?"active":""}" onclick="showTab('${name}', this)">${name}</button>`).join("");
+      const visibleTabs = [
+        "Dashboard", "Input", "Space Planning", "Cost Structure", "Pricing",
+        "Competitor Comparison", "Site Profitability", "Purchase Test", "Reservation System"
+      ];
+      const labels = {
+        "Dashboard":"사업 개요",
+        "Input":"입력",
+        "Space Planning":"공간 구성",
+        "Cost Structure":"원가 구조",
+        "Pricing":"가격표",
+        "Competitor Comparison":"경쟁사 비교",
+        "Site Profitability":"여의도·판교 검증",
+        "Purchase Test":"매매 검토",
+        "Reservation System":"무인 예약"
+      };
+      const names = [...document.querySelectorAll(".section")].map(s=>s.dataset.tab).filter(name=>visibleTabs.includes(name));
+      document.getElementById("tabs").innerHTML = names.map((name,i)=>`<button class="tab ${i===0?"active":""}" onclick="showTab('${name}', this)">${labels[name] || name}</button>`).join("");
     }
     function showTab(name, btn) {
       document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active", s.dataset.tab===name));
