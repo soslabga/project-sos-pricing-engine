@@ -155,7 +155,7 @@
     <section class="section" data-tab="Pricing">
       <div class="card">
         <h2>가격표</h2>
-        <div class="note" style="margin-bottom:14px;">최소 대여는 반일입니다. 가격은 (월 고정비 + 기업이윤)을 보수 목표 이용시간으로 나눈 뒤 룸 면적과 화상회의장비 유무로 배분합니다.</div>
+        <div class="note" style="margin-bottom:14px;">최소 대여는 반일입니다. 가격은 고정비, 변동비, 공실률, 목표 영업이익률을 반영한 필요 월매출을 기준으로 산정한 뒤 룸 면적과 화상회의장비 유무로 배분합니다.</div>
         <div id="pricingTable"></div>
         <div style="margin-top:16px;" id="coworkingTable"></div>
       </div>
@@ -254,18 +254,18 @@
     const defaults = {
       contractArea:650.05, exclusiveArea:301.54, exclusiveRate:46.39,
       revenueRatio:88, commonRatio:12, storageRatio:2, corridorRatio:6, oaZoneArea:1,
-      rent:53300000, maintenance:7000000, purchasePrice:7200000000, loanRatio:60, annualInterestRate:4.8, acquisitionCostRatio:5.0, annualHoldingCostRatio:.35, assetUpsideRatio:2.0, managerUnitCost:3500000,
+      rent:53300000, maintenance:3134060, purchasePrice:7200000000, loanRatio:60, annualInterestRate:4.8, acquisitionCostRatio:5.0, annualHoldingCostRatio:.35, assetUpsideRatio:2.0, managerUnitCost:3500000,
       interiorPerPyeong:650000, furnitureCost:0, initialEquipmentCost:0, systemBuildCost:0, openingCost:0,
-      softwareCost:0, equipmentCost:0, consumablesCost:0, operationCost:0, marketingCost:300000, cleaningDeskUnitCost:5000,
+      softwareCost:0, equipmentCost:0, consumablesCost:0, utilityCost:0, insuranceSecurityCost:0, taxAccountingCost:0, repairReserveCost:0, operationCost:0, marketingCost:300000, cleaningDeskUnitCost:5000,
       initialLeaseMonths:24, extensionOptionMonths:24, leaseProtectionAvailable:1, interiorRecoveryMonths:120, rentIncreaseCap:1, subleaseAllowed:1, serviceAllowed:1, restorationClear:1,
       operatingDays:22, hoursPerDay:10, targetUtilization:60,
-      targetMargin:35, variableCostRatio:8, competitorPosition:90,
+      targetMargin:35, variableCostRatio:8,
       coworkingMonthlyPerSeat:550000, targetOperatingMargin:20,
       monthlyCoworkingFloor:60,
       sparkplusYeouidoSeat:650000, sparkplusYeouidoMeetingHalf:180000, sparkplusYeouidoMeetingDay:320000,
       fastfivePangyoSeat:550000, fastfivePangyoMeetingHalf:160000, fastfivePangyoMeetingDay:300000,
       yeouidoPurchasePrice:7200000000, yeouidoRent:12250000, yeouidoMaintenance:6000000,
-      pangyoPurchasePrice:7200000000, pangyoRent:53300000, pangyoMaintenance:7000000
+      pangyoPurchasePrice:7200000000, pangyoRent:53300000, pangyoMaintenance:3134060
     };
     let state = { ...defaults };
     let areaMode = "contract";
@@ -280,7 +280,7 @@
       ["exclusiveRate","전용률(%)"], ["revenueRatio","수익공간 비율(%)"],
       ["leaseProtectionAvailable","상가 10년 보호 가능(1/0)"], ["interiorRecoveryMonths","인테리어 회수기간(개월)"],
       ["managerUnitCost","운영인력 1인 월 인건비(원)"], ["targetUtilization","보수 목표 이용률(%)"],
-      ["targetMargin","기업이윤율(%)"], ["competitorPosition","공유오피스 대비 가격 포지션(%)"],
+      ["targetMargin","목표 영업이익률(%)"], ["variableCostRatio","변동비율(%)"],
       ["coworkingMonthlyPerSeat","공유오피스 월/석 기준가(원)"],
       ["monthlyCoworkingFloor","1개월 상품 공유오피스 대비 하한(%)"],
       ["sparkplusYeouidoSeat","여의도 스파크플러스 월/석(원)"],
@@ -292,7 +292,9 @@
       ["yeouidoPurchasePrice","여의도 매매가(원)"], ["yeouidoRent","여의도 비교 임대료(원)"], ["yeouidoMaintenance","여의도 관리비(원)"],
       ["pangyoPurchasePrice","판교 매매가(원)"], ["pangyoRent","판교 비교 임대료(원)"], ["pangyoMaintenance","판교 관리비(원)"],
       ["softwareCost","예약/QR 시스템(원)"], ["equipmentCost","OA/화상회의장비 렌탈(원)"],
-      ["consumablesCost","필수 소모품(원)"], ["marketingCost","월 홍보비(원)"], ["operationCost","기타 필수 운영비(원)"],
+      ["consumablesCost","필수 소모품(원)"], ["utilityCost","전기/통신/인터넷(원)"],
+      ["insuranceSecurityCost","보험/보안(원)"], ["taxAccountingCost","세무/회계/법무(원)"], ["repairReserveCost","시설 유지보수 예비비(원)"],
+      ["marketingCost","월 홍보비(원)"], ["operationCost","기타 필수 운영비(원)"],
       ["cleaningDeskUnitCost","좌석당 청소비(원)"], ["interiorPerPyeong","평당 인테리어비(원)"],
       ["operatingDays","운영일수"], ["hoursPerDay","일 운영시간"]
     ];
@@ -301,6 +303,7 @@
     function won(x){ return fmt(x) + "원"; }
     function pct(x){ return (x * 100).toFixed(1) + "%"; }
     function py(x){ return (Number(x)||0).toFixed(1) + "평"; }
+    function roundPrice(x){ return Math.ceil((Number(x)||0) / 1000) * 1000; }
 
     function optimizeRooms(revenueArea) {
       const counts = roomTypes.map(()=>0);
@@ -365,20 +368,29 @@
       const monthlyAssetUpside = n("purchasePrice") * n("assetUpsideRatio") / 100 / 12;
       const purchaseOccupancyCost = monthlyInterest + monthlyAcquisitionCost + monthlyHoldingCost - monthlyAssetUpside;
       const effectiveOccupancyCost = Math.max(0, purchaseOccupancyCost);
-      const operatingCost = managerCost + cleaningCost + n("softwareCost") + n("equipmentCost") + n("consumablesCost") + n("marketingCost") + n("operationCost");
+      const operatingCost = managerCost + cleaningCost + n("softwareCost") + n("equipmentCost") + n("consumablesCost") + n("utilityCost") + n("insuranceSecurityCost") + n("taxAccountingCost") + n("repairReserveCost") + n("marketingCost") + n("operationCost");
       const fixedCostBeforeInvestment = effectiveOccupancyCost + n("maintenance") + operatingCost;
       const fixedCost = fixedCostBeforeInvestment + monthlyInvestment;
-      const requiredProfit = fixedCost * n("targetMargin") / 100;
-      const requiredRevenue = fixedCost + requiredProfit;
       const availableHours = Math.max(1,totalRooms) * n("operatingDays") * n("hoursPerDay");
       const pricingHours = availableHours * n("targetUtilization") / 100;
-      const breakEvenHourly = fixedCost / Math.max(1, pricingHours);
-      const baseHourly = requiredRevenue / Math.max(1, pricingHours) * n("competitorPosition") / 100;
+      const variableRate = n("variableCostRatio") / 100;
+      const targetProfitRate = n("targetMargin") / 100;
+      const contributionRate = Math.max(.01, 1 - variableRate - targetProfitRate);
+      const requiredRevenue = fixedCost / contributionRate;
+      const requiredVariableCost = requiredRevenue * variableRate;
+      const requiredProfit = requiredRevenue * targetProfitRate;
+      const breakEvenHourly = fixedCost / Math.max(1, pricingHours * (1 - variableRate));
+      const baseHourly = requiredRevenue / Math.max(1, pricingHours);
       const avgArea = usedRevenueArea / Math.max(1,totalRooms);
       const avgCap = roomSeats / Math.max(1,totalRooms);
-      const pricing = rooms.map(r=>{
-        const hourly = baseHourly * (r.area / Math.max(1,avgArea)) * Math.sqrt(r.capacity / Math.max(1,avgCap)) * r.premium;
+      const rawPricing = rooms.map(r=>{
+        const hourly = (r.area / Math.max(1,avgArea)) * Math.sqrt(r.capacity / Math.max(1,avgCap)) * r.premium;
         return { ...r, hourly };
+      });
+      const rawWeightedHourly = rawPricing.reduce((s,r)=>s+r.hourly*r.count,0) / Math.max(1,totalRooms);
+      const pricingScale = baseHourly / Math.max(.01, rawWeightedHourly);
+      const pricing = rawPricing.map(r=>{
+        return { ...r, hourly: r.hourly * pricingScale };
       });
       const weightedHourly = pricing.reduce((s,r)=>s+r.hourly*r.count,0) / Math.max(1,totalRooms);
       const openOfficeHourly = 0;
@@ -401,7 +413,7 @@
         exclusive, revenueArea, commonArea, rooms, totalRooms, usedRevenueArea, openOfficeArea, openOfficeSeats,
         roomSeats, totalCapacity, managerCount, oneManagerPossible, managerCost, cleaningRate, cleaningAreaCost, cleaningDeskCost, cleaningCost,
         loanAmount, equityAmount, monthlyInterest, acquisitionCost, monthlyAcquisitionCost, monthlyHoldingCost, monthlyAssetUpside, purchaseOccupancyCost, effectiveOccupancyCost, maxOccupancyCost, rentSaving, purchaseStatus,
-        operatingCost, fixedCostBeforeInvestment, initialInteriorCost, totalInitialInvestment, monthlyInvestment, investmentMonths, totalUseMonths, contractStatus, financialStatus, fixedCost, requiredProfit, requiredRevenue,
+        operatingCost, fixedCostBeforeInvestment, initialInteriorCost, totalInitialInvestment, monthlyInvestment, investmentMonths, totalUseMonths, contractStatus, financialStatus, fixedCost, requiredProfit, requiredRevenue, requiredVariableCost,
         availableHours, pricingHours, breakEvenHourly, pricing, weightedHourly, openOfficeHourly,
         openOfficeAvailableHours, openOfficeSellableHours, bepUtil, revenueAtTarget, maxOccupancyCost, status
       };
@@ -461,10 +473,10 @@
     }
     function priceAmount(room, hours, discount, months=0) {
       const timeBased = room.hourly * hours * discount;
-      if (!months) return timeBased;
+      if (!months) return roundPrice(timeBased);
       const multiMonthDiscount = months === 1 ? 1 : months === 2 ? .96 : .92;
       const coworkingFloor = room.capacity * n("coworkingMonthlyPerSeat") * n("monthlyCoworkingFloor") / 100 * months * multiMonthDiscount;
-      return Math.max(timeBased, coworkingFloor);
+      return roundPrice(Math.max(timeBased, coworkingFloor));
     }
     function roomPrice(c, key, hours, discount) {
       const room = c.pricing.find(r=>r.key===key && r.count>0) || c.pricing.find(r=>r.count>0);
@@ -583,15 +595,38 @@
         ["매입 점유비", "자산가치 상승 반영", `- ${won(c.monthlyAssetUpside)}`],
         ["매입 점유비", "소계", won(c.effectiveOccupancyCost)],
         ["임대 가정 점유비", "비교용 월 임대료", won(n("rent"))],
-        ["공통 운영비", "관리비", won(n("maintenance"))],
+        ["공통 운영비", "관리비 합계", won(n("maintenance"))],
+        ["관리비 근거", "26년 4월 1103호 고지서", "3,134,060원"],
+        ["1103호 관리비 포함", "건물유지관리비", "407,290원"],
+        ["1103호 관리비 포함", "관리용역비", "1,300,460원"],
+        ["1103호 관리비 포함", "공동수도료", "72,000원"],
+        ["1103호 관리비 포함", "기본열요금", "15,680원"],
+        ["1103호 관리비 포함", "공동열요금", "5,990원"],
+        ["1103호 관리비 포함", "건물보험료", "37,100원"],
+        ["1103호 관리비 포함", "전력기금", "29,260원"],
+        ["1103호 관리비 포함", "세대전기료", "657,301원"],
+        ["1103호 관리비 포함", "공동전기료", "156,160원"],
+        ["1103호 관리비 포함", "기본전기료", "254,310원"],
+        ["1103호 관리비 포함", "승강기전기료", "18,880원"],
+        ["1103호 관리비 포함", "주차수익사용", "-148,570원"],
+        ["1103호 관리비 포함", "부가세", "266,750원"],
+        ["1103호 관리비 포함", "비과세 합계", "138,360원"],
+        ["1103호 관리비 포함", "고지서 추가금액", "61,450원"],
         ["공통 운영비", `운영인력 ${c.managerCount}명`, won(c.managerCost)],
         ["공통 운영비", "청소관리", won(c.cleaningCost)],
         ["공통 운영비", "예약/QR 시스템", won(n("softwareCost"))],
         ["공통 운영비", "OA/화상회의장비", won(n("equipmentCost"))],
         ["공통 운영비", "필수 소모품", won(n("consumablesCost"))],
+        ["공통 운영비", "전기/통신/인터넷", won(n("utilityCost"))],
+        ["공통 운영비", "보험/보안", won(n("insuranceSecurityCost"))],
+        ["공통 운영비", "세무/회계/법무", won(n("taxAccountingCost"))],
+        ["공통 운영비", "시설 유지보수 예비비", won(n("repairReserveCost"))],
         ["공통 운영비", "마케팅", won(n("marketingCost"))],
         ["공통 운영비", "기타 운영비", won(n("operationCost"))],
         ["투자비", `${won(c.totalInitialInvestment)} ÷ ${c.investmentMonths}개월`, won(c.monthlyInvestment)],
+        ["변동비", `매출의 ${n("variableCostRatio")}%`, "매출 발생 시 차감"],
+        ["목표 영업이익", `매출의 ${n("targetMargin")}%`, "단가에 반영"],
+        ["필요 월매출", `고정비 ÷ (1 - 변동비율 - 목표 영업이익률)`, won(c.requiredRevenue)],
         ["월 고정비", "매입 기준", won(c.fixedCost)],
         ["월 고정비", "임대 가정", won(leaseFixedCost)]
       ]);
@@ -603,7 +638,7 @@
           ["최소 보조공간", "대기, 임시 작업, 입주사 편의 목적의 비매출 공간. 별도 과금하지 않음"]
         ]) +
         `<div style="height:12px"></div>` +
-        table(["룸/좌석","수량","상품","단가","예상 판매량","이용률","월 매출"], sim.detailRows);
+        table(["룸","수량","상품","단가","예상 판매량","이용률","월 매출"], sim.detailRows);
       document.getElementById("leaseProtectionSummary").innerHTML = table(["항목","확인 내용"], [
         ["핵심", "상가 임대차는 임차인이 계약갱신을 요구할 수 있으나, 전체 임대차기간은 최초 임대차기간 포함 10년을 넘지 못합니다."],
         ["요구 시점", "임대차기간 만료 6개월 전부터 1개월 전까지 계약갱신요구권 행사가 필요합니다."],
@@ -730,19 +765,32 @@
       if (monthlyMiniEl) monthlyMiniEl.innerHTML = table(headers, rows.filter(r=>r[0]==="2인실" || r[0]==="4인실" || r[0]==="4인실 VC"));
       document.getElementById("monthlyComparisonTable").innerHTML = table(headers, rows);
     }
-    function competitorRows(c) {
-      const r4 = c.pricing.find(r=>r.key==="r4" && r.count>0) || c.pricing.find(r=>r.count>0);
-      if (!r4) return [];
-      const sosHalf = priceAmount(r4,4,.88,0);
-      const sosDay = priceAmount(r4,8,.80,0);
-      const sosMonth = priceAmount(r4,160,.48,1);
+    function siteRoomPrices(overrides) {
+      const sc = calcFor(overrides);
+      const r4 = sc.pricing.find(r=>r.key==="r4" && r.count>0) || sc.pricing.find(r=>r.count>0);
+      if (!r4) return { half:0, day:0, month:0 };
+      return {
+        half: priceAmount(r4,4,.88,0),
+        day: priceAmount(r4,8,.80,0),
+        month: priceAmount(r4,160,.48,1)
+      };
+    }
+    function competitorRows() {
+      const yeouido = siteRoomPrices({
+        purchasePrice:n("yeouidoPurchasePrice"), rent:n("yeouidoRent"), maintenance:n("yeouidoMaintenance"),
+        coworkingMonthlyPerSeat:n("sparkplusYeouidoSeat")
+      });
+      const pangyo = siteRoomPrices({
+        purchasePrice:n("pangyoPurchasePrice"), rent:n("pangyoRent"), maintenance:n("pangyoMaintenance"),
+        coworkingMonthlyPerSeat:n("fastfivePangyoSeat")
+      });
       const rows = [
-        ["여의도 스파크플러스", "월 좌석", "4명 기준", sosMonth, n("sparkplusYeouidoSeat") * 4],
-        ["여의도 스파크플러스", "회의실 반일", "4인실 기준", sosHalf, n("sparkplusYeouidoMeetingHalf")],
-        ["여의도 스파크플러스", "회의실 1일", "4인실 기준", sosDay, n("sparkplusYeouidoMeetingDay")],
-        ["판교 패스트파이브", "월 좌석", "4명 기준", sosMonth, n("fastfivePangyoSeat") * 4],
-        ["판교 패스트파이브", "회의실 반일", "4인실 기준", sosHalf, n("fastfivePangyoMeetingHalf")],
-        ["판교 패스트파이브", "회의실 1일", "4인실 기준", sosDay, n("fastfivePangyoMeetingDay")]
+        ["여의도 스파크플러스", "월 좌석", "4명 기준", yeouido.month, n("sparkplusYeouidoSeat") * 4],
+        ["여의도 스파크플러스", "회의실 반일", "4인실 기준", yeouido.half, n("sparkplusYeouidoMeetingHalf")],
+        ["여의도 스파크플러스", "회의실 1일", "4인실 기준", yeouido.day, n("sparkplusYeouidoMeetingDay")],
+        ["판교 패스트파이브", "월 좌석", "4명 기준", pangyo.month, n("fastfivePangyoSeat") * 4],
+        ["판교 패스트파이브", "회의실 반일", "4인실 기준", pangyo.half, n("fastfivePangyoMeetingHalf")],
+        ["판교 패스트파이브", "회의실 1일", "4인실 기준", pangyo.day, n("fastfivePangyoMeetingDay")]
       ];
       return rows.map(([brand, item, basis, sos, competitor])=>{
         const diff = competitor - sos;
@@ -753,7 +801,7 @@
     }
     function renderCompetitorComparison(c) {
       const headers = ["비교 대상","상품","기준","SOS","경쟁사","차액","절감률","판정"];
-      const rows = competitorRows(c);
+      const rows = competitorRows();
       const competitorMiniEl = document.getElementById("competitorComparisonMini");
       if (competitorMiniEl) competitorMiniEl.innerHTML = table(headers, rows.filter(r=>r[1] === "월 좌석"));
       document.getElementById("competitorComparisonTable").innerHTML = table(headers, rows);
@@ -820,18 +868,22 @@
     }
     function costRows(c) {
       return [
-        ["월 관리비", won(n("maintenance"))],
+        ["월 관리비", `${won(n("maintenance"))} / 26년 4월 1103호 고지서 기준`],
         ["운영 인원", `${c.managerCount}명`], ["운영인력 인건비", won(c.managerCost)],
         ["평당 청소관리비", `${won(c.cleaningRate)} / 평`], ["면적 기준 청소비", won(c.cleaningAreaCost)],
         ["좌석 기준 청소비", won(c.cleaningDeskCost)], ["청소관리비 합계", won(c.cleaningCost)],
         ["예약/QR 시스템", won(n("softwareCost"))], ["OA/화상회의장비 렌탈", won(n("equipmentCost"))],
-        ["필수 소모품", won(n("consumablesCost"))], ["월 홍보비", won(n("marketingCost"))], ["기타 필수 운영비", won(n("operationCost"))],
+        ["필수 소모품", won(n("consumablesCost"))], ["전기/통신/인터넷", won(n("utilityCost"))],
+        ["보험/보안", won(n("insuranceSecurityCost"))], ["세무/회계/법무", won(n("taxAccountingCost"))],
+        ["시설 유지보수 예비비", won(n("repairReserveCost"))], ["월 홍보비", won(n("marketingCost"))], ["기타 필수 운영비", won(n("operationCost"))],
         ["월 운영비 합계", won(c.operatingCost)], ["초기 인테리어비", won(c.initialInteriorCost)],
         ["초기투자비 합계", won(c.totalInitialInvestment)], ["월 환산 투자비", `${won(c.monthlyInvestment)} / ${c.investmentMonths}개월`],
-        ["운영 원가 기준 월 비용", won(n("maintenance") + c.operatingCost + c.monthlyInvestment)],
+        ["매입 기준 월 고정비", won(c.fixedCost)],
+        ["변동비율", `${n("variableCostRatio")}%`], ["목표 영업이익률", `${n("targetMargin")}%`],
+        ["필요 월매출", won(c.requiredRevenue)], ["목표 변동비", won(c.requiredVariableCost)], ["목표 영업이익", won(c.requiredProfit)],
         ["목표 이용률", `${n("targetUtilization")}%`], ["가격 반영 공실률", `${100-n("targetUtilization")}%`],
         ["전체 판매 가능 시간", `${fmt(c.availableHours)}시간`], ["공실 반영 판매시간", `${fmt(c.pricingHours)}시간`],
-        ["가격 산식", "운영 원가 + Purchase Test 점유비 + 기업이윤을 보수 목표 이용시간으로 나누어 산출"],
+        ["가격 산식", "필요 월매출 = 고정비 ÷ (1 - 변동비율 - 목표 영업이익률). 단가 = 필요 월매출 ÷ 공실 반영 판매시간"],
         ["원가절감 항목", "2인실, 과도한 회의실, 고급 라운지, 별도 보안인력, 컨시어지, 무료 크레딧, 컵/종이컵 제공 제외"]
       ];
     }
@@ -840,6 +892,8 @@
       if (costSummaryEl) costSummaryEl.innerHTML = table(["비용 항목","월 비용"], [
         ["매입 점유비", won(c.effectiveOccupancyCost)], ["관리비", won(n("maintenance"))],
         ["운영인력", won(c.managerCost)], ["청소관리", won(c.cleaningCost)],
+        ["전기/통신", won(n("utilityCost"))], ["보험/보안", won(n("insuranceSecurityCost"))],
+        ["세무/회계", won(n("taxAccountingCost"))], ["시설 유지보수", won(n("repairReserveCost"))],
         ["홍보비", won(n("marketingCost"))], ["월 환산 투자비", won(c.monthlyInvestment)],
         ["실질 월 고정비", won(c.fixedCost)]
       ]);
@@ -895,38 +949,42 @@
     }
     function renderReservationSystem() {
       document.getElementById("reservationSystemTable").innerHTML = table(["구분","시스템 원칙"], [
-        ["목표", "사람이 예약을 받아주는 구조를 제거하고 고객이 직접 공간 선택, 견적 확인, 결제, 출입권 수령까지 완료"],
-        ["차별점", "패스트파이브·스파크플러스의 상담 기반 예약보다 낮은 인건비와 빠른 확정 속도 확보"],
-        ["재고", "룸별 시간 재고를 실시간으로 노출하고 반일, 1일, 1주, 1개월 단위 예약을 자동 계산"],
-        ["가격", "공실률, 기간 할인, 입주사 할인, 외부 고객 가격을 시스템이 자동 적용"],
-        ["결제", "선결제 후 자동 확정. 미결제 예약은 일정 시간 뒤 자동 해제"],
-        ["출입", "예약 시간에만 유효한 QR/PIN 출입권 자동 발급"],
-        ["정산", "매출, 취소, 환불, 할인, 입주사 이용 내역을 자동 집계"],
-        ["특허", "예약·가격·출입·정산·입주사 할인·외부 개방을 하나의 무인 운영 방식으로 묶어 특허출원 검토"]
+        ["목표", "상담 인력 없이 고객이 직접 공간 선택, 견적 확인, 계약/결제, 출입권 수령까지 완료"],
+        ["운영 범위", "반일, 1일, 1주, 1개월 이상 프로젝트룸 예약을 기본으로 하고 회의실은 필요 시 1개만 외부 개방"],
+        ["가격 원칙", "고정비, 변동비, 공실률, 목표 영업이익률로 산출한 단가에 기간 할인, 입주사 할인, 외부 고객 가격을 자동 적용"],
+        ["재고 원칙", "룸별 사용 가능 시간, 청소 시간, 점검 시간, 관리자 블록 시간을 실시간으로 반영"],
+        ["결제 원칙", "선결제 후 자동 확정. 미결제 예약은 제한 시간 후 자동 해제하고 취소/환불 규칙을 자동 적용"],
+        ["출입 원칙", "예약 시간에만 유효한 QR/PIN 권한을 자동 발급하고 출입 로그를 예약 내역과 연결"],
+        ["정산 원칙", "매출, 환불, 할인, 입주사 이용 내역, 세금계산서/영수증 발행 상태를 자동 집계"],
+        ["특허 검토", "가격 산정, 재고 배정, 출입권 발급, 입주사 할인, 외부 개방, 정산을 하나의 무인 운영 방식으로 묶어 검토"]
       ]);
       document.getElementById("customerFlowTable").innerHTML = table(["단계","고객 행동","자동 처리"], [
-        ["1", "지역과 날짜 선택", "사용 가능한 룸과 시간 재고 표시"],
-        ["2", "인원과 기간 선택", "4인실 이상 프로젝트룸 추천, 2인실 제외"],
-        ["3", "가격 확인", "기간 할인, 입주사 할인, 외부 고객 가격 자동 적용"],
-        ["4", "온라인 결제", "예약 확정 및 영수증 발행"],
-        ["5", "QR/PIN 수령", "예약 시간 기준 출입권 자동 활성화"],
-        ["6", "사용 종료", "연장 가능 시간 표시, 청소/점검 요청 자동 생성"]
+        ["1", "지점, 날짜, 이용기간 선택", "사용 가능한 룸과 시간 재고 표시"],
+        ["2", "인원, 장비, 목적 선택", "4인실 이상 프로젝트룸 추천, 2인실 제외, VC 필요 여부 반영"],
+        ["3", "견적 확인", "기간 할인, 입주사 할인, 외부 고객 가격, 부가세 표시"],
+        ["4", "계약 정보 입력", "사업자 정보, 담당자, 세금계산서 정보 저장"],
+        ["5", "온라인 결제", "카드/계좌 결제, 미결제 자동 해제, 예약 확정"],
+        ["6", "출입권 수령", "예약 시간 기준 QR/PIN 발급, 이용 안내 자동 발송"],
+        ["7", "사용 종료/연장", "연장 가능 시간 표시, 청소/점검 요청 자동 생성"]
       ]);
       document.getElementById("adminFlowTable").innerHTML = table(["영역","자동화 내용"], [
-        ["재고관리", "룸별 예약 가능 시간, 막힌 시간, 청소 시간을 자동 반영"],
-        ["가격관리", "공실률과 기간에 따라 권장 가격을 자동 계산"],
-        ["입주사 할인", "입주사 계정은 크레딧 없이 할인 가격만 적용"],
-        ["외부 개방", "미팅룸 또는 회의실 1개는 외부 고객에게도 예약 노출"],
-        ["현장운영", "출입, 안내, 결제 문의를 시스템 화면과 알림으로 대체"],
-        ["리포트", "지점별 매출, 이용률, BEP, 경쟁사 대비 가격을 자동 집계"]
+        ["재고관리", "룸별 예약 가능 시간, 관리자 블록, 청소/점검 시간을 캘린더로 관리"],
+        ["가격관리", "고정비, 변동비, 공실률, 목표 영업이익률 변경 시 권장 단가 자동 재계산"],
+        ["고객관리", "입주사/외부 고객 구분, 할인율, 결제 상태, 이용 이력 관리"],
+        ["외부 개방", "미팅룸 또는 회의실 1개만 외부 노출하고 나머지는 프로젝트룸 판매에 집중"],
+        ["현장운영", "출입, 안내, 결제 문의, 청소 요청을 알림과 관리자 화면으로 처리"],
+        ["정산관리", "일/월 매출, 환불, 미수, 세금계산서, PG 수수료, 입주사 할인액 집계"],
+        ["리포트", "지점별 매출, 이용률, 공실률, BEP, 경쟁사 대비 가격, 룸별 수익성 자동 집계"]
       ]);
       document.getElementById("systemBuildTable").innerHTML = table(["모듈","필수 기능","원가절감 효과"], [
-        ["예약 엔진", "실시간 재고, 기간 상품, 자동 확정", "예약 응대 인력 제거"],
-        ["가격 엔진", "공실률, 기간 할인, 입주사 할인", "수기 견적 제거"],
-        ["결제", "카드 결제, 세금계산서/영수증, 환불 규칙", "현장 결제 제거"],
-        ["출입", "QR/PIN, 시간 제한 권한, 로그 기록", "상주 안내 인력 축소"],
-        ["관리자", "룸 막기, 청소 시간, 매출 리포트", "지점 운영 표준화"],
-        ["고객 계정", "입주사/외부 고객 구분, 할인 권한", "크레딧 운영 제거"]
+        ["고객 예약 화면", "지점/날짜/기간/인원/장비 선택, 견적 확인, 결제", "상담·견적 응대 제거"],
+        ["예약 엔진", "실시간 재고, 기간 상품, 자동 확정, 자동 해제", "예약 응대 인력 제거"],
+        ["가격 엔진", "고정비, 변동비, 공실률, 목표 영업이익률, 기간 할인, 입주사 할인", "수기 견적 제거"],
+        ["결제/정산", "카드 결제, 현금영수증/세금계산서, 환불 규칙, 미수 관리", "현장 결제와 수기 정산 제거"],
+        ["출입 연동", "QR/PIN, 시간 제한 권한, 출입 로그, 비정상 출입 알림", "상주 안내 인력 축소"],
+        ["관리자 콘솔", "룸 블록, 청소 시간, 고객 관리, 매출 리포트, 가격 변경", "지점 운영 표준화"],
+        ["알림", "예약 확정, 결제 만료, 출입권, 이용 전후 안내, 청소 요청", "전화/메신저 응대 축소"],
+        ["데이터/리포트", "룸별 이용률, 공실률, BEP, 경쟁사 가격 비교, 지점별 손익", "의사결정 자동화"]
       ]);
     }
     function renderScenario(c) {
@@ -945,7 +1003,6 @@
       state.rent = 12250000;
       state.maintenance = 6000000;
       state.coworkingMonthlyPerSeat = 650000;
-      state.competitorPosition = 85;
       areaMode = "exclusive";
       render();
     }
