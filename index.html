@@ -642,16 +642,23 @@
       const r6vc   = c.rooms.find(r=>r.key==="r6vc")?.count || 0;
       const r8vc   = c.rooms.find(r=>r.key==="r8vc")?.count || 0;
       const r12vc  = c.rooms.find(r=>r.key==="r12vc")?.count|| 0;
+      const realisticUtil = 45;
+      const realisticRevenue = planRevenue * realisticUtil / n("targetUtilization");
+      const realisticProfit = realisticRevenue - c.fixedCost - realisticRevenue * n("variableCostRatio") / 100;
+      const isRealisticProfit = realisticProfit >= 0;
       document.getElementById("revenueModelSummary").innerHTML = `
         <div style="font-size:13px;line-height:2;color:var(--navy);">
           <div><strong>${c.totalRooms}개 룸</strong> (4인 ${r4cnt+r4vc}개 · 6인 ${r6cnt+r6vc}개 · 8인 ${r8vc}개 · 12인 ${r12vc}개)</div>
           <div>× 월 가용 <strong>${fmt(c.availableHours)}시간</strong> (${n("operatingDays")}일 × 9시간 · 10 to 7)</div>
-          <div>× 목표 이용률 <strong>${n("targetUtilization")}%</strong></div>
+          <div>× 현실적 기준 이용률 <strong style="color:var(--orange);">${realisticUtil}%</strong> <span style="font-size:11px;color:var(--gray);">(단가 산정 목표 ${n("targetUtilization")}% 아님)</span></div>
           <div style="border-top:1px solid var(--line);margin-top:8px;padding-top:8px;">
-            = 예상 월 매출 <strong style="color:var(--green);font-size:17px;">${won(sim.totalRevenue)}</strong>
+            = 예상 월 매출 <strong style="color:var(--orange);font-size:17px;">${won(realisticRevenue)}</strong>
           </div>
-          <div style="margin-top:10px;background:#f0fdf8;border-radius:7px;padding:9px 11px;font-size:12px;color:var(--green);">
-            ✓ 패스트파이브 판교 대비 <strong>25~38% 저렴</strong><br>✓ 공유오피스 월 좌석 기준 하한가 이상으로 가격 방어
+          <div style="margin-top:6px;font-size:12px;${isRealisticProfit ? 'color:var(--green);' : 'color:var(--red);'}">
+            ${isRealisticProfit ? `✓ 45% 이용률에서 월 ${won(realisticProfit)} 흑자` : `⚠ 45% 이용률에서 월 ${won(Math.abs(realisticProfit))} 적자 — 운전자금 필요`}
+          </div>
+          <div style="margin-top:8px;background:#fff8f0;border-radius:7px;padding:9px 11px;font-size:12px;color:var(--gray);">
+            단가는 패스트파이브 판교 대비 25~38% 저렴하게 설정
           </div>
         </div>`;
 
