@@ -173,9 +173,15 @@
 
     <section class="section" data-tab="Competitor Comparison">
       <div class="card">
-        <h2>여의도 스파크플러스·판교 패스트파이브 가격 비교</h2>
-        <div class="note" style="margin-bottom:14px;">기본값 기준으로 스파크플러스 여의도와 패스트파이브 판교의 월 좌석가·회의실 가격을 같은 기준으로 비교합니다.</div>
+        <h2>4-Way 가격 비교</h2>
+        <div class="note" style="margin-bottom:14px;">
+          SOS 판교(실제) · SOS 여의도(가상) · 스파크플러스 여의도 · 패스트파이브 판교를 같은 기준으로 비교합니다.<br>
+          <span style="font-size:12px;color:var(--gray);">* SOS 여의도 = 파크원타워 기준 (임대료 29.8만원/평 × 103.5평, 관리비 11만원/평)</span>
+        </div>
         <div id="competitorComparisonTable"></div>
+        <div style="margin-top:18px;font-size:12px;color:var(--gray);">
+          스파크플러스·패스트파이브 가격은 좌석제(고정석) 기준입니다. 4인실 1개월 = 4석 × 월 좌석료. 하루 단위 회의실 가격은 별도.
+        </div>
       </div>
     </section>
 
@@ -274,8 +280,9 @@
       coworkingMonthlyPerSeat:550000, targetOperatingMargin:20,
       monthlyCoworkingFloor:60,
       sparkplusYeouidoSeat:650000, sparkplusYeouidoMeetingHalf:180000, sparkplusYeouidoMeetingDay:320000,
+      sparkplusR2month:1300000, sparkplusR5month:3250000, sparkplusR8month:5200000,
       fastfivePangyoSeat:550000, fastfivePangyoMeetingHalf:160000, fastfivePangyoMeetingDay:300000,
-      yeouidoPurchasePrice:7200000000, yeouidoRent:12250000, yeouidoMaintenance:6000000,
+      yeouidoPurchasePrice:7200000000, yeouidoRent:30843000, yeouidoMaintenance:11385000,
       pangyoPurchasePrice:7200000000, pangyoRent:53300000, pangyoMaintenance:3134060
     };
     let state = { ...defaults };
@@ -298,6 +305,9 @@
       ["sparkplusYeouidoSeat","여의도 스파크플러스 월/석(원)"],
       ["sparkplusYeouidoMeetingHalf","여의도 스파크플러스 반일 회의실(원)"],
       ["sparkplusYeouidoMeetingDay","여의도 스파크플러스 1일 회의실(원)"],
+      ["sparkplusR2month","스파크플러스 여의도 432호 2인실 월(원)"],
+      ["sparkplusR5month","스파크플러스 여의도 538호 5인실 월(원)"],
+      ["sparkplusR8month","스파크플러스 여의도 424호 8인실 월(원)"],
       ["fastfivePangyoSeat","판교 패스트파이브 월/석(원)"],
       ["fastfivePangyoMeetingHalf","판교 패스트파이브 반일 회의실(원)"],
       ["fastfivePangyoMeetingDay","판교 패스트파이브 1일 회의실(원)"],
@@ -910,38 +920,105 @@
         month: priceAmount(r4,160,.48,1)
       };
     }
-    function competitorRows() {
-      const yeouido = siteRoomPrices({
-        purchasePrice:n("yeouidoPurchasePrice"), rent:n("yeouidoRent"), maintenance:n("yeouidoMaintenance"),
-        coworkingMonthlyPerSeat:n("sparkplusYeouidoSeat")
-      });
-      const pangyo = siteRoomPrices({
-        purchasePrice:n("pangyoPurchasePrice"), rent:n("pangyoRent"), maintenance:n("pangyoMaintenance"),
-        coworkingMonthlyPerSeat:n("fastfivePangyoSeat")
-      });
-      const rows = [
-        ["여의도 스파크플러스", "월 좌석", "4명 기준", yeouido.month, n("sparkplusYeouidoSeat") * 4],
-        ["여의도 스파크플러스", "회의실 반일", "4인실 기준", yeouido.half, n("sparkplusYeouidoMeetingHalf")],
-        ["여의도 스파크플러스", "회의실 1일", "4인실 기준", yeouido.day, n("sparkplusYeouidoMeetingDay")],
-        ["판교 패스트파이브", "월 좌석", "4명 기준", pangyo.month, n("fastfivePangyoSeat") * 4],
-        ["판교 패스트파이브", "회의실 반일", "4인실 기준", pangyo.half, n("fastfivePangyoMeetingHalf")],
-        ["판교 패스트파이브", "회의실 1일", "4인실 기준", pangyo.day, n("fastfivePangyoMeetingDay")]
-      ];
-      return rows.map(([brand, item, basis, sos, competitor])=>{
-        const diff = competitor - sos;
-        const saving = competitor > 0 ? ((1 - sos / competitor) * 100).toFixed(1) + "%" : "-";
-        const decision = competitor <= 0 ? "가격 입력 필요" : diff >= 0 ? "SOS 우위" : "경쟁사 우위";
-        return [brand, item, basis, won(sos), won(competitor), won(diff), saving, decision];
-      });
-    }
     function renderCompetitorComparison(c) {
-      const headers = ["비교 대상","상품","기준","SOS","경쟁사","차액","절감률","운영 기준"];
-      const rows = competitorRows();
-      const competitorMiniEl = document.getElementById("competitorComparisonMini");
-      if (competitorMiniEl) competitorMiniEl.innerHTML = table(headers, rows.filter(r=>r[1] === "월 좌석"));
+      // SOS 여의도 가상 시나리오 (파크원타워 임대료 기준)
+      const yeoSOS = calcFor({
+        spaceCostMode: 1,
+        rent: n("yeouidoRent"),
+        maintenance: n("yeouidoMaintenance"),
+        deposit: n("yeouidoRent") * 10
+      });
+
+      const r4p  = c.pricing.find(r=>r.key==="r4" && r.count>0);
+      const r6p  = c.pricing.find(r=>r.key==="r6" && r.count>0);
+      const r4y  = yeoSOS.pricing.find(r=>r.key==="r4" && r.count>0);
+      const r6y  = yeoSOS.pricing.find(r=>r.key==="r6" && r.count>0);
+
+      const pa = (room, h, d, m) => room ? priceAmount(room,h,d,m) : 0;
+
+      // 경쟁사 고정 가격
+      const spSeat = n("sparkplusYeouidoSeat");
+      const ffSeat = n("fastfivePangyoSeat");
+
+      // 색상 헬퍼: SOS 판교가 낮으면 초록
+      const cl = (sos, comp) => comp > 0 && sos < comp ? 'style="color:var(--green);font-weight:900;"' : comp > 0 && sos > comp ? 'style="color:var(--red);font-weight:900;"' : '';
+      const fw = v => `<span ${cl(v,0)}>${won(v)}</span>`;
+
+      const rows = [
+        // 항목, SOS판교, SOS여의도*, 스파크플러스여의도, 패스트파이브판교
+        ["월 공간비 (임대+관리)", won(c.effectiveOccupancyCost), won(yeoSOS.effectiveOccupancyCost), `${won(spSeat)}<small style="color:var(--gray)">/석</small>`, `${won(ffSeat)}<small style="color:var(--gray)">/석</small>`],
+        ["BEP 가동률", pct(c.bepUtil), pct(yeoSOS.bepUtil), "N/A", "N/A"],
+        ["4인실 반일 (4h)", won(pa(r4p,4,.88,0)), won(pa(r4y,4,.88,0)), won(n("sparkplusYeouidoMeetingHalf")), won(n("fastfivePangyoMeetingHalf"))],
+        ["4인실 1개월 (4석)", won(pa(r4p,160,.48,1)), won(pa(r4y,160,.48,1)), won(spSeat*4), won(ffSeat*4)],
+        ["6인실 1개월 (6석)", won(pa(r6p,160,.48,1)), won(pa(r6y,160,.48,1)), won(spSeat*6), won(ffSeat*6)],
+      ];
+
+      // 절감률 행 추가 (스파크플러스·패스트파이브 대비 SOS 판교)
+      function savPct(sos, comp) {
+        if (!comp || !sos) return "-";
+        const s = ((1 - sos/comp)*100).toFixed(1);
+        return `<span style="color:${s>0?'var(--green)':'var(--red)'};">${s>0?'-':''}${Math.abs(s)}%</span>`;
+      }
+      const r4half_sos = pa(r4p,4,.88,0), r4mo_sos = pa(r4p,160,.48,1), r6mo_sos = pa(r6p,160,.48,1);
+      const savRows = [
+        ["↳ vs 스파크플러스 절감", "-", "-",
+          savPct(r4half_sos, n("sparkplusYeouidoMeetingHalf")),
+          savPct(r4half_sos, n("fastfivePangyoMeetingHalf"))],
+        ["↳ 4인실 1개월 절감", "-", "-", savPct(r4mo_sos, spSeat*4), savPct(r4mo_sos, ffSeat*4)],
+        ["↳ 6인실 1개월 절감", "-", "-", savPct(r6mo_sos, spSeat*6), savPct(r6mo_sos, ffSeat*6)],
+      ];
+
+      const headers = ["항목", "SOS 판교 (실제)", "SOS 여의도*", "스파크플러스 여의도", "패스트파이브 판교"];
+      const allRows = [...rows, ...savRows];
+      const html = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr>${headers.map(h=>`<th style="background:var(--navy);color:#fff;padding:9px 10px;text-align:${h==='항목'?'left':'center'};">${h}</th>`).join("")}</tr></thead>
+        <tbody>${allRows.map((r,i)=>`<tr style="background:${i%2===0?'#fff':'#f8f9fb'};">${r.map((v,j)=>`<td style="padding:8px 10px;border-bottom:1px solid var(--line);text-align:${j===0?'left':'center'};">${v}</td>`).join("")}</tr>`).join("")}</tbody>
+      </table>`;
+
+      // ── 스파크플러스 여의도 실제 룸별 비교 (432호 2인실·538호 5인실·424호 8인실) ──
+      const spR2 = n("sparkplusR2month");
+      const spR5 = n("sparkplusR5month");
+      const spR8 = n("sparkplusR8month");
+
+      // SOS: 2인 팀→4인실, 5인 팀→6인실, 8인 팀→4인실×2(근접)
+      const sos4mo = pa(r4p, 160, .48, 1);
+      const sos6mo = pa(r6p, 160, .48, 1);
+
+      const roomRows = [
+        ["2인 팀 1개월", `4인실 (최소룸)<br><small style='color:var(--gray)'>2석 과잉 없음, SOS최소</small>`, won(sos4mo),
+         `432호 2인실<br><small style='color:var(--gray)'>2석 딱맞음</small>`, won(spR2),
+         savPct(sos4mo, spR2)],
+        ["5인 팀 1개월", `6인실 (1석 여유)<br><small style='color:var(--gray)'>6인실 활용</small>`, won(sos6mo),
+         `538호 5인실<br><small style='color:var(--gray)'>5석 딱맞음</small>`, won(spR5),
+         savPct(sos6mo, spR5)],
+        ["8인 팀 1개월", `4인실×2 필요<br><small style='color:var(--gray)'>4인실 2개 합산</small>`, won(sos4mo*2),
+         `424호 8인실<br><small style='color:var(--gray)'>8석 딱맞음</small>`, won(spR8),
+         savPct(sos4mo*2, spR8)],
+      ];
+      const roomHeaders = ["팀 규모", "SOS 판교 (룸 유형)", "SOS 가격", "스파크플러스 여의도 (룸)", "스파크플러스 가격", "SOS 절감률"];
+      const roomHtml = `<div style="margin-top:20px;"><h3 style="font-size:14px;font-weight:900;color:var(--navy);margin-bottom:10px;">스파크플러스 여의도 실제 룸 vs SOS 판교 — 팀 규모별</h3>
+        <div style="font-size:12px;color:var(--gray);margin-bottom:8px;">스파크플러스 가격은 좌석당 ${won(spSeat)} 기준 추산 (실제 견적 확인 후 수치 업데이트 필요)</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead><tr>${roomHeaders.map((h,j)=>`<th style="background:#2c3e50;color:#fff;padding:9px 10px;text-align:${j<=1?'left':'center'};">${h}</th>`).join("")}</tr></thead>
+          <tbody>${roomRows.map((r,i)=>`<tr style="background:${i%2===0?'#fff':'#f8f9fb'};">${r.map((v,j)=>`<td style="padding:8px 10px;border-bottom:1px solid var(--line);text-align:${j<=1?'left':'center'};">${v}</td>`).join("")}</tr>`).join("")}</tbody>
+        </table></div>`;
+
+      const el = document.getElementById("competitorComparisonTable");
+      if (el) el.innerHTML = html + roomHtml;
+
+      // 상단 미니 카드 업데이트
       const competitorTopEl = document.getElementById("competitorComparisonTop");
-      if (competitorTopEl) competitorTopEl.innerHTML = table(headers, rows);
-      document.getElementById("competitorComparisonTable").innerHTML = table(headers, rows);
+      if (competitorTopEl) competitorTopEl.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr>${["항목","SOS 판교","스파크플러스 여의도","패스트파이브 판교"].map(h=>`<th style="background:var(--navy);color:#fff;padding:7px 10px;text-align:${h==='항목'?'left':'center'};">${h}</th>`).join("")}</tr></thead>
+        <tbody>${[
+          ["4인실 1개월",won(r4mo_sos),won(spSeat*4),won(ffSeat*4)],
+          ["6인실 1개월",won(r6mo_sos),won(spSeat*6),won(ffSeat*6)],
+          ["4인실 반일",won(r4half_sos),won(n("sparkplusYeouidoMeetingHalf")),won(n("fastfivePangyoMeetingHalf"))],
+        ].map((r,i)=>`<tr style="background:${i%2===0?'#fff':'#f8f9fb'};">${r.map((v,j)=>`<td style="padding:7px 10px;border-bottom:1px solid var(--line);text-align:${j===0?'left':'center'};">${v}</td>`).join("")}</tr>`).join("")}</tbody>
+      </table>`;
+
+      const miniEl = document.getElementById("competitorComparisonMini");
+      if (miniEl) miniEl.innerHTML = `<div style="font-size:13px;"><strong>4인실 1개월:</strong> SOS 판교 ${won(r4mo_sos)} vs 스파크플러스 여의도 ${won(spSeat*4)} / 패스트파이브 판교 ${won(ffSeat*4)}</div>`;
     }
     function calcFor(overrides) {
       const old = { ...state };
