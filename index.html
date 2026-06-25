@@ -71,6 +71,11 @@
     .actions { display:flex; gap:10px; margin-top:16px; }
     button { border:0; border-radius:7px; padding:11px 16px; background:var(--navy); color:#fff; font-weight:900; cursor:pointer; }
     button.secondary { background:var(--blue); }
+    .kpi-list { display:grid; gap:8px; }
+    .kpi-row { display:flex; align-items:center; justify-content:space-between; gap:14px; border-bottom:1px solid #edf2f7; padding:6px 0; white-space:nowrap; }
+    .kpi-row:last-child { border-bottom:0; }
+    .kpi-name { color:var(--gray); font-weight:900; font-size:13px; }
+    .kpi-value { color:var(--navy); font-weight:900; font-size:15px; text-align:right; }
     @media(max-width:1000px){ header{padding:22px 24px} h1{font-size:24px}.hero,.cols2,.cols3,.cols4,.input-grid,.metric-grid,.model-strip{grid-template-columns:1fr}.tile{grid-column:span 12} }
   </style>
 </head>
@@ -285,7 +290,7 @@
       interiorPerPyeong:650000, furnitureCost:0, initialEquipmentCost:0, systemBuildCost:0, openingCost:0,
       softwareCost:0, equipmentCost:0, consumablesCost:0, operationCost:0, marketingCost:300000, cleaningDeskUnitCost:5000,
       initialLeaseMonths:24, extensionOptionMonths:24, leaseProtectionAvailable:1, interiorRecoveryMonths:120, rentIncreaseCap:1, subleaseAllowed:1, serviceAllowed:1, restorationClear:1,
-      operatingDays:22, hoursPerDay:10, targetUtilization:45, openOfficeUtilization:35,
+      operatingDays:22, hoursPerDay:10, targetUtilization:60, openOfficeUtilization:50,
       targetMargin:35, variableCostRatio:8, competitorPosition:90,
       coworkingMonthlyPerSeat:550000, targetOperatingMargin:20,
       monthlyCoworkingFloor:60,
@@ -444,6 +449,9 @@
     function metric(label, value, sub="", cls="") {
       return `<div class="metric ${cls}"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div></div>`;
     }
+    function kpiList(rows) {
+      return `<div class="kpi-list">${rows.map(([name,value])=>`<div class="kpi-row"><span class="kpi-name">${name}</span><span class="kpi-value">${value}</span></div>`).join("")}</div>`;
+    }
 
     function setVal(id, value) {
       state[id] = Number(value);
@@ -544,7 +552,7 @@
       </div>`;
       document.getElementById("headline").innerHTML = `월 시뮬레이션 매출 ${won(sim.totalRevenue)}<br><span style="color:var(--cyan)">예상 영업이익 ${won(targetProfit)}</span>`;
       document.getElementById("oneLine").innerHTML = "Project SOS는 공간 운영에서 불필요한 고정비를 제거해 BEP를 낮추고, 공유오피스 대비 낮은 가격에서도 이익을 남기는 원가절감형 사업 모델입니다.";
-      document.getElementById("executiveSummary").innerHTML = table(["검토 항목","현재 산출"], [
+      document.getElementById("executiveSummary").innerHTML = kpiList([
         ["월 시뮬레이션 매출", won(sim.totalRevenue)],
         ["월 고정비", won(c.fixedCost)],
         ["월 변동비", won(targetVariable)],
@@ -552,24 +560,24 @@
         ["BEP 필요 매출", won(bepRevenue)]
       ]);
       document.getElementById("revenueModelSummary").innerHTML =
-        table(["매출 항목","산식 및 기준"], [
+        kpiList([
           ["룸 매출", won(sim.roomRevenue)],
           ["공용오피스 매출", won(sim.openOfficeRevenue)],
           ["공실률 반영", `룸 공실률 ${100-n("targetUtilization")}% · 공용오피스 공실률 ${100-n("openOfficeUtilization")}%`],
           ["월 시뮬레이션 매출", won(sim.totalRevenue)]
         ]);
-      document.getElementById("costModelSummary").innerHTML = table(["비용 항목","산식 및 월 비용"], [
+      document.getElementById("costModelSummary").innerHTML = kpiList([
         ["매입 점유비", won(c.effectiveOccupancyCost)],
         ["관리비", won(n("maintenance"))],
         ["운영비", won(c.operatingCost)],
         ["인테리어 월환산", won(c.monthlyInvestment)],
         ["월 고정비", won(c.fixedCost)]
       ]);
-      document.getElementById("profitModelSummary").innerHTML = table(["손익 항목","산식 및 금액"], [
+      document.getElementById("profitModelSummary").innerHTML = kpiList([
         ["월 시뮬레이션 매출", won(sim.totalRevenue)],
-        ["월 고정비", `- ${won(c.fixedCost)}`],
-        ["월 변동비", `매출의 ${n("variableCostRatio")}% = - ${won(targetVariable)}`],
-        ["예상 영업이익", `${won(sim.totalRevenue)} - ${won(c.fixedCost)} - ${won(targetVariable)} = ${won(targetProfit)}`],
+        ["월 고정비", `-${won(c.fixedCost)}`],
+        ["월 변동비", `-${won(targetVariable)} (${n("variableCostRatio")}%)`],
+        ["예상 영업이익", won(targetProfit)],
         ["예상 영업이익률", pct(sim.totalRevenue ? targetProfit/sim.totalRevenue : 0)],
         ["BEP 필요 매출", won(bepRevenue)],
         ["BEP 대비 매출 여유", won(sim.totalRevenue - bepRevenue)]
