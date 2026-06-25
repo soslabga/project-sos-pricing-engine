@@ -285,7 +285,8 @@
       fastfivePangyo4room:3090000, fastfivePangyo7room:4060000, fastfivePangyo10room:5590000,
       fastfivePangyoDiscountRate:28,
       yeouidoPurchasePrice:7200000000, yeouidoRent:30843000, yeouidoMaintenance:11385000,
-      pangyoPurchasePrice:4600000000, pangyoRent:18284000, pangyoMaintenance:3134060
+      pangyoPurchasePrice:4600000000, pangyoRent:18284000, pangyoMaintenance:3134060,
+      fastfiveYeouidoRoom4:1800000, fastfiveYeouidoRoom6:3100000
     };
     let state = { ...defaults };
     let areaMode = "contract";
@@ -1062,14 +1063,14 @@
       return c;
     }
     function renderSiteProfitability() {
-      // 판교: 임차 기준 (동일 조건 비교용)
+      // 판교: 임차 기준 시뮬레이션 (매입했지만 동일 조건 비교)
       const pangyo = calcFor({
         spaceCostMode: 1,
         rent: n("pangyoRent"),
         maintenance: n("pangyoMaintenance"),
         deposit: n("pangyoRent") * 10
       });
-      // 여의도: 임차 기준, 파크원타워 임대료
+      // 여의도: 임차 기준 (파크원타워)
       const yeouido = calcFor({
         spaceCostMode: 1,
         rent: n("yeouidoRent"),
@@ -1077,85 +1078,97 @@
         deposit: n("yeouidoRent") * 10
       });
 
-      const ffDisc = 1 - n("fastfivePangyoDiscountRate") / 100;
-      const ff4  = n("fastfivePangyo4room");
-      const ff7  = n("fastfivePangyo7room");
-      const ff10 = n("fastfivePangyo10room");
-      const spR5 = n("sparkplusR5month");
-      const spR8 = n("sparkplusR8month");
+      // 경쟁사 가격 기준 BEP 역산 헬퍼
+      // r4monthly: 경쟁사 4인실 월 가격 → 이 가격으로 판매 시 몇 % 가동하면 BEP?
+      function compBep(c, r4monthly) {
+        const r4p = c.pricing.find(r=>r.key==="r4"&&r.count>0);
+        if (!r4p || !c.pricingScale) return null;
+        const rawR4Hourly = r4p.hourly / c.pricingScale;
+        const compR4Hourly = r4monthly / (160 * 0.48);
+        const compWeightedHourly = c.rawWeightedHourly * (compR4Hourly / rawR4Hourly);
+        const bep = c.fixedCost / Math.max(1, compWeightedHourly * c.availableHours * (1 - n("variableCostRatio")/100));
+        return bep;
+      }
+      function bepBadge(v) {
+        if (v === null) return "—";
+        const p = (v*100).toFixed(0);
+        const col = v <= 0.55 ? "var(--green)" : v <= 0.70 ? "var(--orange)" : "var(--red)";
+        const label = v <= 0.60 ? "✓ 흑자" : v <= 1.0 ? "△ 주의" : "✗ 적자";
+        return `<strong style="color:${col};">${p}%</strong> <small style="color:${col};">${label}</small>`;
+      }
 
+      // 경쟁사 기준 가격들
+      const ff4p  = n("fastfivePangyo4room");    // 판교 정가 3,090,000
+      const ff4y  = n("fastfiveYeouidoRoom4");   // 여의도 특가 1,800,000
+      const sp5y  = n("sparkplusR5month");        // 여의도 5인실 2,700,000
+      const sp4eq = Math.round(sp5y * 4 / 5);    // 4인실 환산 2,160,000
+
+      // 비용 구조 비교
       const pangyoProfit  = pangyo.revenueAtTarget  - pangyo.fixedCost  - pangyo.revenueAtTarget  * n("variableCostRatio") / 100;
       const yeouidoProfit = yeouido.revenueAtTarget - yeouido.fixedCost - yeouido.revenueAtTarget * n("variableCostRatio") / 100;
 
-      // 비용 구조 비교 테이블
       const costRows = [
-        ["공간 취득 방식",        "매입 (소유)",                         "임차 (전대 없음)"],
-        ["취득가 / 월 임대료",    won(n("pangyoPurchasePrice")),          `${won(n("yeouidoRent"))}/월`],
-        ["월 관리비",             won(n("pangyoMaintenance")),            won(n("yeouidoMaintenance"))],
-        ["월 대출 이자",          won(pangyo.monthlyInterest),            "—"],
-        ["월 자기자본 기회비용",  won(pangyo.monthlyEquityOpportunityCost), "—"],
-        ["월 공간비 합계",
-          `<strong style="color:var(--green);">${won(pangyo.effectiveOccupancyCost)}</strong>`,
-          `<strong style="color:var(--orange);">${won(yeouido.effectiveOccupancyCost)}</strong>`],
-        ["월 고정비 합계",        won(pangyo.fixedCost),                  won(yeouido.fixedCost)],
-        ["BEP 가동률",            pct(pangyo.bepUtil),                   pct(yeouido.bepUtil)],
-        ["목표 매출 (60% 가동)",  won(pangyo.revenueAtTarget),            won(yeouido.revenueAtTarget)],
-        ["목표 영업이익",         won(pangyoProfit),                      won(yeouidoProfit)],
+        ["공간 취득 방식",       "임차 기준 (매입 공간, 비교용)",              "임차 (파크원타워)"],
+        ["월 임대료",            won(n("pangyoRent")),                           won(n("yeouidoRent"))],
+        ["월 관리비",            won(n("pangyoMaintenance")),                    won(n("yeouidoMaintenance"))],
+        ["월 운영비",            won(pangyo.operatingCost),                     won(yeouido.operatingCost)],
+        ["월 고정비 합계",
+          `<strong>${won(pangyo.fixedCost)}</strong>`,
+          `<strong>${won(yeouido.fixedCost)}</strong>`],
+        ["모델 BEP (SOS 설정가 기준)", bepBadge(pangyo.bepUtil),              bepBadge(yeouido.bepUtil)],
       ];
       const costHtml = `
-        <h3 style="font-size:14px;font-weight:900;color:var(--navy);margin:0 0 8px;">SOS 판교(임차) vs SOS 여의도(임차) — 동일 조건 비용 비교</h3>
-        <div style="font-size:12px;color:var(--gray);margin-bottom:10px;">동일 면적(103.5평)·동일 룸 구성·임차 기준 | 판교 임대료 ${won(n("pangyoRent"))}/월 vs 여의도(파크원타워) ${won(n("yeouidoRent"))}/월</div>
+        <h3 style="font-size:14px;font-weight:900;color:var(--navy);margin:0 0 6px;">비용 구조</h3>
+        <div style="font-size:12px;color:var(--gray);margin-bottom:8px;">동일 임차 조건 기준 | 판교: ${won(n("pangyoRent"))}/월 | 여의도(파크원타워): ${won(n("yeouidoRent"))}/월</div>
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
           <thead><tr>
-            <th style="background:var(--navy);color:#fff;padding:9px 10px;text-align:left;">항목</th>
-            <th style="background:#1a5c2a;color:#fff;padding:9px 10px;text-align:center;">SOS 판교 (임차 가정)</th>
-            <th style="background:#7a3a00;color:#fff;padding:9px 10px;text-align:center;">SOS 여의도 (임차 가정)</th>
+            <th style="background:var(--navy);color:#fff;padding:8px 10px;text-align:left;">항목</th>
+            <th style="background:#1a5c2a;color:#fff;padding:8px 10px;text-align:center;">SOS 판교 (임차 기준)</th>
+            <th style="background:#7a3a00;color:#fff;padding:8px 10px;text-align:center;">SOS 여의도 (임차 기준)</th>
           </tr></thead>
           <tbody>${costRows.map((r,i)=>`<tr style="background:${i%2===0?'#fff':'#f8f9fb'};">
-            <td style="padding:8px 10px;border-bottom:1px solid var(--line);font-weight:900;color:var(--navy);">${r[0]}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid var(--line);text-align:center;">${r[1]}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid var(--line);text-align:center;">${r[2]}</td>
+            <td style="padding:7px 10px;border-bottom:1px solid var(--line);color:var(--navy);font-weight:700;">${r[0]}</td>
+            <td style="padding:7px 10px;border-bottom:1px solid var(--line);text-align:center;">${r[1]}</td>
+            <td style="padding:7px 10px;border-bottom:1px solid var(--line);text-align:center;">${r[2]}</td>
           </tr>`).join("")}</tbody>
         </table>`;
 
-      // 경쟁사 룸별 비교
-      const sos4mo = pangyo.pricing.find(r=>r.key==="r4"&&r.count>0);
-      const sos6mo = pangyo.pricing.find(r=>r.key==="r6"&&r.count>0);
-      const pa = (room,h,d,m) => room ? priceAmount(room,h,d,m) : 0;
-      const sos4price = pa(sos4mo,160,.48,1);
-      const sos6price = pa(sos6mo,160,.48,1);
-
-      const compRows = [
-        ["5인 팀 1개월",
-          `SOS 6인실 ${won(sos6price)}`,
-          `스파크플러스 538호 5인실 ${won(spR5)}`,
-          `패스트파이브 7인실 정가 ${won(ff7)}<br><small>할인가 약 ${won(Math.round(ff7*ffDisc/10000)*10000)}</small>`],
-        ["8~10인 팀 1개월",
-          `SOS 4인실×2 ${won(sos4price*2)}`,
-          `스파크플러스 424호 8인실 ${won(spR8)}`,
-          `패스트파이브 10인실 정가 ${won(ff10)}<br><small>할인가 약 ${won(Math.round(ff10*ffDisc/10000)*10000)}</small>`],
-        ["4인 팀 1개월",
-          `SOS 4인실 ${won(sos4price)}`,
-          `스파크플러스 없음 (5인실 ${won(spR5)})`,
-          `패스트파이브 4인실 정가 ${won(ff4)}<br><small>할인가 약 ${won(Math.round(ff4*ffDisc/10000)*10000)}</small>`],
+      // 경쟁사 가격 기준 수익성 검증
+      const scenarios = [
+        ["FF 판교 정가",      ff4p,              `${won(ff4p)}`],
+        ["FF 판교 -20%",      Math.round(ff4p*0.80), `${won(Math.round(ff4p*0.80))}`],
+        ["FF 판교 -30%",      Math.round(ff4p*0.70), `${won(Math.round(ff4p*0.70))}`],
+        ["FF 여의도 특가",    ff4y,              `${won(ff4y)}`],
+        ["FF 여의도 -20%",    Math.round(ff4y*0.80), `${won(Math.round(ff4y*0.80))}`],
+        ["SP 5인실 4인환산",  sp4eq,             `${won(sp4eq)}`],
       ];
-      const compHtml = `
+      const bepRows = scenarios.map(([label, price, priceStr]) => [
+        label,
+        priceStr,
+        bepBadge(compBep(pangyo, price)),
+        bepBadge(compBep(yeouido, price)),
+      ]);
+      const bepHtml = `
         <div style="margin-top:20px;">
-        <h3 style="font-size:14px;font-weight:900;color:var(--navy);margin:0 0 8px;">팀 규모별 경쟁사 비교</h3>
-        <div style="font-size:12px;color:var(--gray);margin-bottom:10px;">패스트파이브 할인율 ${n("fastfivePangyoDiscountRate")}% 적용 (실제 계약 시 확인 필요) | 스파크플러스: 실제 계약서 기준</div>
+        <h3 style="font-size:14px;font-weight:900;color:var(--navy);margin:0 0 6px;">경쟁사 가격 기준 수익성 검증 — 이 가격으로 팔면 BEP가 몇 %?</h3>
+        <div style="font-size:12px;color:var(--gray);margin-bottom:8px;">
+          후발주자 전략: 경쟁사 대비 20~30% 저렴하게 판매. BEP ≤ 60%면 목표 가동률에서 흑자.
+        </div>
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
           <thead><tr>
-            <th style="background:var(--navy);color:#fff;padding:9px 10px;text-align:left;">팀 규모</th>
-            <th style="background:#1a5c2a;color:#fff;padding:9px 10px;text-align:center;">SOS 판교</th>
-            <th style="background:#2c3e50;color:#fff;padding:9px 10px;text-align:center;">스파크플러스 여의도</th>
-            <th style="background:#5a3000;color:#fff;padding:9px 10px;text-align:center;">패스트파이브 판교</th>
+            <th style="background:var(--navy);color:#fff;padding:8px 10px;text-align:left;">가격 시나리오</th>
+            <th style="background:var(--navy);color:#fff;padding:8px 10px;text-align:center;">4인실 월 가격</th>
+            <th style="background:#1a5c2a;color:#fff;padding:8px 10px;text-align:center;">판교 BEP</th>
+            <th style="background:#7a3a00;color:#fff;padding:8px 10px;text-align:center;">여의도 BEP</th>
           </tr></thead>
-          <tbody>${compRows.map((r,i)=>`<tr style="background:${i%2===0?'#fff':'#f8f9fb'};">
-            ${r.map((v,j)=>`<td style="padding:8px 10px;border-bottom:1px solid var(--line);text-align:${j===0?'left':'center'};">${v}</td>`).join("")}
+          <tbody>${bepRows.map((r,i)=>`<tr style="background:${i%2===0?'#fff':'#f8f9fb'};">
+            ${r.map((v,j)=>`<td style="padding:7px 10px;border-bottom:1px solid var(--line);text-align:${j===0?'left':'center'};">${v}</td>`).join("")}
           </tr>`).join("")}</tbody>
-        </table></div>`;
+        </table>
+        <div style="font-size:11px;color:var(--gray);margin-top:6px;">* FF=패스트파이브, SP=스파크플러스 | 둘 다 임차 기준 고정비로 계산</div>
+        </div>`;
 
-      document.getElementById("siteProfitabilityTable").innerHTML = costHtml + compHtml;
+      document.getElementById("siteProfitabilityTable").innerHTML = costHtml + bepHtml;
     }
     function calcWithUtil(util) {
       const old = state.targetUtilization;
