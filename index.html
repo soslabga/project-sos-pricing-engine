@@ -90,30 +90,44 @@
     <nav class="tabs" id="tabs"></nav>
 
     <section class="section active" data-tab="Dashboard">
-      <div id="modelOverview"></div>
-      <div class="card" style="margin-bottom:16px;"><h2>단계별 손익</h2><div id="executiveSummary"></div></div>
+      <!-- ① 사업 정의 배너 -->
+      <div id="businessBanner" style="margin-bottom:16px;"></div>
+      <!-- ② 핵심 KPI 4개 -->
+      <div class="metric-grid" style="margin-bottom:16px;" id="kpiCards"></div>
+      <!-- ③ 수익·비용·손익 3단 -->
       <div class="grid cols3" style="margin-bottom:16px;">
-        <div class="card"><h2>매출 구조</h2><div id="revenueModelSummary"></div></div>
-        <div class="card"><h2>비용 구조</h2><div id="costModelSummary"></div></div>
-        <div class="card"><h2>손익 구조</h2><div id="profitModelSummary"></div></div>
+        <div class="card"><h2>수익 구조 <span style="font-size:13px;font-weight:500;color:var(--gray);">— 어떻게 돈을 버나</span></h2><div id="revenueModelSummary" style="margin-top:10px;"></div></div>
+        <div class="card"><h2>비용 구조 <span style="font-size:13px;font-weight:500;color:var(--gray);">— 무엇이 비용인가</span></h2><div id="costModelSummary" style="margin-top:10px;"></div></div>
+        <div class="card"><h2>손익 요약 <span style="font-size:13px;font-weight:500;color:var(--gray);">— 언제 흑자인가</span></h2><div id="profitModelSummary" style="margin-top:10px;"></div></div>
       </div>
-      <div class="card" style="margin-bottom:16px;"><h2>스파크플러스·패스트파이브 가격 비교</h2><div id="competitorComparisonTop"></div></div>
-      <div class="card" style="margin-bottom:16px;"><h2>상세 매출 시뮬레이션</h2><div id="revenueSimulationDetail"></div></div>
-      <div class="card" style="margin-bottom:16px;"><h2>상세 비용 산식</h2><div id="costSimulationDetail"></div></div>
+      <!-- ④ 단계별 손익표 -->
       <div class="card" style="margin-bottom:16px;">
-        <h2>임대 선택 시 10년 보호권 체크</h2>
-        <div id="leaseProtectionSummary"></div>
+        <h2>이용률별 손익 시뮬레이션</h2>
+        <div style="color:var(--gray);font-size:13px;margin-bottom:12px;">이용률이 높아질수록 영업이익이 늘어납니다. 녹색이 흑자, 빨간색이 적자 구간입니다.</div>
+        <div id="executiveSummary"></div>
       </div>
-      <div class="card" style="margin-bottom:16px;">
-        <h2>모델 컨셉</h2>
-        <div class="note" style="margin-bottom:14px;">Project SOS는 실제 면적, 자본비용, 보유세, 관리비, 운영비, 공실률, 변동비, 목표 영업이익률을 기준으로 프로젝트룸 단가와 운영 손익을 관리하는 실행 모델입니다.</div>
-        <div id="modelConcept"></div>
-        <div style="margin-top:16px;" id="differentiationTable"></div>
-      </div>
-      <div class="card" style="margin-bottom:16px;">
-        <h2>원가절감 설계</h2>
-        <div id="costReductionTable"></div>
-      </div>
+      <!-- ⑤ 경쟁사 가격 비교 -->
+      <div class="card" style="margin-bottom:16px;"><h2>경쟁사 대비 가격 포지션</h2><div id="competitorComparisonTop"></div></div>
+      <!-- ⑥ 상세 내용 접기 -->
+      <details class="card" style="margin-bottom:10px;">
+        <summary style="font-weight:900;color:var(--navy);cursor:pointer;font-size:15px;">상세 매출 시뮬레이션 보기</summary>
+        <div id="revenueSimulationDetail" style="margin-top:14px;"></div>
+      </details>
+      <details class="card" style="margin-bottom:10px;">
+        <summary style="font-weight:900;color:var(--navy);cursor:pointer;font-size:15px;">상세 비용 내역 보기</summary>
+        <div id="costSimulationDetail" style="margin-top:14px;"></div>
+      </details>
+      <details class="card" style="margin-bottom:10px;">
+        <summary style="font-weight:900;color:var(--navy);cursor:pointer;font-size:15px;">비즈니스 모델 상세</summary>
+        <div id="modelConcept" style="margin-top:14px;"></div>
+        <div style="margin-top:14px;" id="differentiationTable"></div>
+        <div style="margin-top:14px;" id="costReductionTable"></div>
+      </details>
+      <details class="card" style="margin-bottom:10px;">
+        <summary style="font-weight:900;color:var(--navy);cursor:pointer;font-size:15px;">임대차 10년 보호 확인사항</summary>
+        <div id="leaseProtectionSummary" style="margin-top:14px;"></div>
+      </details>
+      <div id="modelOverview" style="display:none;"></div>
     </section>
 
     <section class="section" data-tab="Input">
@@ -583,59 +597,126 @@
       const marketLeaseFixedCost = n("rent") + n("maintenance") + c.operatingCost + c.monthlyInvestment;
       const marketLeaseProfit = sim.totalRevenue - marketLeaseFixedCost - targetVariable;
       const marketLeaseBepRevenue = marketLeaseFixedCost / Math.max(.01, 1 - n("variableCostRatio")/100);
-      document.getElementById("modelOverview").innerHTML = `<div class="model-strip">
-        <div class="model-box"><strong>핵심 전제</strong><span>목표는 최소 인력으로 효율적으로 운영하는 것입니다. 기존 방식으로 안 되면 예약, 결제, 출입, 정산 시스템을 직접 만들어 관리 포인트를 줄입니다.</span></div>
-        <div class="model-box"><strong>매출 구조</strong><span>4인실 이상 프로젝트룸을 반일~수개월 단위로 판매합니다. 라운지와 공용좌석은 매출 상품이 아니라 최소 보조공간으로 둡니다.</span></div>
-        <div class="model-box"><strong>비용 구조</strong><span>1인 운영이 가능하도록 라운지, 공용좌석, 현장 응대, 소모품 관리 범위를 최소화합니다.</span></div>
-        <div class="model-box"><strong>손익 관리</strong><span>월 고정비를 낮춰 BEP 가동률을 관리하고, 경쟁사 대비 낮은 가격에서도 영업이익이 남도록 운영합니다.</span></div>
-      </div>`;
+      // ① 사업 정의 배너
+      document.getElementById("businessBanner").innerHTML = `
+        <div style="background:linear-gradient(90deg,var(--navy) 0%,var(--navy2) 100%);border-radius:12px;padding:22px 30px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div style="font-size:12px;color:var(--cyan);font-weight:900;letter-spacing:.08em;margin-bottom:6px;">PROJECT SOS · 비즈니스 모델</div>
+            <div style="font-size:20px;font-weight:900;line-height:1.4;">TFT·PMO·외부 협업팀을 위한 프로젝트 전용 업무공간</div>
+            <div style="font-size:13px;color:#c9d7e8;margin-top:6px;">공유오피스 월 좌석과 단기 회의실 대관 사이의 공백 — 반일·1일·1주·1개월 단위로 팀 전용 룸 제공</div>
+          </div>
+          <div style="display:flex;gap:20px;flex-wrap:wrap;">
+            <div style="text-align:center;"><div style="font-size:22px;font-weight:900;color:var(--cyan);">${c.totalRooms}개</div><div style="font-size:11px;color:#c9d7e8;">프로젝트룸</div></div>
+            <div style="text-align:center;"><div style="font-size:22px;font-weight:900;color:var(--cyan);">${py(c.exclusive)}</div><div style="font-size:11px;color:#c9d7e8;">전용면적</div></div>
+            <div style="text-align:center;"><div style="font-size:22px;font-weight:900;color:var(--cyan);">1명</div><div style="font-size:11px;color:#c9d7e8;">운영 인력</div></div>
+          </div>
+        </div>`;
+
+      // ② KPI 카드 4개
+      const bepUtilPct = Math.round(c.bepUtil * 100);
+      const bepCard = bepUtilPct <= 40 ? "good" : bepUtilPct <= 55 ? "warn" : "bad";
+      document.getElementById("kpiCards").innerHTML = `
+        <div class="metric warn">
+          <div class="label">월 고정비</div>
+          <div class="value">${won(c.fixedCost)}</div>
+          <div class="sub">공간비·관리비·인건비·운영비·초기투자 분담 합계</div>
+        </div>
+        <div class="metric ${bepCard}">
+          <div class="label">흑자 전환 이용률</div>
+          <div class="value">${bepUtilPct}%</div>
+          <div class="sub">이 이용률부터 매월 흑자 — 그 전까지는 적자 운영</div>
+        </div>
+        <div class="metric good">
+          <div class="label">목표 이용률</div>
+          <div class="value">${n("targetUtilization")}%</div>
+          <div class="sub">오픈 후 12~18개월 안정화 이후 달성 목표</div>
+        </div>
+        <div class="metric good">
+          <div class="label">목표 영업이익률</div>
+          <div class="value">${n("targetMargin")}%</div>
+          <div class="sub">단가 산정에 반영한 목표 수익률</div>
+        </div>`;
+
+      // ③-A 수익 구조
+      const r4cnt  = c.rooms.find(r=>r.key==="r4")?.count  || 0;
+      const r4vc   = c.rooms.find(r=>r.key==="r4vc")?.count || 0;
+      const r6cnt  = c.rooms.find(r=>r.key==="r6")?.count  || 0;
+      const r6vc   = c.rooms.find(r=>r.key==="r6vc")?.count || 0;
+      const r8vc   = c.rooms.find(r=>r.key==="r8vc")?.count || 0;
+      const r12vc  = c.rooms.find(r=>r.key==="r12vc")?.count|| 0;
+      document.getElementById("revenueModelSummary").innerHTML = `
+        <div style="font-size:13px;line-height:2;color:var(--navy);">
+          <div><strong>${c.totalRooms}개 룸</strong> (4인 ${r4cnt+r4vc}개 · 6인 ${r6cnt+r6vc}개 · 8인 ${r8vc}개 · 12인 ${r12vc}개)</div>
+          <div>× 월 가용 <strong>${fmt(c.availableHours)}시간</strong> (${n("operatingDays")}일 × 9시간 · 10 to 7)</div>
+          <div>× 목표 이용률 <strong>${n("targetUtilization")}%</strong></div>
+          <div style="border-top:1px solid var(--line);margin-top:8px;padding-top:8px;">
+            = 예상 월 매출 <strong style="color:var(--green);font-size:17px;">${won(sim.totalRevenue)}</strong>
+          </div>
+          <div style="margin-top:10px;background:#f0fdf8;border-radius:7px;padding:9px 11px;font-size:12px;color:var(--green);">
+            ✓ 패스트파이브 판교 대비 <strong>25~38% 저렴</strong><br>✓ 공유오피스 월 좌석 기준 하한가 이상으로 가격 방어
+          </div>
+        </div>`;
+
+      // ③-B 비용 구조 (검증 근거 포함)
+      const personnelCost = c.managerCost + n("employmentBurdenCost");
+      const otherOps = c.operatingCost - c.managerCost - n("employmentBurdenCost") - n("partTimeCost") - c.cleaningCost;
+      const spaceLabel = c.isLeaseMode ? "임대료+보증금 기회비용" : "자본비용+보유세";
+      const spaceSource = c.isLeaseMode ? "임대차계약서 기준 ✓" : "매입가·금리 기준 ✓";
+      document.getElementById("costModelSummary").innerHTML = `
+        <table style="width:100%;font-size:13px;border-collapse:collapse;">
+          <tr><td style="padding:6px 0;color:var(--gray);">공간비 <span style="font-size:11px;">(${spaceLabel})</span></td><td style="text-align:right;font-weight:900;">${won(c.spaceCost)}</td><td style="font-size:11px;color:var(--cyan);padding-left:8px;white-space:nowrap;">${spaceSource}</td></tr>
+          <tr><td style="padding:6px 0;color:var(--gray);">관리비</td><td style="text-align:right;font-weight:900;">${won(n("maintenance"))}</td><td style="font-size:11px;color:var(--cyan);padding-left:8px;white-space:nowrap;">실제 고지서 기준 ✓</td></tr>
+          <tr><td style="padding:6px 0;color:var(--gray);">인건비 (매니저 ${c.managerCount}명·4대보험)</td><td style="text-align:right;font-weight:900;">${won(personnelCost)}</td><td style="font-size:11px;color:var(--cyan);padding-left:8px;white-space:nowrap;">법정기준 ✓</td></tr>
+          <tr><td style="padding:6px 0;color:var(--gray);">청소·시스템·소모품 등</td><td style="text-align:right;font-weight:900;">${won(c.cleaningCost + otherOps)}</td><td style="font-size:11px;color:var(--cyan);padding-left:8px;white-space:nowrap;">견적 기준</td></tr>
+          <tr><td style="padding:6px 0;color:var(--gray);">초기 투자 월 분담 <span style="font-size:11px;">(상가 10년 보호 기준)</span></td><td style="text-align:right;font-weight:900;">${won(c.monthlyInvestment)}</td><td style="font-size:11px;color:var(--cyan);padding-left:8px;white-space:nowrap;">${c.investmentMonths}개월 분산</td></tr>
+          <tr style="border-top:2px solid var(--navy);"><td style="padding:9px 0 0;font-weight:900;color:var(--navy);">월 고정비 합계</td><td style="text-align:right;font-weight:900;color:var(--navy);font-size:16px;padding-top:9px;">${won(c.fixedCost)}</td><td></td></tr>
+        </table>`;
+
+      // ③-C 손익 요약
+      const targetMarginActual = sim.totalRevenue ? targetProfit / sim.totalRevenue : 0;
+      document.getElementById("profitModelSummary").innerHTML = `
+        <div style="font-size:13px;color:var(--navy);">
+          <div style="padding:12px;background:#f0fdf8;border-radius:8px;margin-bottom:12px;text-align:center;">
+            <div style="font-size:11px;color:var(--gray);margin-bottom:4px;">목표 이용률 ${n("targetUtilization")}% 달성 시</div>
+            <div style="font-size:24px;font-weight:900;color:var(--green);">${won(targetProfit)}</div>
+            <div style="font-size:12px;color:var(--gray);">월 영업이익 · 이익률 ${pct(targetMarginActual)}</div>
+          </div>
+          <div style="line-height:1.9;">
+            <div><strong>${bepUtilPct}% 이용률</strong>부터 흑자 전환</div>
+            <div style="color:var(--gray);font-size:12px;">흑자 전환 기준 매출 ${won(bepRevenue)}</div>
+          </div>
+          <div style="margin-top:10px;padding:9px 11px;background:#fff8f0;border-radius:7px;font-size:12px;color:var(--orange);">
+            ⚠ 오픈 초기(이용률 20%)는 월 적자 예상<br>안정화까지 운전자금 확보 필요
+          </div>
+        </div>`;
+
+      // ④ 단계별 손익표 (산식 컬럼 제거, 색상 추가)
       const stageRows = profitStageRows(c);
+      const stageHtml = stageRows.map(r=>{
+        const isProfit = r.profit >= 0;
+        const rowStyle = isProfit ? "background:#f0fdf8;" : "background:#fff5f5;";
+        const profitStyle = isProfit ? "color:var(--green);font-weight:900;" : "color:var(--red);font-weight:900;";
+        return `<tr style="${rowStyle}">
+          <td>${r.name}</td>
+          <td style="text-align:right;">${r.util}</td>
+          <td style="text-align:right;">${won(r.revenue)}</td>
+          <td style="text-align:right;">${won(r.fixedCost)}</td>
+          <td style="text-align:right;${profitStyle}">${won(r.profit)}</td>
+          <td style="text-align:right;${profitStyle}">${pct(r.margin)}</td>
+        </tr>`;
+      }).join("");
       document.getElementById("executiveSummary").innerHTML =
-        table(["단계","이용률","예상 판매시간","월 매출","월 고정비","월 변동비","영업이익 산식","영업이익","이익률"], stageRows.map(r=>[
-          r.name,
-          r.util,
-          `${fmt(c.availableHours * (Number(r.util.replace("%",""))/100))}시간`,
-          won(r.revenue),
-          won(r.fixedCost),
-          won(r.variable),
-          `${won(r.revenue)} - ${won(r.fixedCost)} - ${won(r.variable)}`,
-          won(r.profit),
-          pct(r.margin)
-        ])) +
-        `<h3 style="margin-top:18px;">기준단가 산정공식</h3>` +
-        table(["항목","산식","금액"], [
-          ["월 고정비", "공간비 + 관리비 + 운영비 + 월 환산 투자비", won(c.fixedCost)],
-          ["목표 변동비", `필요 월매출 × ${n("variableCostRatio")}%`, won(c.requiredVariableCost)],
-          ["목표 영업이익", `필요 월매출 × ${n("targetMargin")}%`, won(c.requiredProfit)],
-          ["필요 월매출", `월 고정비 ÷ (1 - 변동비율 ${n("variableCostRatio")}% - 목표이익률 ${n("targetMargin")}%)`, won(c.requiredRevenue)],
-          ["월 판매가능 시간", `${c.totalRooms}개 룸 × ${n("operatingDays")}일 × ${n("hoursPerDay")}시간`, `${fmt(c.availableHours)}시간`],
-          ["목표 판매시간", `${fmt(c.availableHours)}시간 × 목표 이용률 ${n("targetUtilization")}%`, `${fmt(c.pricingHours)}시간`],
-          ["기준 시간단가", `${won(c.requiredRevenue)} ÷ ${fmt(c.pricingHours)}시간`, won(c.baseHourly)],
-          ["최종 기준단가", "원가 기준 시간단가를 룸 크기·VC 여부·시장 하한가에 맞춰 보정", won(c.weightedHourly)]
-        ]);
-      document.getElementById("revenueModelSummary").innerHTML =
-        kpiList([
-          ["룸 매출", won(sim.roomRevenue)],
-          ["판매율 가정", `룸 이용률 ${n("targetUtilization")}%`],
-          ["월 시뮬레이션 매출", won(sim.totalRevenue)]
-        ]);
-      document.getElementById("costModelSummary").innerHTML = kpiList([
-        ["공간비 모드", c.isLeaseMode ? "임차 모드" : "매입 모드"],
-        ["월 자본비용", won(c.monthlyCapitalCost)],
-        ["재산세/종부세 월환산", won(n("propertyTaxMonthly"))],
-        ["월 공간비", won(c.spaceCost)],
-        ["월 관리비", won(n("maintenance"))],
-        ["운영비", won(c.operatingCost)],
-        ["월 고정비", won(c.fixedCost)]
-      ]);
-      document.getElementById("profitModelSummary").innerHTML = kpiList([
-        ["월 시뮬레이션 매출", won(sim.totalRevenue)],
-        ["예상 영업이익", won(targetProfit)],
-        ["외부 임대료 가정 영업이익", won(marketLeaseProfit)],
-        ["월 변동비", `-${won(targetVariable)} (${n("variableCostRatio")}%)`],
-        ["BEP 필요 매출", won(bepRevenue)],
-        ["외부 임대료 가정 BEP", won(marketLeaseBepRevenue)]
-      ]);
+        `<table style="width:100%;border-collapse:collapse;font-size:14px;">
+          <thead><tr>
+            <th style="background:var(--navy);color:#fff;padding:10px;text-align:left;">단계</th>
+            <th style="background:var(--navy);color:#fff;padding:10px;text-align:right;">이용률</th>
+            <th style="background:var(--navy);color:#fff;padding:10px;text-align:right;">월 매출</th>
+            <th style="background:var(--navy);color:#fff;padding:10px;text-align:right;">월 고정비</th>
+            <th style="background:var(--navy);color:#fff;padding:10px;text-align:right;">영업이익</th>
+            <th style="background:var(--navy);color:#fff;padding:10px;text-align:right;">이익률</th>
+          </tr></thead>
+          <tbody>${stageHtml}</tbody>
+        </table>`;
       document.getElementById("costSimulationDetail").innerHTML = table(["비용 항목","구성","월 금액"], [
         ["면적 기준", "계약면적", "496.0평"],
         ["면적 기준", "전용면적", "228.0평"],
