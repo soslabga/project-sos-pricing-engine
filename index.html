@@ -99,7 +99,7 @@
           <div class="note" id="oneLine"></div>
           <div class="input-grid quick" id="quickInputs"></div>
         </div>
-        <div class="card"><h2>손익 핵심 지표</h2><div id="executiveSummary"></div></div>
+        <div class="card"><h2>단계별 손익</h2><div id="executiveSummary"></div></div>
       </div>
       <div class="grid cols3" style="margin-bottom:16px;">
         <div class="card"><h2>매출 구조</h2><div id="revenueModelSummary"></div></div>
@@ -546,6 +546,22 @@
       }
       return { rows, detailRows, roomRevenue, openOfficeRevenue, totalRevenue: roomRevenue + openOfficeRevenue };
     }
+    function profitStageRows(c) {
+      return stages.map(st=>{
+        const revenue = c.weightedHourly*c.availableHours*st.util;
+        const variable = revenue*n("variableCostRatio")/100;
+        const profit = revenue - c.fixedCost - variable;
+        return {
+          name: st.name,
+          util: Math.round(st.util*100)+"%",
+          revenue,
+          fixedCost: c.fixedCost,
+          variable,
+          profit,
+          margin: revenue ? profit/revenue : 0
+        };
+      });
+    }
 
     function renderDashboard(c) {
       const statusText = c.status==="Green" ? "실행 기준" : c.status==="Yellow" ? "조정 기준" : "개선 기준";
@@ -562,15 +578,13 @@
         <div class="model-box"><strong>비용 구조</strong><span>1인 운영이 가능하도록 라운지, 공용좌석, 현장 응대, 소모품 관리 범위를 최소화합니다.</span></div>
         <div class="model-box"><strong>손익 관리</strong><span>월 고정비를 낮춰 BEP 가동률을 관리하고, 경쟁사 대비 낮은 가격에서도 영업이익이 남도록 운영합니다.</span></div>
       </div>`;
-      document.getElementById("headline").innerHTML = `월 시뮬레이션 매출 ${won(sim.totalRevenue)}<br><span style="color:var(--cyan)">예상 영업이익 ${won(targetProfit)}</span>`;
+      const stageRows = profitStageRows(c);
+      const headlineStage = stageRows.find(r=>r.name.includes("목표")) || stageRows[stageRows.length-1];
+      document.getElementById("headline").innerHTML = `목표 단계 월 매출 ${won(headlineStage.revenue)}<br><span style="color:var(--cyan)">목표 단계 영업이익 ${won(headlineStage.profit)}</span>`;
       document.getElementById("oneLine").innerHTML = "Project SOS는 최소 인력 운영을 전제로 예약·결제·출입·정산을 자동화하고, 불필요한 서비스 비용을 제거해 BEP를 낮추는 원가절감형 사업 모델입니다.";
-      document.getElementById("executiveSummary").innerHTML = kpiList([
-        ["월 시뮬레이션 매출", won(sim.totalRevenue)],
-        ["월 고정비", won(c.fixedCost)],
-        ["월 변동비", won(targetVariable)],
-        ["예상 영업이익", won(targetProfit)],
-        ["BEP 필요 매출", won(bepRevenue)]
-      ]);
+      document.getElementById("executiveSummary").innerHTML = table(["단계","이용률","월 매출","월 변동비","영업이익","이익률"], stageRows.map(r=>[
+        r.name, r.util, won(r.revenue), won(r.variable), won(r.profit), pct(r.margin)
+      ]));
       document.getElementById("revenueModelSummary").innerHTML =
         kpiList([
           ["룸 매출", won(sim.roomRevenue)],
@@ -1003,12 +1017,7 @@
       ]);
     }
     function renderScenario(c) {
-      const rows = stages.map(st=>{
-        const revenue = c.weightedHourly*c.availableHours*st.util;
-        const variable = revenue*n("variableCostRatio")/100;
-        const profit = revenue - c.fixedCost - variable;
-        return [st.name, Math.round(st.util*100)+"%", won(revenue), won(c.fixedCost), won(variable), won(profit), pct(revenue?profit/revenue:0)];
-      });
+      const rows = profitStageRows(c).map(r=>[r.name, r.util, won(r.revenue), won(r.fixedCost), won(r.variable), won(r.profit), pct(r.margin)]);
       document.getElementById("scenarioTable").innerHTML = table(["단계","룸 이용률","월 매출","월 고정비","월 변동비","영업이익","영업이익률"], rows);
     }
     function applyYeouido(){
