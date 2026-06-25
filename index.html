@@ -592,8 +592,9 @@
           r.name, r.util, won(r.revenue), won(r.variable), won(r.profit), pct(r.margin)
         ])) +
         `<div style="height:12px"></div>` +
-        table(["단계","매출 산식","변동비 산식","영업이익 산식"], stageRows.map(r=>[
+        table(["단계","기준 단가","매출 산식","변동비 산식","영업이익 산식"], stageRows.map(r=>[
           r.name,
+          won(c.weightedHourly),
           `${won(c.weightedHourly)} × ${fmt(c.availableHours)}시간 × ${r.util} = ${won(r.revenue)}`,
           `${won(r.revenue)} × ${n("variableCostRatio")}% = ${won(r.variable)}`,
           `${won(r.revenue)} - ${won(c.fixedCost)} - ${won(r.variable)} = ${won(r.profit)}`
