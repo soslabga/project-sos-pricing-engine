@@ -786,6 +786,42 @@
         ["5", "토즈 예약시스템 벤치마크", "고객 예약 단계와 관리자 재고관리 방식을 비교"]
       ]);
     }
+    function renderReservationSystem() {
+      document.getElementById("reservationSystemTable").innerHTML = table(["구분","시스템 원칙"], [
+        ["목표", "사람이 예약을 받아주는 구조를 제거하고 고객이 직접 공간 선택, 견적 확인, 결제, 출입권 수령까지 완료"],
+        ["차별점", "패스트파이브·스파크플러스의 상담 기반 예약보다 낮은 인건비와 빠른 확정 속도 확보"],
+        ["재고", "룸별 시간 재고를 실시간으로 노출하고 반일, 1일, 1주, 1개월 단위 예약을 자동 계산"],
+        ["가격", "공실률, 기간 할인, 입주사 할인, 외부 고객 가격을 시스템이 자동 적용"],
+        ["결제", "선결제 후 자동 확정. 미결제 예약은 일정 시간 뒤 자동 해제"],
+        ["출입", "예약 시간에만 유효한 QR/PIN 출입권 자동 발급"],
+        ["정산", "매출, 취소, 환불, 할인, 입주사 이용 내역을 자동 집계"],
+        ["특허", "예약·가격·출입·정산·입주사 할인·외부 개방을 하나의 무인 운영 방식으로 묶어 특허출원 검토"]
+      ]);
+      document.getElementById("customerFlowTable").innerHTML = table(["단계","고객 행동","자동 처리"], [
+        ["1", "지역과 날짜 선택", "사용 가능한 룸과 시간 재고 표시"],
+        ["2", "인원과 기간 선택", "4인실 이상 프로젝트룸 추천, 2인실 제외"],
+        ["3", "가격 확인", "기간 할인, 입주사 할인, 외부 고객 가격 자동 적용"],
+        ["4", "온라인 결제", "예약 확정 및 영수증 발행"],
+        ["5", "QR/PIN 수령", "예약 시간 기준 출입권 자동 활성화"],
+        ["6", "사용 종료", "연장 가능 시간 표시, 청소/점검 요청 자동 생성"]
+      ]);
+      document.getElementById("adminFlowTable").innerHTML = table(["영역","자동화 내용"], [
+        ["재고관리", "룸별 예약 가능 시간, 막힌 시간, 청소 시간을 자동 반영"],
+        ["가격관리", "공실률과 기간에 따라 권장 가격을 자동 계산"],
+        ["입주사 할인", "입주사 계정은 크레딧 없이 할인 가격만 적용"],
+        ["외부 개방", "미팅룸 또는 회의실 1개는 외부 고객에게도 예약 노출"],
+        ["현장운영", "출입, 안내, 결제 문의를 시스템 화면과 알림으로 대체"],
+        ["리포트", "지점별 매출, 이용률, BEP, 경쟁사 대비 가격을 자동 집계"]
+      ]);
+      document.getElementById("systemBuildTable").innerHTML = table(["모듈","필수 기능","원가절감 효과"], [
+        ["예약 엔진", "실시간 재고, 기간 상품, 자동 확정", "예약 응대 인력 제거"],
+        ["가격 엔진", "공실률, 기간 할인, 입주사 할인", "수기 견적 제거"],
+        ["결제", "카드 결제, 세금계산서/영수증, 환불 규칙", "현장 결제 제거"],
+        ["출입", "QR/PIN, 시간 제한 권한, 로그 기록", "상주 안내 인력 축소"],
+        ["관리자", "룸 막기, 청소 시간, 매출 리포트", "지점 운영 표준화"],
+        ["고객 계정", "입주사/외부 고객 구분, 할인 권한", "크레딧 운영 제거"]
+      ]);
+    }
     function renderScenario(c) {
       const rows = stages.map(st=>{
         const revenue = c.weightedHourly*c.availableHours*st.util + c.openOfficeHourly*c.openOfficeAvailableHours*n("openOfficeUtilization")/100;
@@ -818,7 +854,7 @@
     function render() {
       renderInputs();
       const c = calc();
-      renderDashboard(c); renderSpace(c); renderCosts(c); renderPricing(c); renderMonthlyComparison(c); renderCompetitorComparison(c); renderSiteProfitability(); renderVacancyPricing(c); renderBep(c); renderPurchase(c); renderScenario(c); renderOperatingPolicy(c);
+      renderDashboard(c); renderSpace(c); renderCosts(c); renderPricing(c); renderMonthlyComparison(c); renderCompetitorComparison(c); renderSiteProfitability(); renderVacancyPricing(c); renderBep(c); renderPurchase(c); renderScenario(c); renderOperatingPolicy(c); renderReservationSystem();
     }
     renderTabs();
     render();
