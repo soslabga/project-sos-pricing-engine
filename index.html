@@ -254,9 +254,9 @@
     const defaults = {
       contractArea:496.0, exclusiveArea:228.0, exclusiveRate:45.97,
       revenueRatio:88, commonRatio:12, storageRatio:2, corridorRatio:6, oaZoneArea:1,
-      spaceCostMode:0, rent:53300000, deposit:533000000, maintenance:7500000, purchasePrice:10000000000, loanRatio:70, annualInterestRate:4.5, equityOpportunityRate:4.0, propertyTaxMonthly:2500000, acquisitionCostRatio:0, annualHoldingCostRatio:0, assetUpsideRatio:0, managerUnitCost:3500000,
-      interiorPerPyeong:650000, furnitureCost:50000000, initialEquipmentCost:10000000, systemBuildCost:30000000, openingCost:5000000,
-      softwareCost:700000, equipmentCost:800000, consumablesCost:400000, utilityCost:0, insuranceSecurityCost:300000, taxAccountingCost:300000, repairReserveCost:500000, operationCost:800000, marketingCost:300000, cleaningDeskUnitCost:5000,
+      spaceCostMode:0, rent:53300000, deposit:533000000, maintenance:7500000, purchasePrice:10000000000, loanRatio:70, annualInterestRate:4.5, equityOpportunityRate:4.0, depositOpportunityRate:4.0, propertyTaxMonthly:2500000, acquisitionCostRatio:0, annualHoldingCostRatio:0, assetUpsideRatio:0, managerUnitCost:3500000,
+      interiorPerPyeong:650000, furnitureCost:50000000, initialEquipmentCost:10000000, systemBuildCost:30000000, openingCost:5000000, restorationReserveTotal:30000000, fitoutFreeMonths:1.5,
+      softwareCost:700000, equipmentCost:800000, consumablesCost:400000, utilityCost:700000, insuranceSecurityCost:300000, taxAccountingCost:300000, repairReserveCost:500000, operationCost:800000, marketingCost:300000, employmentBurdenCost:340000, partTimeCost:900000, cleaningDeskUnitCost:5000,
       initialLeaseMonths:24, extensionOptionMonths:0, leaseProtectionAvailable:1, interiorRecoveryMonths:120, rentIncreaseCap:1, subleaseAllowed:0, serviceAllowed:1, restorationClear:1,
       operatingDays:22, hoursPerDay:10, targetUtilization:60,
       targetMargin:35, variableCostRatio:8,
@@ -275,7 +275,7 @@
       ["purchasePrice","매입가(원)"], ["maintenance","월 관리비(원)"]
     ];
     const advancedDefs = [
-      ["spaceCostMode","공간비 모드(0=매입, 1=임차)"], ["purchasePrice","매입가(원)"], ["loanRatio","대출비율(%)"], ["annualInterestRate","대출 연 이자율(%)"], ["equityOpportunityRate","자기자본 기회비용률(%)"],
+      ["spaceCostMode","공간비 모드(0=매입, 1=임차)"], ["purchasePrice","매입가(원)"], ["loanRatio","대출비율(%)"], ["annualInterestRate","대출 연 이자율(%)"], ["equityOpportunityRate","자기자본 기회비용률(%)"], ["depositOpportunityRate","보증금 기회비용률(%)"],
       ["propertyTaxMonthly","재산세/종부세 월 환산(원)"], ["rent","외부 임대료 비교값(원)"],
       ["acquisitionCostRatio","취득 부대비용(%)"], ["annualHoldingCostRatio","기타 보유비율(%)"], ["assetUpsideRatio","연 자산가치 상승률(%)"],
       ["exclusiveRate","전용률(%)"], ["revenueRatio","수익공간 비율(%)"],
@@ -295,6 +295,8 @@
       ["softwareCost","예약/QR 시스템(원)"], ["equipmentCost","OA/화상회의장비 렌탈(원)"],
       ["consumablesCost","필수 소모품(원)"], ["utilityCost","전기/통신/인터넷(원)"],
       ["insuranceSecurityCost","보험/보안(원)"], ["taxAccountingCost","세무/회계/법무(원)"], ["repairReserveCost","시설 유지보수 예비비(원)"],
+      ["employmentBurdenCost","4대보험 사업주 부담(원)"], ["partTimeCost","파트타임 운영비(원)"],
+      ["restorationReserveTotal","원상복구 순충당금(원)"], ["fitoutFreeMonths","공사기간 비용 반영개월"],
       ["marketingCost","월 홍보비(원)"], ["operationCost","기타 필수 운영비(원)"],
       ["cleaningDeskUnitCost","좌석당 청소비(원)"], ["interiorPerPyeong","평당 인테리어비(원)"],
       ["operatingDays","운영일수"], ["hoursPerDay","일 운영시간"]
@@ -356,14 +358,18 @@
       const managerCount = Math.max(1, Math.ceil(exclusive / 350));
       const oneManagerPossible = managerCount <= 1;
       const managerCost = managerCount * n("managerUnitCost");
-      const investmentMonths = n("leaseProtectionAvailable") >= 1 ? Math.max(1, n("interiorRecoveryMonths")) : 48;
+      const isLeaseMode = n("spaceCostMode") >= 1;
+      const investmentMonths = isLeaseMode ? Math.max(1, n("initialLeaseMonths")) : n("leaseProtectionAvailable") >= 1 ? Math.max(1, n("interiorRecoveryMonths")) : 48;
       const initialInteriorCost = exclusive * n("interiorPerPyeong");
-      const totalInitialInvestment = initialInteriorCost + n("furnitureCost") + n("initialEquipmentCost") + n("systemBuildCost") + n("openingCost");
+      const fitoutPeriodCost = isLeaseMode ? (n("rent") + n("maintenance")) * n("fitoutFreeMonths") : 0;
+      const restorationReserve = isLeaseMode ? n("restorationReserveTotal") : 0;
+      const totalInitialInvestment = initialInteriorCost + n("furnitureCost") + n("initialEquipmentCost") + n("systemBuildCost") + n("openingCost") + restorationReserve + fitoutPeriodCost;
       const monthlyInvestment = totalInitialInvestment / investmentMonths;
       const loanAmount = n("purchasePrice") * n("loanRatio") / 100;
       const equityAmount = Math.max(0, n("purchasePrice") - loanAmount);
       const monthlyInterest = loanAmount * n("annualInterestRate") / 100 / 12;
       const monthlyEquityOpportunityCost = equityAmount * n("equityOpportunityRate") / 100 / 12;
+      const monthlyDepositOpportunityCost = n("deposit") * n("depositOpportunityRate") / 100 / 12;
       const monthlyCapitalCost = monthlyInterest + monthlyEquityOpportunityCost;
       const acquisitionCost = n("purchasePrice") * n("acquisitionCostRatio") / 100;
       const monthlyAcquisitionCost = acquisitionCost / 48;
@@ -371,9 +377,8 @@
       const monthlyAssetUpside = n("purchasePrice") * n("assetUpsideRatio") / 100 / 12;
       const purchaseOccupancyCost = monthlyCapitalCost + monthlyAcquisitionCost + monthlyHoldingCost + n("propertyTaxMonthly") - monthlyAssetUpside;
       const effectiveOccupancyCost = Math.max(0, purchaseOccupancyCost);
-      const operatingCost = managerCost + cleaningCost + n("softwareCost") + n("equipmentCost") + n("consumablesCost") + n("utilityCost") + n("insuranceSecurityCost") + n("taxAccountingCost") + n("repairReserveCost") + n("marketingCost") + n("operationCost");
-      const isLeaseMode = n("spaceCostMode") >= 1;
-      const spaceCost = isLeaseMode ? n("rent") : effectiveOccupancyCost;
+      const operatingCost = managerCost + n("employmentBurdenCost") + n("partTimeCost") + cleaningCost + n("softwareCost") + n("equipmentCost") + n("consumablesCost") + n("utilityCost") + n("insuranceSecurityCost") + n("taxAccountingCost") + n("repairReserveCost") + n("marketingCost") + n("operationCost");
+      const spaceCost = isLeaseMode ? n("rent") + monthlyDepositOpportunityCost : effectiveOccupancyCost;
       const fixedCostBeforeInvestment = spaceCost + n("maintenance") + operatingCost;
       const fixedCost = fixedCostBeforeInvestment + monthlyInvestment;
       const availableHours = Math.max(1,totalRooms) * n("operatingDays") * n("hoursPerDay");
@@ -417,8 +422,8 @@
       return {
         exclusive, revenueArea, commonArea, rooms, totalRooms, usedRevenueArea, openOfficeArea, openOfficeSeats,
         roomSeats, totalCapacity, managerCount, oneManagerPossible, managerCost, cleaningRate, cleaningAreaCost, cleaningDeskCost, cleaningCost,
-        isLeaseMode, spaceCost, loanAmount, equityAmount, monthlyInterest, monthlyEquityOpportunityCost, monthlyCapitalCost, acquisitionCost, monthlyAcquisitionCost, monthlyHoldingCost, monthlyAssetUpside, purchaseOccupancyCost, effectiveOccupancyCost, maxOccupancyCost, rentSaving, purchaseStatus,
-        operatingCost, fixedCostBeforeInvestment, initialInteriorCost, totalInitialInvestment, monthlyInvestment, investmentMonths, totalUseMonths, contractStatus, financialStatus, fixedCost, requiredProfit, requiredRevenue, requiredVariableCost, contributionRate, baseHourly, rawWeightedHourly, pricingScale,
+        isLeaseMode, spaceCost, loanAmount, equityAmount, monthlyInterest, monthlyEquityOpportunityCost, monthlyDepositOpportunityCost, monthlyCapitalCost, acquisitionCost, monthlyAcquisitionCost, monthlyHoldingCost, monthlyAssetUpside, purchaseOccupancyCost, effectiveOccupancyCost, maxOccupancyCost, rentSaving, purchaseStatus,
+        operatingCost, fixedCostBeforeInvestment, initialInteriorCost, fitoutPeriodCost, restorationReserve, totalInitialInvestment, monthlyInvestment, investmentMonths, totalUseMonths, contractStatus, financialStatus, fixedCost, requiredProfit, requiredRevenue, requiredVariableCost, contributionRate, baseHourly, rawWeightedHourly, pricingScale,
         availableHours, pricingHours, breakEvenHourly, pricing, weightedHourly, openOfficeHourly,
         openOfficeAvailableHours, openOfficeSellableHours, bepUtil, revenueAtTarget, maxOccupancyCost, status
       };
@@ -612,24 +617,31 @@
         ["면적 기준", "계약면적", "496.0평"],
         ["면적 기준", "전용면적", "228.0평"],
         ["공간비 모드", c.isLeaseMode ? "임차 모드" : "매입 모드", c.isLeaseMode ? "월 임대료 기준" : "자본비용 + 보유세 기준"],
+        ["임차 공간비", "월 임대료", c.isLeaseMode ? won(n("rent")) : "-"],
+        ["임차 공간비", `보증금 ${won(n("deposit"))} × 연 ${n("depositOpportunityRate")}% ÷ 12`, c.isLeaseMode ? won(c.monthlyDepositOpportunityCost) : "-"],
         ["자본비용", `대출 ${n("loanRatio")}% × 연 ${n("annualInterestRate")}%`, won(c.monthlyInterest)],
         ["자본비용", `자기자본 ${100-n("loanRatio")}% × 연 ${n("equityOpportunityRate")}%`, won(c.monthlyEquityOpportunityCost)],
         ["자본비용", "소계", won(c.monthlyCapitalCost)],
         ["보유세", "재산세/종부세 월 환산, 100억 × 과표 70% × 0.4% ÷ 12 기준", won(n("propertyTaxMonthly"))],
-        ["공간비", c.isLeaseMode ? "월 임대료" : "자본비용 + 보유세 + 기타 보유비 - 자산가치 상승 반영", won(c.spaceCost)],
+        ["공간비", c.isLeaseMode ? "월 임대료 + 보증금 기회비용" : "자본비용 + 보유세 + 기타 보유비 - 자산가치 상승 반영", won(c.spaceCost)],
         ["공통 운영비", "관리비 합계", won(n("maintenance"))],
-        ["관리비 근거", "4월 고지서 643만원 수준에 계절 보정 반영", won(n("maintenance"))],
+        ["관리비 근거", "4월 고지서 전기료 포함 643만원 수준에 냉방 계절 보정 반영", won(n("maintenance"))],
         ["공통 운영비", `운영인력 ${c.managerCount}명`, won(c.managerCost)],
+        ["공통 운영비", "4대보험 사업주 부담", won(n("employmentBurdenCost"))],
+        ["공통 운영비", "파트타임 운영 보조", won(n("partTimeCost"))],
         ["공통 운영비", "청소관리", won(c.cleaningCost)],
         ["공통 운영비", "예약/QR 시스템", won(n("softwareCost"))],
         ["공통 운영비", "OA/화상회의장비", won(n("equipmentCost"))],
         ["공통 운영비", "필수 소모품", won(n("consumablesCost"))],
-        ["공통 운영비", "전기/통신/인터넷", won(n("utilityCost"))],
+        ["공통 운영비", "전용 인터넷/추가 전기 예비비", won(n("utilityCost"))],
         ["공통 운영비", "보험/보안", won(n("insuranceSecurityCost"))],
         ["공통 운영비", "세무/회계/법무", won(n("taxAccountingCost"))],
         ["공통 운영비", "시설 유지보수 예비비", won(n("repairReserveCost"))],
         ["공통 운영비", "마케팅", won(n("marketingCost"))],
         ["공통 운영비", "기타 운영비", won(n("operationCost"))],
+        ["초기투자", "인테리어", won(c.initialInteriorCost)],
+        ["초기투자", "원상복구 순충당금", won(c.restorationReserve)],
+        ["초기투자", `${n("fitoutFreeMonths")}개월 공사기간 임대료+관리비`, won(c.fitoutPeriodCost)],
         ["투자비", `${won(c.totalInitialInvestment)} ÷ ${c.investmentMonths}개월`, won(c.monthlyInvestment)],
         ["변동비", `매출의 ${n("variableCostRatio")}%`, "매출 발생 시 차감"],
         ["목표 영업이익", `매출의 ${n("targetMargin")}%`, "단가에 반영"],
@@ -897,10 +909,12 @@
         ["평당 청소관리비", `${won(c.cleaningRate)} / 평`], ["면적 기준 청소비", won(c.cleaningAreaCost)],
         ["좌석 기준 청소비", won(c.cleaningDeskCost)], ["청소관리비 합계", won(c.cleaningCost)],
         ["예약/QR 시스템", won(n("softwareCost"))], ["OA/화상회의장비 렌탈", won(n("equipmentCost"))],
-        ["필수 소모품", won(n("consumablesCost"))], ["전기/통신/인터넷", won(n("utilityCost"))],
+        ["필수 소모품", won(n("consumablesCost"))], ["전용 인터넷/추가 전기 예비비", won(n("utilityCost"))],
         ["보험/보안", won(n("insuranceSecurityCost"))], ["세무/회계/법무", won(n("taxAccountingCost"))],
-        ["시설 유지보수 예비비", won(n("repairReserveCost"))], ["월 홍보비", won(n("marketingCost"))], ["기타 필수 운영비", won(n("operationCost"))],
+        ["시설 유지보수 예비비", won(n("repairReserveCost"))], ["4대보험 사업주 부담", won(n("employmentBurdenCost"))], ["파트타임 운영 보조", won(n("partTimeCost"))],
+        ["월 홍보비", won(n("marketingCost"))], ["기타 필수 운영비", won(n("operationCost"))],
         ["월 운영비 합계", won(c.operatingCost)], ["초기 인테리어비", won(c.initialInteriorCost)],
+        ["원상복구 순충당금", won(c.restorationReserve)], ["공사기간 임대료+관리비", won(c.fitoutPeriodCost)],
         ["초기투자비 합계", won(c.totalInitialInvestment)], ["월 환산 투자비", `${won(c.monthlyInvestment)} / ${c.investmentMonths}개월`],
         ["월 고정비", won(c.fixedCost)],
         ["변동비율", `${n("variableCostRatio")}%`], ["목표 영업이익률", `${n("targetMargin")}%`],
@@ -916,7 +930,7 @@
       if (costSummaryEl) costSummaryEl.innerHTML = table(["비용 항목","월 비용"], [
         ["월 자본비용", won(c.monthlyCapitalCost)], ["재산세/종부세", won(n("propertyTaxMonthly"))], ["관리비", won(n("maintenance"))],
         ["운영인력", won(c.managerCost)], ["청소관리", won(c.cleaningCost)],
-        ["전기/통신", won(n("utilityCost"))], ["보험/보안", won(n("insuranceSecurityCost"))],
+        ["인터넷/추가전기", won(n("utilityCost"))], ["보험/보안", won(n("insuranceSecurityCost"))],
         ["세무/회계", won(n("taxAccountingCost"))], ["시설 유지보수", won(n("repairReserveCost"))],
         ["홍보비", won(n("marketingCost"))], ["월 환산 투자비", won(c.monthlyInvestment)],
         ["실질 월 고정비", won(c.fixedCost)]
