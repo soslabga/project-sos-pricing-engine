@@ -509,30 +509,41 @@
         ["BEP 가동률", pct(c.bepUtil)]
       ]);
       document.getElementById("revenueModelSummary").innerHTML = table(["항목","금액/기준"], [
-        ["룸 목표 매출", won(c.weightedHourly*c.pricingHours)],
-        ["공용오피스 목표 매출", won(c.openOfficeHourly*c.openOfficeSellableHours)],
-        ["목표 월매출", won(c.revenueAtTarget)],
-        ["주력 상품", "4인실 이상 프로젝트룸"],
-        ["판매 단위", "반일, 1일, 1주, 1개월 이상"]
+        ["판매 가능 룸", `${c.totalRooms}개 룸 · 월 ${fmt(c.availableHours)}시간`],
+        ["목표 판매시간", `${fmt(c.pricingHours)}시간 / 목표 이용률 ${n("targetUtilization")}%`],
+        ["평균 룸 시간단가", won(c.weightedHourly)],
+        ["룸 매출", `${won(c.weightedHourly)} × ${fmt(c.pricingHours)}시간 = ${won(c.weightedHourly*c.pricingHours)}`],
+        ["공용오피스 좌석", `${c.openOfficeSeats}석 · 월 판매가능 ${fmt(c.openOfficeAvailableHours)}시간`],
+        ["공용오피스 판매시간", `${fmt(c.openOfficeSellableHours)}시간 / 이용률 ${n("openOfficeUtilization")}%`],
+        ["공용오피스 시간단가", won(c.openOfficeHourly)],
+        ["공용오피스 매출", `${won(c.openOfficeHourly)} × ${fmt(c.openOfficeSellableHours)}시간 = ${won(c.openOfficeHourly*c.openOfficeSellableHours)}`],
+        ["목표 월매출", won(c.revenueAtTarget)]
       ]);
       document.getElementById("costModelSummary").innerHTML = table(["항목","월 비용"], [
-        ["매입 점유비", won(c.effectiveOccupancyCost)],
+        ["매입 점유비", `이자 ${won(c.monthlyInterest)} + 취득비 월환산 ${won(c.monthlyAcquisitionCost)} + 보유비 ${won(c.monthlyHoldingCost)} - 자산가치 반영 ${won(c.monthlyAssetUpside)} = ${won(c.effectiveOccupancyCost)}`],
         ["관리비", won(n("maintenance"))],
-        ["운영인력", won(c.managerCost)],
-        ["청소관리", won(c.cleaningCost)],
+        ["운영인력", `${c.managerCount}명 × ${won(n("managerUnitCost"))} = ${won(c.managerCost)}`],
+        ["청소관리", `면적 ${won(c.cleaningAreaCost)} + 좌석 ${won(c.cleaningDeskCost)} = ${won(c.cleaningCost)}`],
+        ["예약/QR 시스템", won(n("softwareCost"))],
+        ["OA/화상회의장비", won(n("equipmentCost"))],
+        ["필수 소모품", won(n("consumablesCost"))],
         ["마케팅", won(n("marketingCost"))],
-        ["투자비 월 환산", won(c.monthlyInvestment)],
+        ["기타 운영비", won(n("operationCost"))],
+        ["인테리어 월환산", `${won(c.totalInitialInvestment)} ÷ ${c.investmentMonths}개월 = ${won(c.monthlyInvestment)}`],
         ["월 고정비", won(c.fixedCost)]
       ]);
       const targetVariable = c.revenueAtTarget*n("variableCostRatio")/100;
       const targetProfit = c.revenueAtTarget - c.fixedCost - targetVariable;
+      const bepRevenue = c.fixedCost / Math.max(.01, 1 - n("variableCostRatio")/100);
       document.getElementById("profitModelSummary").innerHTML = table(["항목","산출"], [
         ["목표 월매출", won(c.revenueAtTarget)],
         ["월 고정비", `- ${won(c.fixedCost)}`],
-        ["월 변동비", `- ${won(targetVariable)}`],
-        ["예상 영업이익", won(targetProfit)],
+        ["월 변동비", `매출의 ${n("variableCostRatio")}% = - ${won(targetVariable)}`],
+        ["예상 영업이익", `${won(c.revenueAtTarget)} - ${won(c.fixedCost)} - ${won(targetVariable)} = ${won(targetProfit)}`],
         ["예상 영업이익률", pct(c.revenueAtTarget ? targetProfit/c.revenueAtTarget : 0)],
-        ["BEP 가동률", pct(c.bepUtil)]
+        ["BEP 필요 매출", won(bepRevenue)],
+        ["BEP 가동률", pct(c.bepUtil)],
+        ["BEP 대비 매출 여유", won(c.revenueAtTarget - bepRevenue)]
       ]);
       document.getElementById("leaseProtectionSummary").innerHTML = table(["항목","확인 내용"], [
         ["핵심", "상가 임대차는 임차인이 계약갱신을 요구할 수 있으나, 전체 임대차기간은 최초 임대차기간 포함 10년을 넘지 못합니다."],
