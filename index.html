@@ -490,36 +490,76 @@
       const duration = durations.find(d=>d[1]===hours && d[2]===discount);
       return room ? won(priceAmount(room, hours, discount, duration ? duration[3] : 0)) : "-";
     }
+    function revenueSimulation(c) {
+      const mix = [
+        { label:"반일", hours:4, discount:.88, months:0, share:.30 },
+        { label:"1일", hours:8, discount:.80, months:0, share:.30 },
+        { label:"1주", hours:40, discount:.62, months:0, share:.20 },
+        { label:"1개월", hours:160, discount:.48, months:1, share:.20 }
+      ];
+      let roomRevenue = 0;
+      const rows = [];
+      c.pricing.filter(r=>r.count>0).forEach(r=>{
+        const availableHours = r.count * n("operatingDays") * n("hoursPerDay");
+        const targetHours = availableHours * n("targetUtilization") / 100;
+        const prices = mix.map(m=>priceAmount(r,m.hours,m.discount,m.months));
+        const revenues = mix.map((m,i)=>{
+          const salesCount = targetHours * m.share / m.hours;
+          const amount = salesCount * prices[i];
+          roomRevenue += amount;
+          return { salesCount, amount };
+        });
+        rows.push([
+          r.name,
+          `${r.count}개`,
+          `${fmt(availableHours)}시간`,
+          `${fmt(targetHours)}시간`,
+          `${100-n("targetUtilization")}%`,
+          `${won(prices[0])} × ${revenues[0].salesCount.toFixed(1)}회 = ${won(revenues[0].amount)}`,
+          `${won(prices[1])} × ${revenues[1].salesCount.toFixed(1)}회 = ${won(revenues[1].amount)}`,
+          `${won(prices[2])} × ${revenues[2].salesCount.toFixed(1)}회 = ${won(revenues[2].amount)}`,
+          `${won(prices[3])} × ${revenues[3].salesCount.toFixed(1)}회 = ${won(revenues[3].amount)}`,
+          won(revenues.reduce((s,x)=>s+x.amount,0))
+        ]);
+      });
+      const openOfficeRevenue = c.openOfficeHourly * c.openOfficeSellableHours;
+      return { rows, roomRevenue, openOfficeRevenue, totalRevenue: roomRevenue + openOfficeRevenue };
+    }
 
     function renderDashboard(c) {
       const statusText = c.status==="Green" ? "입점 가능" : c.status==="Yellow" ? "조건부 검토" : "입점 부적합";
+      const sim = revenueSimulation(c);
+      const targetVariable = sim.totalRevenue*n("variableCostRatio")/100;
+      const targetProfit = sim.totalRevenue - c.fixedCost - targetVariable;
+      const bepRevenue = c.fixedCost / Math.max(.01, 1 - n("variableCostRatio")/100);
       document.getElementById("modelOverview").innerHTML = `<div class="model-strip">
         <div class="model-box"><strong>핵심 전제</strong><span>이 모델의 경쟁력은 매출 확대보다 원가 절감에 있습니다. 불필요한 서비스와 인력을 제거해 낮은 BEP를 만드는 구조입니다.</span></div>
         <div class="model-box"><strong>매출 구조</strong><span>4인실 이상 프로젝트룸을 반일~수개월 단위로 판매하고, 입주사 할인 예약과 외부 예약을 병행합니다.</span></div>
         <div class="model-box"><strong>비용 구조</strong><span>매입 또는 장기점유 비용, 관리비, 1인 운영 인건비, 청소비, 최소 시스템비가 핵심 비용입니다.</span></div>
         <div class="model-box"><strong>손익 판단</strong><span>월 고정비를 낮춰 BEP 가동률을 낮추고, 경쟁사 대비 낮은 가격에서도 영업이익이 남는지 검증합니다.</span></div>
       </div>`;
-      document.getElementById("headline").innerHTML = `월 목표매출 ${won(c.revenueAtTarget)}<br><span style="color:var(--cyan)">예상 영업이익 ${won(c.revenueAtTarget - c.fixedCost - c.revenueAtTarget*n("variableCostRatio")/100)}</span>`;
+      document.getElementById("headline").innerHTML = `월 시뮬레이션 매출 ${won(sim.totalRevenue)}<br><span style="color:var(--cyan)">예상 영업이익 ${won(targetProfit)}</span>`;
       document.getElementById("oneLine").innerHTML = "Project SOS는 공간 운영에서 불필요한 고정비를 제거해 BEP를 낮추고, 공유오피스 대비 낮은 가격에서도 이익을 남기는 원가절감형 사업 모델입니다.";
       document.getElementById("executiveSummary").innerHTML = table(["검토 항목","현재 산출"], [
-        ["목표 월매출", won(c.revenueAtTarget)],
+        ["월 시뮬레이션 매출", won(sim.totalRevenue)],
         ["월 고정비", won(c.fixedCost)],
-        ["월 변동비", won(c.revenueAtTarget*n("variableCostRatio")/100)],
-        ["예상 영업이익", won(c.revenueAtTarget - c.fixedCost - c.revenueAtTarget*n("variableCostRatio")/100)],
-        ["BEP 가동률", pct(c.bepUtil)]
+        ["월 변동비", won(targetVariable)],
+        ["예상 영업이익", won(targetProfit)],
+        ["BEP 필요 매출", won(bepRevenue)]
       ]);
-      document.getElementById("revenueModelSummary").innerHTML = table(["항목","금액/기준"], [
-        ["판매 가능 룸", `${c.totalRooms}개 룸 · 월 ${fmt(c.availableHours)}시간`],
-        ["목표 판매시간", `${fmt(c.pricingHours)}시간 / 목표 이용률 ${n("targetUtilization")}%`],
-        ["평균 룸 시간단가", won(c.weightedHourly)],
-        ["룸 매출", `${won(c.weightedHourly)} × ${fmt(c.pricingHours)}시간 = ${won(c.weightedHourly*c.pricingHours)}`],
-        ["공용오피스 좌석", `${c.openOfficeSeats}석 · 월 판매가능 ${fmt(c.openOfficeAvailableHours)}시간`],
-        ["공용오피스 판매시간", `${fmt(c.openOfficeSellableHours)}시간 / 이용률 ${n("openOfficeUtilization")}%`],
-        ["공용오피스 시간단가", won(c.openOfficeHourly)],
-        ["공용오피스 매출", `${won(c.openOfficeHourly)} × ${fmt(c.openOfficeSellableHours)}시간 = ${won(c.openOfficeHourly*c.openOfficeSellableHours)}`],
-        ["목표 월매출", won(c.revenueAtTarget)]
-      ]);
-      document.getElementById("costModelSummary").innerHTML = table(["항목","월 비용"], [
+      document.getElementById("revenueModelSummary").innerHTML =
+        table(["매출 항목","산식 및 기준"], [
+          ["룸 판매 기준", `${c.totalRooms}개 룸 · 월 판매가능 ${fmt(c.availableHours)}시간 · 공실률 ${100-n("targetUtilization")}% 반영`],
+          ["상품 판매 믹스", "반일 30% · 1일 30% · 1주 20% · 1개월 20%"],
+          ["룸 매출 합계", won(sim.roomRevenue)],
+          ["공용오피스 매출", `${c.openOfficeSeats}석 · ${fmt(c.openOfficeSellableHours)}시간 × ${won(c.openOfficeHourly)} = ${won(sim.openOfficeRevenue)}`],
+          ["월 시뮬레이션 매출", won(sim.totalRevenue)]
+        ]) +
+        `<div style="height:12px"></div>` +
+        table(["룸 타입","수량","월 가능시간","공실 반영 판매시간","공실률","반일 매출","1일 매출","1주 매출","1개월 매출","월 매출"], sim.rows.concat([
+          ["공용오피스", `${c.openOfficeSeats}석`, `${fmt(c.openOfficeAvailableHours)}시간`, `${fmt(c.openOfficeSellableHours)}시간`, `${100-n("openOfficeUtilization")}%`, "-", "-", "-", "-", won(sim.openOfficeRevenue)]
+        ]));
+      document.getElementById("costModelSummary").innerHTML = table(["비용 항목","산식 및 월 비용"], [
         ["매입 점유비", `이자 ${won(c.monthlyInterest)} + 취득비 월환산 ${won(c.monthlyAcquisitionCost)} + 보유비 ${won(c.monthlyHoldingCost)} - 자산가치 반영 ${won(c.monthlyAssetUpside)} = ${won(c.effectiveOccupancyCost)}`],
         ["관리비", won(n("maintenance"))],
         ["운영인력", `${c.managerCount}명 × ${won(n("managerUnitCost"))} = ${won(c.managerCost)}`],
@@ -532,18 +572,14 @@
         ["인테리어 월환산", `${won(c.totalInitialInvestment)} ÷ ${c.investmentMonths}개월 = ${won(c.monthlyInvestment)}`],
         ["월 고정비", won(c.fixedCost)]
       ]);
-      const targetVariable = c.revenueAtTarget*n("variableCostRatio")/100;
-      const targetProfit = c.revenueAtTarget - c.fixedCost - targetVariable;
-      const bepRevenue = c.fixedCost / Math.max(.01, 1 - n("variableCostRatio")/100);
-      document.getElementById("profitModelSummary").innerHTML = table(["항목","산출"], [
-        ["목표 월매출", won(c.revenueAtTarget)],
+      document.getElementById("profitModelSummary").innerHTML = table(["손익 항목","산식 및 금액"], [
+        ["월 시뮬레이션 매출", won(sim.totalRevenue)],
         ["월 고정비", `- ${won(c.fixedCost)}`],
         ["월 변동비", `매출의 ${n("variableCostRatio")}% = - ${won(targetVariable)}`],
-        ["예상 영업이익", `${won(c.revenueAtTarget)} - ${won(c.fixedCost)} - ${won(targetVariable)} = ${won(targetProfit)}`],
-        ["예상 영업이익률", pct(c.revenueAtTarget ? targetProfit/c.revenueAtTarget : 0)],
+        ["예상 영업이익", `${won(sim.totalRevenue)} - ${won(c.fixedCost)} - ${won(targetVariable)} = ${won(targetProfit)}`],
+        ["예상 영업이익률", pct(sim.totalRevenue ? targetProfit/sim.totalRevenue : 0)],
         ["BEP 필요 매출", won(bepRevenue)],
-        ["BEP 가동률", pct(c.bepUtil)],
-        ["BEP 대비 매출 여유", won(c.revenueAtTarget - bepRevenue)]
+        ["BEP 대비 매출 여유", won(sim.totalRevenue - bepRevenue)]
       ]);
       document.getElementById("leaseProtectionSummary").innerHTML = table(["항목","확인 내용"], [
         ["핵심", "상가 임대차는 임차인이 계약갱신을 요구할 수 있으나, 전체 임대차기간은 최초 임대차기간 포함 10년을 넘지 못합니다."],
