@@ -249,13 +249,10 @@
 
   <script>
     const roomTypes = [
-      { key:"r2", name:"2인실", area:5, capacity:2, weight:0, premium:.82, vc:false },
-      { key:"r4", name:"4인실", area:6, capacity:4, weight:.60, premium:1.00, vc:false },
-      { key:"r4vc", name:"4인실 VC", area:6, capacity:4, weight:.10, premium:1.15, vc:true },
-      { key:"r6", name:"6인실", area:7, capacity:6, weight:.09, premium:1.05, vc:false },
-      { key:"r6vc", name:"6인실 VC", area:7, capacity:6, weight:0, premium:1.18, vc:true },
-      { key:"r8vc", name:"8인실 VC", area:12, capacity:8, weight:0, premium:1.22, vc:true },
-      { key:"r12vc", name:"12인실 VC", area:15, capacity:12, weight:0, premium:1.28, vc:true }
+      { key:"r4",   name:"4인실",    area:8,  capacity:4, weight:.85, premium:1.00, vc:false },
+      { key:"r4vc", name:"4인실 VC", area:8,  capacity:4, weight:0,   premium:1.15, vc:true  },
+      { key:"r6",   name:"6인실",    area:10, capacity:6, weight:.12, premium:1.05, vc:false },
+      { key:"r6vc", name:"6인실 VC", area:10, capacity:6, weight:0,   premium:1.18, vc:true  }
     ];
     const durations = [
       ["반일",4,.88,0], ["1일",8,.80,0], ["3일",24,.72,0], ["1주",40,.62,0],
@@ -327,11 +324,6 @@
       let targetRoomArea = revenueArea * .94;
       roomTypes.forEach((r, i) => {
         let proposed = Math.floor((targetRoomArea * r.weight) / r.area);
-        if (r.key === "r2") proposed = 0;
-        if (r.key === "r8vc" && targetRoomArea >= 120) proposed = Math.max(1, proposed);
-        if (r.key === "r12vc" && targetRoomArea >= 180) proposed = Math.max(1, proposed);
-        if (r.key === "r8vc") proposed = Math.min(proposed, 2);
-        if (r.key === "r12vc") proposed = Math.min(proposed, 1);
         counts[i] = Math.max(0, proposed);
       });
       let used = counts.reduce((sum,c,i)=>sum+c*roomTypes[i].area,0);
@@ -640,15 +632,13 @@
       const r4vc   = c.rooms.find(r=>r.key==="r4vc")?.count || 0;
       const r6cnt  = c.rooms.find(r=>r.key==="r6")?.count  || 0;
       const r6vc   = c.rooms.find(r=>r.key==="r6vc")?.count || 0;
-      const r8vc   = c.rooms.find(r=>r.key==="r8vc")?.count || 0;
-      const r12vc  = c.rooms.find(r=>r.key==="r12vc")?.count|| 0;
       const realisticUtil = 45;
       const realisticRevenue = planRevenue * realisticUtil / n("targetUtilization");
       const realisticProfit = realisticRevenue - c.fixedCost - realisticRevenue * n("variableCostRatio") / 100;
       const isRealisticProfit = realisticProfit >= 0;
       document.getElementById("revenueModelSummary").innerHTML = `
         <div style="font-size:13px;line-height:2;color:var(--navy);">
-          <div><strong>${c.totalRooms}개 룸</strong> (4인 ${r4cnt+r4vc}개 · 6인 ${r6cnt+r6vc}개 · 8인 ${r8vc}개 · 12인 ${r12vc}개)</div>
+          <div><strong>${c.totalRooms}개 룸</strong> (4인실 ${r4cnt+r4vc}개 · 6인실 ${r6cnt+r6vc}개)</div>
           <div>× 월 가용 <strong>${fmt(c.availableHours)}시간</strong> (${n("operatingDays")}일 × 9시간 · 10 to 7)</div>
           <div>× 현실적 기준 이용률 <strong style="color:var(--orange);">${realisticUtil}%</strong> <span style="font-size:11px;color:var(--gray);">(단가 산정 목표 ${n("targetUtilization")}% 아님)</span></div>
           <div style="border-top:1px solid var(--line);margin-top:8px;padding-top:8px;">
@@ -822,7 +812,7 @@
         ["가격 전략", "브랜드 프리미엄 가격", "시간당 단가 중심", "공유오피스보다 낮지만 기업이윤을 확보하는 실속 가격"],
         ["차별화", "멋진 사무공간", "회의 장소", "일을 끝내는 프로젝트 운영 환경"]
       ]);
-      const colors = { r2:"#6b7785", r4:"var(--blue)", r4vc:"#0089d6", r6:"var(--green)", r6vc:"#00a88a", r8vc:"var(--orange)", r12vc:"var(--red)" };
+      const colors = { r4:"var(--blue)", r4vc:"#0089d6", r6:"var(--green)", r6vc:"#00a88a" };
       const tiles = c.rooms.filter(r=>r.count>0).map(r=>`<div class="tile" style="background:${colors[r.key]}">${r.name} ${r.count}개<small>${py(r.usedArea)} · ${r.seats}명 · ${r.facility}</small></div>`);
       tiles.push(`<div class="tile" style="background:#6b7785">최소 보조공간<small>${py(c.openOfficeArea)} · 대기/임시 작업 전용</small></div>`);
       tiles.push(`<div class="tile" style="background:#394657">공용/OA<small>공용 ${py(c.commonArea)} · 세단기/복합기</small></div>`);
@@ -833,7 +823,6 @@
         metric("전용면적", py(c.exclusive), `계약면적 ${py(n("contractArea"))}`),
         metric("월 고정비", won(c.fixedCost), `월 자본비용 ${won(c.monthlyCapitalCost)} · 보유세 ${won(n("propertyTaxMonthly"))}`),
         metric("추천 구성", `${c.totalRooms}개 룸`, `룸 ${c.roomSeats}명 · 공용좌석 판매 없음`),
-        metric("2인실", "제외", "가격 경쟁력 낮음"),
         metric("4인실 반일", roomPrice(c,"r4",4,.88), "주력 룸 기준"),
         metric("4인실 1일", roomPrice(c,"r4",8,.80), "주력 룸 기준"),
         metric("4인실 1주", roomPrice(c,"r4",40,.62), "주력 룸 기준"),
@@ -908,7 +897,7 @@
       const headers = ["룸","기준 인원","시간제 환산 1개월","공유오피스 대비 하한","최종 SOS 1개월","공유오피스 월 비용","절감액","절감률"];
       const rows = monthlyComparisonRows(c);
       const monthlyMiniEl = document.getElementById("monthlyComparisonMini");
-      if (monthlyMiniEl) monthlyMiniEl.innerHTML = table(headers, rows.filter(r=>r[0]==="2인실" || r[0]==="4인실" || r[0]==="4인실 VC"));
+      if (monthlyMiniEl) monthlyMiniEl.innerHTML = table(headers, rows.filter(r=>r[0]==="4인실" || r[0]==="4인실 VC" || r[0]==="6인실"));
       document.getElementById("monthlyComparisonTable").innerHTML = table(headers, rows);
     }
     function siteRoomPrices(overrides) {
@@ -1003,13 +992,13 @@
         return [
           `${100-util}%`,
           `${util}%`,
-          roomPrice(sc,"r2",160,.48),
           roomPrice(sc,"r4",4,.88),
           roomPrice(sc,"r4",160,.48),
+          roomPrice(sc,"r6",160,.48),
           pct(sc.bepUtil)
         ];
       });
-      const headers = ["공실률","목표 이용률","2인실 1개월","4인실 반일","4인실 1개월","BEP 가동률"];
+      const headers = ["공실률","목표 이용률","4인실 반일","4인실 1개월","6인실 1개월","BEP 가동률"];
       const vacancyMiniEl = document.getElementById("vacancyPricingMini");
       if (vacancyMiniEl) vacancyMiniEl.innerHTML = table(headers, rows);
       document.getElementById("vacancyPricingTable").innerHTML = table(headers, rows);
