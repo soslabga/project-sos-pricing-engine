@@ -941,11 +941,10 @@
 
       // 경쟁사 고정 가격
       const spSeat = n("sparkplusYeouidoSeat");
-      // 패스트파이브 실제 룸 가격 (정가 × 할인율)
-      const ffDisc = 1 - n("fastfivePangyoDiscountRate") / 100;
-      const ff4room  = Math.round(n("fastfivePangyo4room")  * ffDisc);
-      const ff7room  = Math.round(n("fastfivePangyo7room")  * ffDisc);
-      const ff10room = Math.round(n("fastfivePangyo10room") * ffDisc);
+      // 패스트파이브 정가 기준
+      const ff4room  = n("fastfivePangyo4room");
+      const ff7room  = n("fastfivePangyo7room");
+      const ff10room = n("fastfivePangyo10room");
 
       // 절감률 헬퍼
       function savPct(sos, comp) {
@@ -961,7 +960,7 @@
         ["월 공간비 (임대+관리)", won(c.spaceCost), won(yeoSOS.spaceCost), `${won(spSeat)}<small style="color:var(--gray)">/석</small>`, "—"],
         ["BEP 가동률", pct(c.bepUtil), pct(yeoSOS.bepUtil), "N/A", "N/A"],
         ["4인실 반일 (4h)", won(r4half_sos), won(pa(r4y,4,.88,0)), won(n("sparkplusYeouidoMeetingHalf")), won(n("fastfivePangyoMeetingHalf"))],
-        ["4인실 1개월", won(r4mo_sos), won(pa(r4y,160,.48,1)), won(n("sparkplusR5month"))+"<small style='color:#aaa'> (5인실)</small>", won(ff4room)+"<small style='color:#aaa'> (할인가)</small>"],
+        ["4인실 1개월", won(r4mo_sos), won(pa(r4y,160,.48,1)), won(n("sparkplusR5month"))+"<small style='color:#aaa'> (5인실)</small>", won(ff4room)+"<small style='color:#aaa'> (정가)</small>"],
         ["6인실 1개월", won(r6mo_sos), won(pa(r6y,160,.48,1)), won(n("sparkplusR8month"))+"<small style='color:#aaa'> (8인실)</small>", won(ff7room)+"<small style='color:#aaa'> (7인실 할인가)</small>"],
       ];
 
