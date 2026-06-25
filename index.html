@@ -544,6 +544,9 @@
       const targetVariable = sim.totalRevenue*n("variableCostRatio")/100;
       const targetProfit = sim.totalRevenue - c.fixedCost - targetVariable;
       const bepRevenue = c.fixedCost / Math.max(.01, 1 - n("variableCostRatio")/100);
+      const leaseFixedCost = n("rent") + n("maintenance") + c.operatingCost + c.monthlyInvestment;
+      const leaseProfit = sim.totalRevenue - leaseFixedCost - targetVariable;
+      const leaseBepRevenue = leaseFixedCost / Math.max(.01, 1 - n("variableCostRatio")/100);
       document.getElementById("modelOverview").innerHTML = `<div class="model-strip">
         <div class="model-box"><strong>핵심 전제</strong><span>이 모델의 경쟁력은 매출 확대보다 원가 절감에 있습니다. 불필요한 서비스와 인력을 제거해 낮은 BEP를 만드는 구조입니다.</span></div>
         <div class="model-box"><strong>매출 구조</strong><span>4인실 이상 프로젝트룸을 반일~수개월 단위로 판매하고, 입주사 할인 예약과 외부 예약을 병행합니다.</span></div>
@@ -567,20 +570,34 @@
           ["월 시뮬레이션 매출", won(sim.totalRevenue)]
         ]);
       document.getElementById("costModelSummary").innerHTML = kpiList([
+        ["매입 기준 월 고정비", won(c.fixedCost)],
+        ["임대 가정 월 고정비", won(leaseFixedCost)],
         ["매입 점유비", won(c.effectiveOccupancyCost)],
-        ["관리비", won(n("maintenance"))],
-        ["운영비", won(c.operatingCost)],
-        ["인테리어 월환산", won(c.monthlyInvestment)],
-        ["월 고정비", won(c.fixedCost)]
+        ["임대료 가정", won(n("rent"))],
+        ["매입 대비 임대 비용 차이", won(leaseFixedCost - c.fixedCost)]
       ]);
       document.getElementById("profitModelSummary").innerHTML = kpiList([
         ["월 시뮬레이션 매출", won(sim.totalRevenue)],
-        ["월 고정비", `-${won(c.fixedCost)}`],
+        ["매입 기준 영업이익", won(targetProfit)],
+        ["임대 가정 영업이익", won(leaseProfit)],
         ["월 변동비", `-${won(targetVariable)} (${n("variableCostRatio")}%)`],
-        ["예상 영업이익", won(targetProfit)],
-        ["예상 영업이익률", pct(sim.totalRevenue ? targetProfit/sim.totalRevenue : 0)],
-        ["BEP 필요 매출", won(bepRevenue)],
-        ["BEP 대비 매출 여유", won(sim.totalRevenue - bepRevenue)]
+        ["매입 기준 BEP", won(bepRevenue)],
+        ["임대 가정 BEP", won(leaseBepRevenue)]
+      ]);
+      document.getElementById("costSimulationDetail").innerHTML = table(["비용 항목","상세 산식"], [
+        ["매입 기준 점유비", `이자 ${won(c.monthlyInterest)} + 취득비 월환산 ${won(c.monthlyAcquisitionCost)} + 보유비 ${won(c.monthlyHoldingCost)} - 자산가치 반영 ${won(c.monthlyAssetUpside)} = ${won(c.effectiveOccupancyCost)}`],
+        ["임대 가정 점유비", `비교용 월 임대료 ${won(n("rent"))}`],
+        ["관리비", won(n("maintenance"))],
+        ["운영인력", `${c.managerCount}명 × ${won(n("managerUnitCost"))} = ${won(c.managerCost)}`],
+        ["청소관리", `면적 ${won(c.cleaningAreaCost)} + 좌석 ${won(c.cleaningDeskCost)} = ${won(c.cleaningCost)}`],
+        ["예약/QR 시스템", won(n("softwareCost"))],
+        ["OA/화상회의장비", won(n("equipmentCost"))],
+        ["필수 소모품", won(n("consumablesCost"))],
+        ["마케팅", won(n("marketingCost"))],
+        ["기타 운영비", won(n("operationCost"))],
+        ["인테리어 월환산", `${won(c.totalInitialInvestment)} ÷ ${c.investmentMonths}개월 = ${won(c.monthlyInvestment)}`],
+        ["매입 기준 월 고정비", `${won(c.effectiveOccupancyCost)} + ${won(n("maintenance"))} + ${won(c.operatingCost)} + ${won(c.monthlyInvestment)} = ${won(c.fixedCost)}`],
+        ["임대 가정 월 고정비", `${won(n("rent"))} + ${won(n("maintenance"))} + ${won(c.operatingCost)} + ${won(c.monthlyInvestment)} = ${won(leaseFixedCost)}`]
       ]);
       document.getElementById("revenueSimulationDetail").innerHTML =
         table(["기준","내용"], [
@@ -592,17 +609,6 @@
         table(["룸 타입","수량","월 가능시간","공실 반영 판매시간","공실률","반일 매출","1일 매출","1주 매출","1개월 매출","월 매출"], sim.rows.concat([
           ["공용오피스", `${c.openOfficeSeats}석`, `${fmt(c.openOfficeAvailableHours)}시간`, `${fmt(c.openOfficeSellableHours)}시간`, `${100-n("openOfficeUtilization")}%`, "-", "-", "-", "-", won(sim.openOfficeRevenue)]
         ]));
-      document.getElementById("costSimulationDetail").innerHTML = table(["비용 항목","상세 산식"], [
-        ["매입 점유비", `이자 ${won(c.monthlyInterest)} + 취득비 월환산 ${won(c.monthlyAcquisitionCost)} + 보유비 ${won(c.monthlyHoldingCost)} - 자산가치 반영 ${won(c.monthlyAssetUpside)} = ${won(c.effectiveOccupancyCost)}`],
-        ["운영인력", `${c.managerCount}명 × ${won(n("managerUnitCost"))} = ${won(c.managerCost)}`],
-        ["청소관리", `면적 ${won(c.cleaningAreaCost)} + 좌석 ${won(c.cleaningDeskCost)} = ${won(c.cleaningCost)}`],
-        ["예약/QR 시스템", won(n("softwareCost"))],
-        ["OA/화상회의장비", won(n("equipmentCost"))],
-        ["필수 소모품", won(n("consumablesCost"))],
-        ["마케팅", won(n("marketingCost"))],
-        ["기타 운영비", won(n("operationCost"))],
-        ["인테리어 월환산", `${won(c.totalInitialInvestment)} ÷ ${c.investmentMonths}개월 = ${won(c.monthlyInvestment)}`]
-      ]);
       document.getElementById("leaseProtectionSummary").innerHTML = table(["항목","확인 내용"], [
         ["핵심", "상가 임대차는 임차인이 계약갱신을 요구할 수 있으나, 전체 임대차기간은 최초 임대차기간 포함 10년을 넘지 못합니다."],
         ["요구 시점", "임대차기간 만료 6개월 전부터 1개월 전까지 계약갱신요구권 행사가 필요합니다."],
