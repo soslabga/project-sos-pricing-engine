@@ -248,13 +248,13 @@
       ["2주",80,.56,0], ["1개월",160,.48,1], ["2개월",320,.43,2], ["3개월",480,.39,3]
     ];
     const stages = [
-      { name:"초기", util:.30 }, { name:"안정화", util:.50 }, { name:"목표", util:.60 },
+      { name:"오픈 1~6개월", util:.30 }, { name:"안정화 6~12개월", util:.50 }, { name:"목표 12~18개월", util:.60 },
       { name:"성장", util:.70 }, { name:"상한", util:.85 }
     ];
     const defaults = {
       contractArea:496.0, exclusiveArea:228.0, exclusiveRate:45.97,
       revenueRatio:88, commonRatio:12, storageRatio:2, corridorRatio:6, oaZoneArea:1,
-      rent:53300000, deposit:533000000, maintenance:7500000, purchasePrice:10000000000, loanRatio:70, annualInterestRate:4.5, equityOpportunityRate:4.0, propertyTaxMonthly:9600000, acquisitionCostRatio:0, annualHoldingCostRatio:0, assetUpsideRatio:0, managerUnitCost:3500000,
+      spaceCostMode:0, rent:53300000, deposit:533000000, maintenance:7500000, purchasePrice:10000000000, loanRatio:70, annualInterestRate:4.5, equityOpportunityRate:4.0, propertyTaxMonthly:2500000, acquisitionCostRatio:0, annualHoldingCostRatio:0, assetUpsideRatio:0, managerUnitCost:3500000,
       interiorPerPyeong:650000, furnitureCost:50000000, initialEquipmentCost:10000000, systemBuildCost:30000000, openingCost:5000000,
       softwareCost:700000, equipmentCost:800000, consumablesCost:400000, utilityCost:0, insuranceSecurityCost:300000, taxAccountingCost:300000, repairReserveCost:500000, operationCost:800000, marketingCost:300000, cleaningDeskUnitCost:5000,
       initialLeaseMonths:24, extensionOptionMonths:0, leaseProtectionAvailable:1, interiorRecoveryMonths:120, rentIncreaseCap:1, subleaseAllowed:0, serviceAllowed:1, restorationClear:1,
@@ -275,7 +275,7 @@
       ["purchasePrice","매입가(원)"], ["maintenance","월 관리비(원)"]
     ];
     const advancedDefs = [
-      ["purchasePrice","매입가(원)"], ["loanRatio","대출비율(%)"], ["annualInterestRate","대출 연 이자율(%)"], ["equityOpportunityRate","자기자본 기회비용률(%)"],
+      ["spaceCostMode","공간비 모드(0=매입, 1=임차)"], ["purchasePrice","매입가(원)"], ["loanRatio","대출비율(%)"], ["annualInterestRate","대출 연 이자율(%)"], ["equityOpportunityRate","자기자본 기회비용률(%)"],
       ["propertyTaxMonthly","재산세/종부세 월 환산(원)"], ["rent","외부 임대료 비교값(원)"],
       ["acquisitionCostRatio","취득 부대비용(%)"], ["annualHoldingCostRatio","기타 보유비율(%)"], ["assetUpsideRatio","연 자산가치 상승률(%)"],
       ["exclusiveRate","전용률(%)"], ["revenueRatio","수익공간 비율(%)"],
@@ -372,7 +372,8 @@
       const purchaseOccupancyCost = monthlyCapitalCost + monthlyAcquisitionCost + monthlyHoldingCost + n("propertyTaxMonthly") - monthlyAssetUpside;
       const effectiveOccupancyCost = Math.max(0, purchaseOccupancyCost);
       const operatingCost = managerCost + cleaningCost + n("softwareCost") + n("equipmentCost") + n("consumablesCost") + n("utilityCost") + n("insuranceSecurityCost") + n("taxAccountingCost") + n("repairReserveCost") + n("marketingCost") + n("operationCost");
-      const spaceCost = effectiveOccupancyCost;
+      const isLeaseMode = n("spaceCostMode") >= 1;
+      const spaceCost = isLeaseMode ? n("rent") : effectiveOccupancyCost;
       const fixedCostBeforeInvestment = spaceCost + n("maintenance") + operatingCost;
       const fixedCost = fixedCostBeforeInvestment + monthlyInvestment;
       const availableHours = Math.max(1,totalRooms) * n("operatingDays") * n("hoursPerDay");
@@ -416,7 +417,7 @@
       return {
         exclusive, revenueArea, commonArea, rooms, totalRooms, usedRevenueArea, openOfficeArea, openOfficeSeats,
         roomSeats, totalCapacity, managerCount, oneManagerPossible, managerCost, cleaningRate, cleaningAreaCost, cleaningDeskCost, cleaningCost,
-        spaceCost, loanAmount, equityAmount, monthlyInterest, monthlyEquityOpportunityCost, monthlyCapitalCost, acquisitionCost, monthlyAcquisitionCost, monthlyHoldingCost, monthlyAssetUpside, purchaseOccupancyCost, effectiveOccupancyCost, maxOccupancyCost, rentSaving, purchaseStatus,
+        isLeaseMode, spaceCost, loanAmount, equityAmount, monthlyInterest, monthlyEquityOpportunityCost, monthlyCapitalCost, acquisitionCost, monthlyAcquisitionCost, monthlyHoldingCost, monthlyAssetUpside, purchaseOccupancyCost, effectiveOccupancyCost, maxOccupancyCost, rentSaving, purchaseStatus,
         operatingCost, fixedCostBeforeInvestment, initialInteriorCost, totalInitialInvestment, monthlyInvestment, investmentMonths, totalUseMonths, contractStatus, financialStatus, fixedCost, requiredProfit, requiredRevenue, requiredVariableCost, contributionRate, baseHourly, rawWeightedHourly, pricingScale,
         availableHours, pricingHours, breakEvenHourly, pricing, weightedHourly, openOfficeHourly,
         openOfficeAvailableHours, openOfficeSellableHours, bepUtil, revenueAtTarget, maxOccupancyCost, status
@@ -489,10 +490,10 @@
     }
     function revenueSimulation(c) {
       const mix = [
-        { label:"반일", hours:4, discount:.88, months:0, share:.30 },
-        { label:"1일", hours:8, discount:.80, months:0, share:.30 },
-        { label:"1주", hours:40, discount:.62, months:0, share:.20 },
-        { label:"1개월", hours:160, discount:.48, months:1, share:.20 }
+        { label:"반일", hours:4, discount:.88, months:0, share:.45 },
+        { label:"1일", hours:8, discount:.80, months:0, share:.35 },
+        { label:"1주", hours:40, discount:.62, months:0, share:.15 },
+        { label:"1개월", hours:160, discount:.48, months:1, share:.05 }
       ];
       let roomRevenue = 0;
       const rows = [];
@@ -577,8 +578,10 @@
           ["월 시뮬레이션 매출", won(sim.totalRevenue)]
         ]);
       document.getElementById("costModelSummary").innerHTML = kpiList([
+        ["공간비 모드", c.isLeaseMode ? "임차 모드" : "매입 모드"],
         ["월 자본비용", won(c.monthlyCapitalCost)],
         ["재산세/종부세 월환산", won(n("propertyTaxMonthly"))],
+        ["월 공간비", won(c.spaceCost)],
         ["월 관리비", won(n("maintenance"))],
         ["운영비", won(c.operatingCost)],
         ["월 고정비", won(c.fixedCost)]
@@ -594,11 +597,12 @@
       document.getElementById("costSimulationDetail").innerHTML = table(["비용 항목","구성","월 금액"], [
         ["면적 기준", "계약면적", "496.0평"],
         ["면적 기준", "전용면적", "228.0평"],
+        ["공간비 모드", c.isLeaseMode ? "임차 모드" : "매입 모드", c.isLeaseMode ? "월 임대료 기준" : "자본비용 + 보유세 기준"],
         ["자본비용", `대출 ${n("loanRatio")}% × 연 ${n("annualInterestRate")}%`, won(c.monthlyInterest)],
         ["자본비용", `자기자본 ${100-n("loanRatio")}% × 연 ${n("equityOpportunityRate")}%`, won(c.monthlyEquityOpportunityCost)],
         ["자본비용", "소계", won(c.monthlyCapitalCost)],
-        ["보유세", "재산세/종부세 월 환산, 세무사 확인 전 추정", won(n("propertyTaxMonthly"))],
-        ["공간비", "자본비용 + 보유세 + 기타 보유비 - 자산가치 상승 반영", won(c.spaceCost)],
+        ["보유세", "재산세/종부세 월 환산, 100억 × 과표 70% × 0.4% ÷ 12 기준", won(n("propertyTaxMonthly"))],
+        ["공간비", c.isLeaseMode ? "월 임대료" : "자본비용 + 보유세 + 기타 보유비 - 자산가치 상승 반영", won(c.spaceCost)],
         ["공통 운영비", "관리비 합계", won(n("maintenance"))],
         ["관리비 근거", "4월 고지서 643만원 수준에 계절 보정 반영", won(n("maintenance"))],
         ["공통 운영비", `운영인력 ${c.managerCount}명`, won(c.managerCost)],
@@ -622,8 +626,11 @@
       document.getElementById("revenueSimulationDetail").innerHTML =
         table(["기준","내용"], [
           ["룸 판매 기준", `${c.totalRooms}개 룸 · 월 판매가능 ${fmt(c.availableHours)}시간 · 목표 판매 ${fmt(c.pricingHours)}시간`],
-          ["상품 판매 믹스", "반일 30% · 1일 30% · 1주 20% · 1개월 20%"],
-          ["판매율", `룸 이용률 ${n("targetUtilization")}%`]
+          ["상품 판매 믹스", "반일 45% · 1일 35% · 1주 15% · 1개월 5%"],
+          ["판매율", `목표 룸 이용률 ${n("targetUtilization")}%`],
+          ["이용률 램프업", "오픈 1~6개월 25~35% · 안정화 6~12개월 45~55% · 목표 12~18개월 60%"],
+          ["48개월 평균 이용률", "초기 6개월 30% · 안정화 6개월 50% · 이후 36개월 60% = 평균 약 55%"],
+          ["가격 기준", "단가는 목표 단계 60% 기준. 오픈 초기 손익은 시나리오 표에서 별도 관리"]
         ]) +
         `<div style="height:12px"></div>` +
         table(["단가 도출 단계","산식","값"], [
