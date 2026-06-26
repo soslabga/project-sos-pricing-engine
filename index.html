@@ -284,7 +284,7 @@
     const defaults = {
       contractArea:228.0, exclusiveArea:103.5, exclusiveRate:45.39,
       revenueRatio:88, commonRatio:12, storageRatio:2, corridorRatio:6, oaZoneArea:1,
-      spaceCostMode:1, rent:13987000, deposit:69935000, maintenance:7500000, purchasePrice:4600000000, loanRatio:70, annualInterestRate:4.5, equityOpportunityRate:4.0, depositOpportunityRate:4.0, propertyTaxMonthly:2500000, acquisitionCostRatio:0, annualHoldingCostRatio:0, assetUpsideRatio:0, managerUnitCost:3500000,
+      spaceCostMode:0, rent:13987000, deposit:69935000, maintenance:7500000, purchasePrice:4600000000, loanRatio:70, annualInterestRate:4.5, equityOpportunityRate:4.0, depositOpportunityRate:4.0, propertyTaxMonthly:2500000, acquisitionCostRatio:0, annualHoldingCostRatio:0, assetUpsideRatio:0, managerUnitCost:3500000,
       interiorPerPyeong:650000, furnitureCost:50000000, initialEquipmentCost:10000000, systemBuildCost:30000000, openingCost:5000000, restorationReserveTotal:30000000, fitoutFreeMonths:1.5,
       softwareCost:700000, equipmentCost:800000, consumablesCost:400000, utilityCost:700000, insuranceSecurityCost:300000, taxAccountingCost:300000, repairReserveCost:500000, operationCost:800000, marketingCost:2000000, employmentBurdenCost:340000, partTimeCost:0, cleaningDeskUnitCost:5000,
       initialLeaseMonths:24, extensionOptionMonths:0, leaseProtectionAvailable:1, interiorRecoveryMonths:120, rentIncreaseCap:1, subleaseAllowed:0, serviceAllowed:1, restorationClear:1,
@@ -679,7 +679,7 @@
             ${isRealisticProfit ? `✓ 45% 이용률에서 월 ${won(realisticProfit)} 흑자` : `⚠ 45% 이용률에서 월 ${won(Math.abs(realisticProfit))} 적자 — 운전자금 필요`}
           </div>
           <div style="margin-top:8px;background:#fff8f0;border-radius:7px;padding:9px 11px;font-size:12px;color:var(--gray);">
-            <strong style="color:var(--orange);">포지션:</strong> 패스트파이브·스파크플러스 입점지(수요 검증된 입지)에 가성비로 진입 · 양사가 안 파는 단기(반일~2주) 가능 · 단가 양사 대비 25~38% 저렴
+            단가는 패스트파이브 판교 대비 25~38% 저렴하게 설정
           </div>
         </div>`;
 
@@ -817,9 +817,8 @@
         ["핵심 고객", "단기 TFT, PMO, 외부 컨설팅팀, 고객 공동개발팀, 임시 프로젝트 조직"],
         ["도입 필요성", "공유오피스는 월 좌석 중심으로 비용 부담이 크고, 회의실은 지속 업무공간으로 한계가 있음"],
         ["핵심 경쟁력", "실제 비용 기반 가격 산정, 필요 시 자체 무인 예약 시스템 구축, 1인 운영 가능 구조"],
-        ["경쟁 구도", "스파크플러스·패스트파이브는 상주 좌석/오피스 중심(월 단위·서울 프라임 집중). Project SOS는 같은 입점지(수요 검증된 입지)에 가성비로 진입하고, 양사가 안 파는 단기(반일~2주)를 더 저렴하게 공급"],
-        ["입지 전략", "패스트파이브·스파크플러스 입점지 = 이미 수요가 검증된 곳. 경쟁이 있어도 그곳에 들어가 가성비·단기로 점유 (강남·도심·여의도·성수·홍대·판교·분당)"],
-        ["입력", "계약면적 또는 전용면적, 임대료, 보증금, 보증금 기회비용, 관리비, 운영비로 실행 가격 산정 (임대 기준)"],
+        ["경쟁 구도", "스파크플러스·패스트파이브는 상주 좌석/오피스 중심, 토즈는 회의실 중심이며 Project SOS는 중기 프로젝트 수행 공간으로 차별화"],
+        ["입력", "계약면적 또는 전용면적, 매입가, 대출비율, 이자율, 보유세, 관리비, 운영비로 실행 가격 산정"],
         ["공간", "2인실은 경쟁력이 낮아 제외하고 4인실 이상 프로젝트룸 중심으로 구성"],
         ["운영", "상담 예약을 없애고 셀프 예약, 온라인 결제, QR 출입, 표준 룸 모듈로 1인 운영이 가능하게 설계. 방법이 없으면 자체 시스템을 구축"],
         ["원가", "인테리어 표준화, 중고/표준 가구, 장비 렌탈, 컵·종이컵 미제공, 크레딧 미제공"],
