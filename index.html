@@ -193,6 +193,19 @@
       </div>
     </section>
 
+    <section class="section" data-tab="Subdivided Lease">
+      <div class="card">
+        <h2>분할임대 vs 통임대 — 1103호 (4T 합법형)</h2>
+        <div class="note" style="margin-bottom:14px;">
+          11층 업무시설(4T 제한)에서 합법 가능한 방식은 <strong>4T 기업 임대</strong>뿐입니다. 통임대(1곳)와 분할임대(4T 다수)를 같은 보유비용 기준으로 비교합니다. 회의실·라운지는 <strong>관리비 실비 공용제공(수익 제외)</strong>.
+        </div>
+        <div class="metric-grid" id="diviKpi" style="margin-bottom:16px;"></div>
+        <div id="diviCompare" style="margin-bottom:18px;"></div>
+        <div id="diviSensitivity" style="margin-bottom:18px;"></div>
+        <div id="diviAssumptions"></div>
+      </div>
+    </section>
+
     <section class="section" data-tab="Vacancy Pricing">
       <div class="card">
         <h2>공실률별 가격 시나리오</h2>
@@ -286,7 +299,8 @@
       fastfivePangyoDiscountRate:28,
       yeouidoPurchasePrice:7200000000, yeouidoRent:30843000, yeouidoMaintenance:11385000,
       pangyoPurchasePrice:4600000000, pangyoRent:18284000, pangyoMaintenance:3134060,
-      fastfiveYeouidoRoom4:1800000, fastfiveYeouidoRoom6:3100000
+      fastfiveYeouidoRoom4:1800000, fastfiveYeouidoRoom6:3100000,
+      diviLeasableRatio:87, diviRentPerPyeong:200000, diviOccupancy:85, diviFitoutCost:40000000, diviFitoutMonths:36, diviCommonMgmt:500000, diviDepositMonths:10
     };
     let state = { ...defaults };
     let areaMode = "contract";
@@ -323,7 +337,11 @@
       ["restorationReserveTotal","원상복구 순충당금(원)"], ["fitoutFreeMonths","공사기간 비용 반영개월"],
       ["marketingCost","월 홍보비(원)"], ["operationCost","기타 필수 운영비(원)"],
       ["cleaningDeskUnitCost","좌석당 청소비(원)"], ["interiorPerPyeong","평당 인테리어비(원)"],
-      ["operatingDays","운영일수"], ["hoursPerDay","일 운영시간"]
+      ["operatingDays","운영일수"], ["hoursPerDay","일 운영시간"],
+      ["diviLeasableRatio","분할 임대가능면적 비율(%)"], ["diviRentPerPyeong","분할 평당 임대료(원)"],
+      ["diviOccupancy","분할 입주율(%)"], ["diviFitoutCost","분할 가벽·구축비(원)"],
+      ["diviFitoutMonths","구축비 상각(개월)"], ["diviCommonMgmt","분할 공용관리비 월(원)"],
+      ["diviDepositMonths","보증금(월수)"]
     ];
     function n(id){ return Number(state[id]) || 0; }
     function fmt(x){ return Math.round(Number(x)||0).toLocaleString("ko-KR"); }
@@ -1170,6 +1188,94 @@
 
       document.getElementById("siteProfitabilityTable").innerHTML = costHtml + bepHtml;
     }
+    function renderSubdividedLease() {
+      const area = n("exclusiveArea");
+      // 공통 보유비용
+      const loan = n("purchasePrice") * n("loanRatio") / 100;
+      const equity = Math.max(0, n("purchasePrice") - loan);
+      const mInterest = loan * n("annualInterestRate") / 100 / 12;
+      const mEquity = equity * n("equityOpportunityRate") / 100 / 12;
+      const cashCarry = mInterest + n("propertyTaxMonthly");          // 현금 기준 (이자+세금)
+      const fullCarry = cashCarry + mEquity;                          // 경제적 기준 (+자기자본 기회비용)
+      const depOpp = n("depositOpportunityRate") / 100 / 12;
+      const depMonths = n("diviDepositMonths");
+
+      // 통임대 (1곳)
+      const wRent = n("pangyoRent");
+      const wDepIncome = wRent * depMonths * depOpp;
+      const wIncome = wRent + wDepIncome;
+      const wPyeong = area > 0 ? wRent / area : 0;
+      const wNetCash = wIncome - cashCarry;
+      const wNetEcon = wIncome - fullCarry;
+
+      // 분할임대 (4T 다수)
+      const leasable = area * n("diviLeasableRatio") / 100;
+      const fullRent = leasable * n("diviRentPerPyeong");
+      const monthlyFitout = n("diviFitoutMonths") > 0 ? n("diviFitoutCost") / n("diviFitoutMonths") : 0;
+      const commonMgmt = n("diviCommonMgmt");
+      function diviAt(occ) {
+        const rent = fullRent * occ / 100;
+        const depIncome = fullRent * depMonths * depOpp * occ / 100;
+        const income = rent + depIncome;
+        const netCash = income - monthlyFitout - commonMgmt - cashCarry;
+        const netEcon = income - monthlyFitout - commonMgmt - fullCarry;
+        return { occ, rent, depIncome, income, netCash, netEcon };
+      }
+      const dFull = diviAt(100);
+      const dReal = diviAt(n("diviOccupancy"));
+      const incomeFull = fullRent + fullRent * depMonths * depOpp;
+      const bepCashOcc = incomeFull > 0 ? (monthlyFitout + commonMgmt + cashCarry) / incomeFull * 100 : 0;
+
+      // KPI 카드
+      document.getElementById("diviKpi").innerHTML = [
+        metric("월 보유비용(현금)", won(cashCarry), "대출이자+재산세 (자기자본 기회비용 제외)", "warn"),
+        metric("통임대 순현금", won(wNetCash), `임대 ${won(wRent)} · 평당 ${won(wPyeong)}`, wNetCash >= 0 ? "good" : "bad"),
+        metric(`분할 순현금 (${n("diviOccupancy")}%)`, won(dReal.netCash), `만실 시 ${won(dFull.netCash)}`, dReal.netCash >= 0 ? "good" : "bad"),
+        metric("분할 흑자 입주율", bepCashOcc <= 100 ? Math.round(bepCashOcc) + "%" : "100%+", "현금 기준 흑자 전환점", bepCashOcc <= 70 ? "good" : bepCashOcc <= 90 ? "warn" : "bad")
+      ].join("");
+
+      const fmtNet = v => `<strong style="color:${v >= 0 ? 'var(--green)' : 'var(--red)'};">${won(v)}</strong>`;
+
+      // 비교표
+      document.getElementById("diviCompare").innerHTML =
+        `<h3>분할임대 vs 통임대 — 월 손익 비교</h3>` +
+        table(["항목", "통임대 (1곳)", "분할 만실", `분할 ${n("diviOccupancy")}%`], [
+          ["임대가능면적", py(area), py(leasable), py(leasable)],
+          ["평당 임대료", won(wPyeong), won(n("diviRentPerPyeong")), won(n("diviRentPerPyeong"))],
+          ["월 임대수입", won(wRent), won(fullRent), won(dReal.rent)],
+          ["보증금 운용수익", won(wDepIncome), won(dFull.depIncome), won(dReal.depIncome)],
+          ["(−) 구축비 월상각", "0원", "-" + won(monthlyFitout), "-" + won(monthlyFitout)],
+          ["(−) 공용관리비", "0원", "-" + won(commonMgmt), "-" + won(commonMgmt)],
+          ["현금 순현금흐름", fmtNet(wNetCash), fmtNet(dFull.netCash), fmtNet(dReal.netCash)],
+          ["경제적 순손익 (자기자본 기회비용 포함)", fmtNet(wNetEcon), fmtNet(dFull.netEcon), fmtNet(dReal.netEcon)]
+        ]);
+
+      // 입주율 민감도
+      const sens = [50, 70, 85, 100].map(occ => {
+        const d = diviAt(occ);
+        return [`${occ}%`, won(d.income), "-" + won(monthlyFitout + commonMgmt), fmtNet(d.netCash), fmtNet(d.netEcon)];
+      });
+      document.getElementById("diviSensitivity").innerHTML =
+        `<h3>분할임대 입주율별 손익 — 점진 충원 시뮬레이션</h3>` +
+        `<div style="font-size:12px;color:var(--gray);margin-bottom:8px;">분할의 핵심 장점: 통임대는 대어 1곳을 기다려야 하지만, 분할은 4T사 1곳씩 들어올 때마다 수입이 발생합니다.</div>` +
+        table(["입주율", "월 수입(임대+보증금운용)", "분할 부대비용", "현금 순현금흐름", "경제적 순손익"], sens);
+
+      // 가정·합법근거
+      document.getElementById("diviAssumptions").innerHTML =
+        `<div class="note" style="margin-top:4px;">
+          <strong>합법 구조 (4T):</strong> 가벽 구획 + 개별 임대차계약 + 각 임차인 사업자등록 + 4T 업종 유지·위반시 해지 특약. 회의실·라운지는 <strong>관리비 실비 공용제공(무마진·무인·입주사 전용)</strong>, SOS는 그 층에서 영리 서비스 운영 ❌.
+        </div>
+        <div style="height:12px"></div>` +
+        table(["가정", "값", "비고"], [
+          ["통임대 시장 임대료", won(wRent), "판교 1103호 면적보정 시세"],
+          ["분할 임대가능면적 비율", n("diviLeasableRatio") + "%", "복도·공용 회의실/라운지 차감"],
+          ["분할 평당 임대료", won(n("diviRentPerPyeong")), "소형 사무실 프리미엄 (실시세로 조정)"],
+          ["가벽·구축비", won(n("diviFitoutCost")) + ` / ${n("diviFitoutMonths")}개월 상각`, "일회성 구획 공사"],
+          ["공용관리비(SOS 부담)", won(n("diviCommonMgmt")), "공용 회의실·라운지 청소·유지"],
+          ["보유비용(현금)", won(cashCarry), "대출이자 " + won(mInterest) + " + 재산세 " + won(n("propertyTaxMonthly"))],
+          ["보유비용(경제적)", won(fullCarry), "+ 자기자본 기회비용 " + won(mEquity)]
+        ]);
+    }
     function calcWithUtil(util) {
       const old = state.targetUtilization;
       state.targetUtilization = util;
@@ -1366,7 +1472,7 @@
     function renderTabs() {
       const visibleTabs = [
         "Dashboard", "Space Planning", "Cost Structure", "Pricing",
-        "Competitor Comparison", "Site Profitability", "Purchase Test", "Reservation System", "Marketing Strategy"
+        "Competitor Comparison", "Site Profitability", "Subdivided Lease", "Purchase Test", "Reservation System", "Marketing Strategy"
       ];
       const labels = {
         "Dashboard":"사업 개요",
@@ -1376,6 +1482,7 @@
         "Pricing":"가격표",
         "Competitor Comparison":"경쟁사 비교",
         "Site Profitability":"여의도·판교 검증",
+        "Subdivided Lease":"분할임대(4T)",
         "Purchase Test":"공간비 관리",
         "Reservation System":"무인 예약",
         "Marketing Strategy":"마케팅 전략"
@@ -1391,7 +1498,7 @@
     function render() {
       renderInputs();
       const c = calc();
-      renderDashboard(c); renderSpace(c); renderCosts(c); renderPricing(c); renderMonthlyComparison(c); renderCompetitorComparison(c); renderSiteProfitability(); renderVacancyPricing(c); renderBep(c); renderPurchase(c); renderScenario(c); renderOperatingPolicy(c); renderReservationSystem(); renderMarketingStrategy();
+      renderDashboard(c); renderSpace(c); renderCosts(c); renderPricing(c); renderMonthlyComparison(c); renderCompetitorComparison(c); renderSiteProfitability(); renderSubdividedLease(); renderVacancyPricing(c); renderBep(c); renderPurchase(c); renderScenario(c); renderOperatingPolicy(c); renderReservationSystem(); renderMarketingStrategy();
     }
     renderTabs();
     render();
