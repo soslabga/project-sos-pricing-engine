@@ -43,8 +43,8 @@ const draw_r4=(y0)=>{
   let x=0.12;
   for(let i=0;i<7;i++){room(x,y0,2.2,2.9,2,'#dce8ff','2200×2900');x+=2.3;}
   // 1인 2개 상단(북쪽 복도 접근): 1900×1400 ≈ 0.8평
-  room(x,y0,1.9,1.4,1,'#ede8ff','1900×1400');
-  room(x+2.0,y0,1.9,1.4,1,'#ede8ff','1900×1400');
+  room(x,y0,1.89,1.4,1,'#ede8ff','1890×1400');
+  room(x+1.99,y0,1.89,1.4,1,'#ede8ff','1890×1400');
   // 하단 구조벽(복도 없어 접근불가)
   s.push(`<rect x="${X(x)}" y="${Y(y0+1.5)}" width="${3.9*S}" height="${1.3*S}" fill="#cbd5e1" stroke="#94a3b8" stroke-width="0.8"/>`);
   s.push(`<text x="${X(x+1.95)}" y="${Y(y0+2.15)}" font-size="7" fill="#64748b" text-anchor="middle">구조벽</text>`);
@@ -57,8 +57,8 @@ const draw_r5=(y0)=>{
   s.push(`<rect x="${X(x)}" y="${Y(y0)}" width="${3.9*S}" height="${1.3*S}" fill="#cbd5e1" stroke="#94a3b8" stroke-width="0.8"/>`);
   s.push(`<text x="${X(x+1.95)}" y="${Y(y0+0.65)}" font-size="7" fill="#64748b" text-anchor="middle">구조벽</text>`);
   // 1인 2개 하단(남쪽 복도 접근): 1900×1400 ≈ 0.8평
-  room(x,y0+1.5,1.9,1.4,1,'#ede8ff','1900×1400');
-  room(x+2.0,y0+1.5,1.9,1.4,1,'#ede8ff','1900×1400');
+  room(x,y0+1.5,1.89,1.4,1,'#ede8ff','1890×1400');
+  room(x+1.99,y0+1.5,1.89,1.4,1,'#ede8ff','1890×1400');
 };
 draw_r4(11.02);
 // 줄5 등맞댐
