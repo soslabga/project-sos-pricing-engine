@@ -135,7 +135,7 @@
           <summary>고급 설정</summary>
           <div class="input-grid" id="advancedInputs" style="margin-top:14px;"></div>
         </details>
-        <div class="actions"><button onclick="resetDefaults()">판교 기본값 복원</button><button onclick="applyYeouido()">여의도 매물 검증</button><button class="secondary" onclick="window.print()">PDF/출력</button></div>
+        <div class="actions"><button onclick="applyPreset('판교 H스퀘어 B1')">판교 H스퀘어</button><button onclick="applyPreset('분당 수내역 5층')">분당 수내역</button><button onclick="applyPreset('여의도 GS자이 인근 4층')">여의도 GS자이</button><button class="secondary" onclick="window.print()">PDF/출력</button></div>
       </div>
     </section>
 
@@ -261,6 +261,32 @@
       </div>
     </section>
 
+    <section class="section" data-tab="Cash Flow">
+      <div class="card">
+        <h2>60개월 월별 현금흐름</h2>
+        <div class="note" style="margin-bottom:14px;">초기투자비를 0개월 차 유출로 반영한 뒤, 이용률 램프업 → 안정화 → 성장 단계를 거쳐 60개월 누적 현금흐름을 자동 산출합니다. 투자회수 전환월은 파란 테두리로 표시됩니다.</div>
+        <div class="metric-grid" style="margin-bottom:16px;" id="cashFlowMetrics"></div>
+        <div id="cashFlowChart" style="margin-bottom:16px;"></div>
+        <div id="cashFlowTable"></div>
+      </div>
+    </section>
+
+    <section class="section" data-tab="ROI / IRR">
+      <div class="grid cols2">
+        <div class="card"><h2>투자수익 지표</h2><div id="roiTable"></div></div>
+        <div class="card"><h2>할인율별 NPV</h2><div id="npvTable"></div></div>
+      </div>
+      <div class="card" style="margin-top:16px;"><h2>연도별 손익 요약</h2><div id="yearlyTable"></div></div>
+    </section>
+
+    <section class="section" data-tab="매물 검증">
+      <div class="card" style="margin-bottom:16px;">
+        <h2>매물 비교 대시보드</h2>
+        <div class="note" style="margin-bottom:14px;">등록된 매물을 같은 기준으로 비교합니다. GO/NO-GO 판정, 좌석 단가 경쟁력, 투자회수 기간을 한눈에 확인하세요.</div>
+        <div id="execDashboard"></div>
+      </div>
+    </section>
+
     <section class="section" data-tab="Scenario Analysis">
       <div class="card"><h2>시나리오 분석</h2><div id="scenarioTable"></div></div>
     </section>
@@ -268,14 +294,17 @@
 
   <script>
     const roomTypes = [
-      { key:"r4",   name:"4인실",    area:8,  capacity:4, weight:.85, premium:1.00, vc:false },
-      { key:"r4vc", name:"4인실 VC", area:8,  capacity:4, weight:0,   premium:1.15, vc:true  },
-      { key:"r6",   name:"6인실",    area:10, capacity:6, weight:.12, premium:1.05, vc:false },
-      { key:"r6vc", name:"6인실 VC", area:10, capacity:6, weight:0,   premium:1.18, vc:true  }
+      { key:"r4", name:"4인실", area:8,  capacity:4, premium:1.00 },
+      { key:"r6", name:"6인실", area:10, capacity:6, premium:1.10 }
+    ];
+    const officeTypes = [
+      { key:"o2", name:"2인 사무실", area:2,  capacity:2, weight:0.35, premium:1.00 },
+      { key:"o4", name:"4인 사무실", area:4,  capacity:4, weight:0.50, premium:0.95 },
+      { key:"o6", name:"6인 사무실", area:6,  capacity:6, weight:0.15, premium:0.90 }
     ];
     const durations = [
-      ["반일",4,.88,0], ["1일",8,.80,0], ["3일",24,.72,0], ["1주",40,.62,0],
-      ["2주",80,.56,0], ["1개월",160,.48,1], ["2개월",320,.43,2], ["3개월",480,.39,3]
+      ["1주",40,.62,0],
+      ["1개월",160,.48,1], ["1년",1920,.35,12]
     ];
     const stages = [
       { name:"오픈 저조", util:.10 }, { name:"오픈 초기", util:.20 }, { name:"오픈 개선", util:.30 },
@@ -284,13 +313,14 @@
     const defaults = {
       contractArea:228.0, exclusiveArea:103.5, exclusiveRate:45.39,
       revenueRatio:88, commonRatio:12, storageRatio:2, corridorRatio:6, oaZoneArea:1,
+      meetingRoom4Count:2, meetingRoom6Count:1, loungeAreaPyeong:10,
       spaceCostMode:0, rent:13987000, deposit:69935000, maintenance:7500000, purchasePrice:4600000000, loanRatio:70, annualInterestRate:4.5, equityOpportunityRate:4.0, depositOpportunityRate:4.0, propertyTaxMonthly:2500000, acquisitionCostRatio:0, annualHoldingCostRatio:0, assetUpsideRatio:0, managerUnitCost:3500000,
       interiorPerPyeong:650000, furnitureCost:50000000, initialEquipmentCost:10000000, systemBuildCost:30000000, openingCost:5000000, restorationReserveTotal:30000000, fitoutFreeMonths:1.5,
-      softwareCost:700000, equipmentCost:800000, consumablesCost:400000, utilityCost:700000, insuranceSecurityCost:300000, taxAccountingCost:300000, repairReserveCost:500000, operationCost:800000, marketingCost:2000000, employmentBurdenCost:340000, partTimeCost:0, cleaningDeskUnitCost:5000,
+      softwareCost:400000, equipmentCost:200000, consumablesCost:200000, utilityCost:600000, insuranceSecurityCost:200000, taxAccountingCost:300000, repairReserveCost:300000, operationCost:0, marketingCost:300000, employmentBurdenCost:340000, partTimeCost:300000, cleaningDeskUnitCost:5000,
       initialLeaseMonths:24, extensionOptionMonths:0, leaseProtectionAvailable:1, interiorRecoveryMonths:120, rentIncreaseCap:1, subleaseAllowed:0, serviceAllowed:1, restorationClear:1,
       operatingDays:22, hoursPerDay:9, targetUtilization:60,
       targetMargin:35, variableCostRatio:8,
-      coworkingMonthlyPerSeat:550000, targetOperatingMargin:20,
+      coworkingMonthlyPerSeat:550000, officeMonthlyPerSeat:550000, seatDensity:0.89, bepUtilization:70, targetOperatingMargin:20,
       monthlyCoworkingFloor:60,
       sparkplusYeouidoSeat:650000, sparkplusYeouidoMeetingHalf:180000, sparkplusYeouidoMeetingDay:320000,
       sparkplusR2month:1300000, sparkplusR5month:2700000, sparkplusR8month:3350000,
@@ -350,18 +380,60 @@
     function py(x){ return (Number(x)||0).toFixed(1) + "평"; }
     function roundPrice(x){ return Math.ceil((Number(x)||0) / 1000) * 1000; }
 
-    function optimizeRooms(revenueArea) {
-      const counts = roomTypes.map(()=>0);
-      let targetRoomArea = revenueArea * .94;
-      roomTypes.forEach((r, i) => {
-        let proposed = Math.floor((targetRoomArea * r.weight) / r.area);
-        counts[i] = Math.max(0, proposed);
+    const properties = {
+      "판교 H스퀘어 B1": {
+        _address:"경기도 성남시 분당구 판교역로 152 H스퀘어 B1",
+        contractArea:209.9, exclusiveArea:104.1, exclusiveRate:49,
+        spaceCostMode:1, rent:6500000, deposit:75000000, maintenance:2000000,
+        coworkingMonthlyPerSeat:550000, competitorMeetingHourly:26000,
+        competitor4Monthly:2224800, competitor6Monthly:2923200,
+        _region:"판교/분당", _comp4name:"패스트파이브 4인실", _comp6name:"패스트파이브 7인실"
+      },
+      "분당 수내역 5층": {
+        _address:"경기도 성남시 분당구 수내동 18-1 5층",
+        contractArea:205.7, exclusiveArea:120.8, exclusiveRate:59,
+        spaceCostMode:1, rent:4330000, deposit:75000000, maintenance:950000,
+        coworkingMonthlyPerSeat:550000, competitorMeetingHourly:22000,
+        competitor4Monthly:1650000, competitor6Monthly:1980000,
+        _region:"판교/분당", _comp4name:"스파크플러스 5인실", _comp6name:"스파크플러스 6인실"
+      },
+      "여의도 GS자이 인근 4층": {
+        _address:"서울특별시 영등포구 여의도동 (GS자이 인근 상가 4층)",
+        contractArea:108.9, exclusiveArea:89.8, exclusiveRate:82,
+        spaceCostMode:1, rent:7500000, deposit:100000000, maintenance:800000,
+        coworkingMonthlyPerSeat:650000, competitorMeetingHourly:32000,
+        competitor4Monthly:1755000, competitor6Monthly:2700000,
+        _region:"여의도/영등포", _comp4name:"패스트파이브 4인실", _comp6name:"스파크플러스 5인실"
+      }
+    };
+        function optimizeRooms(revenueArea) {
+      return roomTypes.map(function(r) {
+        if (r.key === "r4") return Math.max(0, Math.round(n("meetingRoom4Count")));
+        if (r.key === "r6") return Math.max(0, Math.round(n("meetingRoom6Count")));
+        return 0;
       });
-      let used = counts.reduce((sum,c,i)=>sum+c*roomTypes[i].area,0);
-      const mainRoomIndex = roomTypes.findIndex(r=>r.key==="r4");
-      while (used + 8 <= targetRoomArea) { counts[mainRoomIndex] += 1; used += 8; }
+    }
+    function allocateOffices(officeArea) {
+      var counts = officeTypes.map(function(){ return 0; });
+      officeTypes.forEach(function(o, i) {
+        counts[i] = Math.floor((officeArea * o.weight) / o.area);
+      });
+      var used = counts.reduce(function(s,c,i){ return s + c * officeTypes[i].area; }, 0);
+      var mainIdx = officeTypes.findIndex(function(o){ return o.key === "o4"; });
+      var smallIdx = officeTypes.findIndex(function(o){ return o.key === "o2"; });
+      while (used + officeTypes[mainIdx].area <= officeArea) { counts[mainIdx]++; used += officeTypes[mainIdx].area; }
+      while (used + officeTypes[smallIdx].area <= officeArea) { counts[smallIdx]++; used += officeTypes[smallIdx].area; }
       return counts;
     }
+    function applyPreset(name) {
+      var p = properties[name];
+      if (!p) return;
+      Object.assign(state, defaults, p);
+      renderAll();
+      switchTab("매물 검증");
+    }
+    function applyYeouido() { applyPreset("여의도 GS자이 인근 4층"); }
+    function resetDefaults() { applyPreset("판교 H스퀘어 B1"); }
 
     function cleaningPyeongRate(area) {
       if (area < 50) return 6000;
@@ -378,21 +450,33 @@
       const commonArea = Math.max(0, exclusive - revenueArea);
       const counts = optimizeRooms(revenueArea);
       const rooms = roomTypes.map((r,i)=>({
-        ...r, count:counts[i], usedArea:counts[i]*r.area, seats:counts[i]*r.capacity,
-        facility:r.vc ? "화상회의장비 있음" : "화상회의장비 없음"
+        ...r, count:counts[i], usedArea:counts[i]*r.area, seats:counts[i]*r.capacity
       }));
       const totalRooms = rooms.reduce((s,r)=>s+r.count,0);
       const usedRevenueArea = rooms.reduce((s,r)=>s+r.usedArea,0);
       const residualArea = Math.max(0, revenueArea - usedRevenueArea);
-      const openOfficeArea = Math.min(residualArea, Math.max(0, exclusive * .03));
+      const loungeArea = Math.min(n("loungeAreaPyeong"), residualArea);
+      const officeArea = Math.max(0, residualArea - loungeArea);
+      const officeCounts = allocateOffices(officeArea);
+      const offices = officeTypes.map(function(o,i){
+        return { key:o.key, name:o.name, area:o.area, capacity:o.capacity, premium:o.premium,
+                 count:officeCounts[i], usedArea:officeCounts[i]*o.area, seats:officeCounts[i]*o.capacity };
+      });
+      const totalOfficeRooms = offices.reduce(function(s,o){ return s+o.count; }, 0);
+      const totalOfficeSeats = offices.reduce(function(s,o){ return s+o.seats; }, 0);
+      const officeRevenue = offices.reduce(function(s,o){
+        return s + o.count * o.capacity * n("officeMonthlyPerSeat") * o.premium * n("targetUtilization") / 100;
+      }, 0);
+      const openOfficeArea = loungeArea;
       const openOfficeSeats = 0;
+      const loungeRevenue = 0;
       const cleaningRate = cleaningPyeongRate(exclusive);
       const cleaningAreaCost = exclusive * cleaningRate;
       const cleaningDeskCost = openOfficeSeats * n("cleaningDeskUnitCost");
       const cleaningCost = cleaningAreaCost + cleaningDeskCost;
       const roomSeats = rooms.reduce((s,r)=>s+r.seats,0);
       const totalCapacity = roomSeats;
-      const managerCount = Math.max(1, Math.ceil(exclusive / 350));
+      const managerCount = 1;
       const oneManagerPossible = managerCount <= 1;
       const managerCost = managerCount * n("managerUnitCost");
       const isLeaseMode = n("spaceCostMode") >= 1;
@@ -418,55 +502,268 @@
       const spaceCost = isLeaseMode ? n("rent") + monthlyDepositOpportunityCost : effectiveOccupancyCost;
       const fixedCostBeforeInvestment = spaceCost + n("maintenance") + operatingCost;
       const fixedCost = fixedCostBeforeInvestment + monthlyInvestment;
-      const availableHours = Math.max(1,totalRooms) * n("operatingDays") * n("hoursPerDay");
-      const pricingHours = availableHours * n("targetUtilization") / 100;
       const variableRate = n("variableCostRatio") / 100;
       const targetProfitRate = n("targetMargin") / 100;
-      const contributionRate = Math.max(.01, 1 - variableRate - targetProfitRate);
-      const requiredRevenue = fixedCost / contributionRate;
+      const targetUtil = n("targetUtilization") / 100;
+      const seatDensity = n("seatDensity") || 0.89;
+      const totalSeats = Math.floor(exclusive * seatDensity);
+      const bepUtilRate = n("bepUtilization") / 100 || 0.70;
+      const bepSeatPrice = Math.round(fixedCost / Math.max(1, totalSeats * bepUtilRate * (1 - variableRate)));
+      const recommendedSeatPrice = Math.round(bepSeatPrice * (1 + targetProfitRate));
+      const revenueAtTarget = totalSeats * recommendedSeatPrice * targetUtil;
+      const profitAtTarget = revenueAtTarget * (1 - variableRate) - fixedCost;
+      const marginAtTarget = revenueAtTarget > 0 ? profitAtTarget / revenueAtTarget : 0;
+      const bepUtil = fixedCost / Math.max(1, totalSeats * recommendedSeatPrice * (1 - variableRate));
+      const comp4monthly = n("competitor4Monthly");
+      const comp4nameStr = state["_comp4name"] || "";
+      const comp4match = comp4nameStr.match(/(\d+)인/);
+      const comp4seats = comp4match ? parseInt(comp4match[1]) : 4;
+      const competitorSeatPrice = comp4monthly > 0 ? Math.round(comp4monthly / comp4seats) : 0;
+      const priceOk = competitorSeatPrice > 0 && recommendedSeatPrice <= competitorSeatPrice;
+      const priceDiff = competitorSeatPrice > 0 ? Math.round((1 - recommendedSeatPrice / competitorSeatPrice) * 100) : 0;
+      const bepOk = bepUtil <= 0.70;
+      const marginOk = marginAtTarget >= targetProfitRate * 0.8;
+      const spaceOk = spaceCost < revenueAtTarget * 0.40;
+      const isGo = priceOk && bepOk;
+      const requiredRevenue = fixedCost / Math.max(0.01, 1 - variableRate - targetProfitRate);
       const requiredVariableCost = requiredRevenue * variableRate;
       const requiredProfit = requiredRevenue * targetProfitRate;
-      const breakEvenHourly = fixedCost / Math.max(1, pricingHours * (1 - variableRate));
-      const baseHourly = requiredRevenue / Math.max(1, pricingHours);
-      const avgArea = usedRevenueArea / Math.max(1,totalRooms);
-      const avgCap = roomSeats / Math.max(1,totalRooms);
-      const rawPricing = rooms.map(r=>{
-        const hourly = (r.area / Math.max(1,avgArea)) * Math.sqrt(r.capacity / Math.max(1,avgCap)) * r.premium;
-        return { ...r, hourly };
-      });
-      const rawWeightedHourly = rawPricing.reduce((s,r)=>s+r.hourly*r.count,0) / Math.max(1,totalRooms);
-      const pricingScale = baseHourly / Math.max(.01, rawWeightedHourly);
-      const pricing = rawPricing.map(r=>{
-        return { ...r, hourly: r.hourly * pricingScale };
-      });
-      const weightedHourly = pricing.reduce((s,r)=>s+r.hourly*r.count,0) / Math.max(1,totalRooms);
-      const openOfficeHourly = 0;
-      const openOfficeAvailableHours = openOfficeSeats * n("operatingDays") * n("hoursPerDay");
-      const openOfficeSellableHours = 0;
-      const revenueCapacity = weightedHourly * availableHours;
-      const bepUtil = fixedCost / Math.max(1, revenueCapacity * (1 - n("variableCostRatio")/100));
-      const revenueAtTarget = weightedHourly * pricingHours;
-      const maxTotalFixed = revenueAtTarget * (1 - n("variableCostRatio")/100 - n("targetOperatingMargin")/100);
-      const maxOccupancyCost = Math.max(0, maxTotalFixed - n("maintenance") - operatingCost - monthlyInvestment);
+      const contributionRate = 1 - variableRate - targetProfitRate;
+      const availableHours = totalSeats * n("operatingDays") * n("hoursPerDay");
+      const pricingHours = availableHours * targetUtil;
+      const baseHourly = 0; const rawWeightedHourly = 0; const pricingScale = 1;
+      const pricing = rooms;
+      const weightedHourly = 0; const openOfficeHourly = 0;
+      const openOfficeAvailableHours = 0; const openOfficeSellableHours = 0;
+      const breakEvenHourly = 0; const meetingRequiredRevenue = 0;
+      const maxOccupancyCost = revenueAtTarget * 0.40;
       const rentSaving = n("rent") - effectiveOccupancyCost;
-      const purchaseStatus = effectiveOccupancyCost <= maxOccupancyCost && rentSaving >= 0 ? "Green" : effectiveOccupancyCost <= maxOccupancyCost * 1.1 ? "Yellow" : "Red";
-      const financialStatus = purchaseStatus;
+      const purchaseStatus = effectiveOccupancyCost <= maxOccupancyCost ? "Green" : "Yellow";
+      const financialStatus = isGo ? "Green" : bepUtil <= 0.80 ? "Yellow" : "Red";
       const totalUseMonths = n("initialLeaseMonths") + n("extensionOptionMonths");
       let contractStatus = "Green";
       if (n("initialLeaseMonths") < 24 || n("serviceAllowed") < 1) contractStatus = "Red";
       else if (n("restorationClear") < 1) contractStatus = "Yellow";
-      const status = (financialStatus === "Red" || !oneManagerPossible) ? "Red" : (financialStatus === "Yellow" || contractStatus === "Yellow") ? "Yellow" : "Green";
+      const status = financialStatus;
       return {
-        exclusive, revenueArea, commonArea, rooms, totalRooms, usedRevenueArea, openOfficeArea, openOfficeSeats,
-        roomSeats, totalCapacity, managerCount, oneManagerPossible, managerCost, cleaningRate, cleaningAreaCost, cleaningDeskCost, cleaningCost,
+        exclusive, revenueArea, commonArea, loungeArea, officeArea, offices, totalOfficeRooms, totalOfficeSeats, officeRevenue, rooms, totalRooms, usedRevenueArea, openOfficeArea, openOfficeSeats,
+        roomSeats, totalCapacity: totalSeats, totalSeats, managerCount, oneManagerPossible, managerCost, cleaningRate, cleaningAreaCost, cleaningDeskCost, cleaningCost,
         isLeaseMode, spaceCost, loanAmount, equityAmount, monthlyInterest, monthlyEquityOpportunityCost, monthlyDepositOpportunityCost, monthlyCapitalCost, acquisitionCost, monthlyAcquisitionCost, monthlyHoldingCost, monthlyAssetUpside, purchaseOccupancyCost, effectiveOccupancyCost, maxOccupancyCost, rentSaving, purchaseStatus,
         operatingCost, fixedCostBeforeInvestment, initialInteriorCost, fitoutPeriodCost, restorationReserve, totalInitialInvestment, monthlyInvestment, investmentMonths, totalUseMonths, contractStatus, financialStatus, fixedCost, requiredProfit, requiredRevenue, requiredVariableCost, contributionRate, baseHourly, rawWeightedHourly, pricingScale,
-        availableHours, pricingHours, breakEvenHourly, pricing, weightedHourly, openOfficeHourly,
-        openOfficeAvailableHours, openOfficeSellableHours, bepUtil, revenueAtTarget, maxOccupancyCost, status
+        availableHours, pricingHours, meetingRequiredRevenue, breakEvenHourly, pricing, weightedHourly, openOfficeHourly,
+        openOfficeAvailableHours, openOfficeSellableHours,
+        seatDensity, totalSeats, bepUtilRate, bepSeatPrice, recommendedSeatPrice,
+        comp4seats, competitorSeatPrice, priceOk, priceDiff, bepUtil, bepOk, marginOk, spaceOk, isGo,
+        revenueAtTarget, profitAtTarget, marginAtTarget, status
       };
     }
 
-    function table(headers, rows) {
+    function calcForProperty(p) {
+      var saved = {};
+      var keys = ["contractArea","exclusiveArea","exclusiveRate","spaceCostMode","rent","deposit","maintenance",
+                  "coworkingMonthlyPerSeat","competitorMeetingHourly","competitor4Monthly","competitor6Monthly",
+                  "_comp4name","_comp6name","_region","_address"];
+      keys.forEach(function(k){ saved[k] = state[k]; });
+      Object.assign(state, p);
+      var c = calc();
+      Object.assign(state, saved);
+      return c;
+    }
+    function switchTab(name) {
+      document.querySelectorAll(".section").forEach(function(s){ s.classList.toggle("active", s.dataset.tab===name); });
+      document.querySelectorAll(".tab").forEach(function(t){ t.classList.toggle("active", t.textContent===name); });
+      var activeTab = document.querySelector('.tab.active');
+      if (!activeTab) {
+        var allTabs = document.querySelectorAll('.tab');
+        allTabs.forEach(function(t){ if(t.getAttribute('onclick') && t.getAttribute('onclick').includes("'"+name+"'")) t.classList.add('active'); });
+      }
+    }
+    function renderAll() { render(); }
+    function renderExecutiveDashboard() {
+      var html2 = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:4px 0;">';
+      Object.entries(properties).forEach(function(entry) {
+        var name = entry[0], p = entry[1];
+        var c = calcForProperty(p);
+        var addr = p._address || '';
+        var isGo = c.isGo;
+        var gc = isGo ? '#16a34a' : '#dc2626';
+        var glight = isGo ? '#f0fdf4' : '#fef2f2';
+        var gborder = isGo ? '#86efac' : '#fca5a5';
+        var cum = -(c.totalInitialInvestment || 0), pb = -1;
+        var tUtil = n("targetUtilization")/100 || 0.60;
+        var varR = n("variableCostRatio")/100 || 0.08;
+        for (var m = 1; m <= 60; m++) {
+          var ru = m <= 12 ? 0.20 + 0.40*(m-1)/11 : tUtil;
+          var rev = (c.totalSeats||0) * (c.recommendedSeatPrice||0) * ru;
+          var inv = m <= (c.investmentMonths||60) ? (c.monthlyInvestment||0) : 0;
+          cum += rev - rev*varR - (c.fixedCost||0) - inv;
+          if (pb < 0 && cum >= 0) pb = m;
+        }
+        var pbOk = pb > 0 && pb <= 60;
+        var criteria = [
+          { label:'가격경쟁력', ok: c.priceOk,  detail: (c.priceDiff>=0?'-':'+') + Math.abs(c.priceDiff||0) + '%' },
+          { label:'BEP 이용률', ok: c.bepOk,    detail: Math.round((c.bepUtil||0)*100) + '%' },
+          { label:'투자회수',   ok: pbOk,        detail: pb > 0 ? pb+'개월' : '60개월 초과' },
+          { label:'공간비율',   ok: c.spaceOk,   detail: Math.round((c.spaceCost||0)/(c.revenueAtTarget||1)*100) + '%' }
+        ];
+        html2 += '<div style="background:#fff;border:2px solid '+gborder+';border-radius:12px;padding:16px;font-size:13px;">';
+        html2 += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">';
+        html2 += '<div>';
+        html2 += '<div style="font-weight:700;font-size:15px;color:#111;">'+name+'</div>';
+        if (addr) html2 += '<div style="font-size:11px;color:#6b7280;margin-top:2px;">'+addr+'</div>';
+        html2 += '</div>';
+        html2 += '<span style="background:'+gc+';color:#fff;font-weight:700;font-size:13px;padding:4px 10px;border-radius:20px;">'+(isGo?'✅ GO':'❌ NO-GO')+'</span>';
+        html2 += '</div>';
+        html2 += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">';
+        criteria.forEach(function(cr) {
+          var bg = cr.ok ? '#dcfce7' : '#fee2e2';
+          var fc = cr.ok ? '#16a34a' : '#dc2626';
+          html2 += '<span style="background:'+bg+';color:'+fc+';font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;">'+cr.label+' '+cr.detail+'</span>';
+        });
+        html2 += '</div>';
+        html2 += '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+        var rows2 = [
+          ['면적(계약/전용)', Math.round(p.contractArea*10)/10+'평 / '+Math.round((c.exclusive||0)*10)/10+'평'],
+          ['월 임대+관리비', won((p.rent||0)+(p.maintenance||0))],
+          ['평당 임대료(계약)', won(Math.round((p.rent||0)/Math.max(1,p.contractArea)))],
+          ['평당 임대료(전용)', won(Math.round((p.rent||0)/Math.max(1,c.exclusive||1)))],
+          ['총 좌석 (0.89평/인)', (c.totalSeats||0)+'석'],
+          ['회의실', (function(){return (c.rooms||[]).filter(function(r){return r.count>0;}).map(function(r){return r.name+' '+r.count+'개';}).join(' / ') || '-';})()],
+          ['사무실', (function(){return (c.offices||[]).filter(function(o){return o.count>0;}).map(function(o){return o.name+' '+o.count+'개';}).join(' / ') || '-';})()],
+          ['월 고정비', won(c.fixedCost||0)],
+          ['목표 월매출', won(c.revenueAtTarget||0)],
+          ['초기 투자금', won(c.totalInitialInvestment||0)],
+          ['투자회수', pb > 0 ? pb+'개월' : '60개월 초과']
+        ];
+        rows2.forEach(function(r2) {
+          html2 += '<tr style="border-bottom:1px solid #e5e7eb;">';
+          html2 += '<td style="padding:4px 2px;color:#6b7280;">'+r2[0]+'</td>';
+          html2 += '<td style="padding:4px 2px;text-align:right;font-weight:600;">'+r2[1]+'</td>';
+          html2 += '</tr>';
+        });
+        html2 += '</table>';
+        html2 += '<div style="margin-top:10px;background:'+glight+';border:1px solid '+gborder+';border-radius:8px;padding:8px;">';
+        html2 += '<div style="font-weight:700;font-size:11px;color:#374151;margin-bottom:6px;">좌석 단가 비교 (월)</div>';
+        html2 += '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+        var sPrice = c.recommendedSeatPrice || 0;
+        var compPrice = c.competitorSeatPrice || 0;
+        var diff2 = c.priceDiff || 0;
+        var diffColor = diff2 >= 0 ? '#16a34a' : '#dc2626';
+        var diffText = diff2 >= 0 ? ('▼'+diff2+'% 저렴') : ('▲'+Math.abs(diff2)+'% 비쌈');
+        html2 += '<tr style="border-bottom:1px solid '+gborder+';"><td style="padding:4px 2px;color:#6b7280;">본전 좌석단가</td><td style="padding:4px 2px;text-align:right;">'+won(c.bepSeatPrice||0)+'</td></tr>';
+        html2 += '<tr style="border-bottom:1px solid '+gborder+';"><td style="padding:4px 2px;color:#374151;font-weight:700;">SOS 권장가/석</td><td style="padding:4px 2px;text-align:right;font-weight:700;color:'+(c.priceOk?'#16a34a':'#dc2626')+';">'+won(sPrice)+'</td></tr>';
+        html2 += '<tr style="border-bottom:1px solid '+gborder+';"><td style="padding:4px 2px;color:#6b7280;">'+(p._comp4name||'경쟁사')+' /석</td><td style="padding:4px 2px;text-align:right;font-weight:700;color:#1d4ed8;">'+won(compPrice)+'</td></tr>';
+        html2 += '<tr><td style="padding:4px 2px;color:#374151;font-weight:700;">가격 경쟁력</td><td style="padding:4px 2px;text-align:right;font-weight:700;color:'+diffColor+';">'+diffText+'</td></tr>';
+        html2 += '</table></div>';
+        html2 += '</div>';
+      });
+      html2 += '</div>';
+      var el = document.getElementById('execDashboard');
+      if (el) el.innerHTML = html2;
+    }
+
+    function monthlyRevByUtil(c, util) {
+      const u = Math.min(util, 0.95);
+      return (c.totalSeats||0) * (c.recommendedSeatPrice||0) * u;
+    }
+    function cashFlowStream(c) {
+      const target = n("targetUtilization") / 100;
+      const rows = [];
+      let cum = -(c.totalInitialInvestment||0);
+      for (let m = 1; m <= 60; m++) {
+        let util;
+        if (m <= 3)       util = 0.20;
+        else if (m <= 6)  util = 0.25;
+        else if (m <= 12) util = 0.25 + (m - 6) / 6 * (target - 0.25);
+        else              util = Math.min(target + (m - 12) / 48 * 0.10, target + 0.10);
+        const rev      = monthlyRevByUtil(c, util);
+        const variable = rev * n("variableCostRatio") / 100;
+        const netCF    = rev - (c.fixedCost||0) - variable;
+        cum += netCF;
+        rows.push({ m, util, rev, fixed: c.fixedCost||0, variable, netCF, cum });
+      }
+      return rows;
+    }
+    function renderCashFlow(c) {
+      const rows    = cashFlowStream(c);
+      const payback = rows.find(r => r.cum >= 0);
+      const maxAbs  = Math.max(1, ...rows.map(r => Math.abs(r.cum)));
+      const CHT     = 120;
+      document.getElementById("cashFlowMetrics").innerHTML = [
+        metric("초기 총투자비",        won(c.totalInitialInvestment||0),  "인테리어+집기+장비 합계"),
+        metric("60개월 누적 현금흐름", won(rows[59].cum), rows[59].cum >= 0 ? "흑자 전환 완료" : "적자 잔존", rows[59].cum >= 0 ? "good" : "bad"),
+        metric("투자회수 예상",        payback ? payback.m + "개월차" : "60개월 내 미회수", payback ? `${60 - payback.m}개월 여유` : "임대료 재협의 필요", payback ? "good" : "bad"),
+        metric("월 평균 영업이익",     won(rows.slice(12).reduce((s,r)=>s+r.netCF,0)/48), "안정화 이후 48개월 평균", rows.slice(12).reduce((s,r)=>s+r.netCF,0)>0?"good":"bad")
+      ].join("");
+      const bars = rows.map(r => {
+        const h  = Math.max(2, Math.round(Math.abs(r.cum) / maxAbs * CHT));
+        const cl = r.cum >= 0 ? "var(--green)" : "var(--red)";
+        const br = payback && r.m === payback.m ? "outline:2px solid var(--cyan);" : "";
+        return `<div style="display:flex;flex-direction:column-reverse;height:${CHT}px;flex:1;min-width:7px;" title="${r.m}M: ${won(r.cum)}"><div style="height:${h}px;background:${cl};border-radius:2px 2px 0 0;${br}"></div></div>`;
+      }).join("");
+      const xlabels = rows.map(r => `<div style="flex:1;min-width:7px;text-align:center;font-size:9px;color:var(--gray);">${r.m % 6 === 0 ? r.m+"M" : ""}</div>`).join("");
+      document.getElementById("cashFlowChart").innerHTML =
+        `<h3 style="margin-bottom:8px;">누적 현금흐름 (초록=흑자·빨강=적자, 파란 테두리=회수 전환월)</h3>
+        <div style="overflow-x:auto;"><div style="display:flex;align-items:flex-end;gap:2px;min-width:480px;">${bars}</div><div style="display:flex;gap:2px;min-width:480px;margin-top:2px;">${xlabels}</div></div>`;
+      const trows = rows.filter(r => r.m <= 12 || r.m % 6 === 0).map(r => [
+        r.m + "M", Math.round(r.util * 100) + "%", won(r.rev), won(r.fixed), won(r.netCF),
+        `<span style="color:${r.cum>=0?"var(--green)":"var(--red)"};">${won(r.cum)}</span>`
+      ]);
+      document.getElementById("cashFlowTable").innerHTML = table(
+        ["월차","이용률","월 매출","월 고정비","월 순현금흐름","누적 현금흐름"], trows
+      );
+    }
+    function irrSolve(cfs) {
+      let r = 0.005;
+      for (let i = 0; i < 300; i++) {
+        let npv = 0, dnpv = 0;
+        for (let t = 0; t < cfs.length; t++) {
+          const p = Math.pow(1 + r, t);
+          npv  += cfs[t] / p;
+          if (t > 0) dnpv -= t * cfs[t] / (p * (1 + r));
+        }
+        if (Math.abs(dnpv) < 1e-12) break;
+        const rn = r - npv / dnpv;
+        if (Math.abs(rn - r) < 1e-9) { r = rn; break; }
+        r = Math.max(-0.999, rn);
+      }
+      return r;
+    }
+    function renderROI(c) {
+      const rows       = cashFlowStream(c);
+      const cfs        = [-(c.totalInitialInvestment||0), ...rows.map(r => r.netCF)];
+      const monthlyIRR = irrSolve(cfs);
+      const annualIRR  = Math.pow(1 + monthlyIRR, 12) - 1;
+      const totalNet   = rows.reduce((s,r) => s + r.netCF, 0);
+      const roi60      = (c.totalInitialInvestment||0) > 0 ? totalNet / (c.totalInitialInvestment||1) : 0;
+      const payback    = rows.find(r => r.cum >= 0);
+      document.getElementById("roiTable").innerHTML = table(["지표","값"], [
+        ["초기 총투자비",              won(c.totalInitialInvestment||0)],
+        ["60개월 누적 영업이익",       won(totalNet)],
+        ["순이익 (영업이익 − 투자비)", won(totalNet - (c.totalInitialInvestment||0))],
+        ["ROI (60개월)",               (roi60 * 100).toFixed(1) + "%"],
+        ["월 IRR",                     (monthlyIRR * 100).toFixed(2) + "%"],
+        ["연 IRR",                     (annualIRR * 100).toFixed(1) + "%"],
+        ["투자회수기간",               payback ? payback.m + "개월" : "60개월 초과"]
+      ]);
+      const rates = [5, 8, 10, 12, 15, 20];
+      document.getElementById("npvTable").innerHTML = table(["할인율","NPV (원)","판정"], rates.map(rate => {
+        const mr  = Math.pow(1 + rate / 100, 1/12) - 1;
+        const npv = cfs.reduce((s, cf, t) => s + cf / Math.pow(1 + mr, t), 0);
+        return [rate + "%", won(npv), `<span style="color:${npv>=0?"var(--green)":"var(--red)"};">${npv>=0?"흑자":"적자"}</span>`];
+      }));
+      document.getElementById("yearlyTable").innerHTML = table(
+        ["연도","연 매출","연 고정비","연 영업이익","영업이익률"],
+        [1,2,3,4,5].map(yr => {
+          const sl     = rows.slice((yr-1)*12, yr*12);
+          const rev    = sl.reduce((s,r)=>s+r.rev,0);
+          const profit = sl.reduce((s,r)=>s+r.netCF,0);
+          return [`${yr}년차`, won(rev), won((c.fixedCost||0)*12), won(profit), (rev>0?profit/rev*100:0).toFixed(1)+"%"];
+        })
+      );
+    }
+
+        function table(headers, rows) {
       return `<table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
     }
     function pill(s) {
@@ -1471,19 +1768,18 @@
     }
     function renderTabs() {
       const visibleTabs = [
-        "Dashboard", "Space Planning", "Cost Structure", "Pricing",
-        "Competitor Comparison", "Site Profitability", "Subdivided Lease", "Purchase Test", "Reservation System", "Marketing Strategy"
+        "매물 검증", "Dashboard", "Cost Structure", "Pricing",
+        "Competitor Comparison", "Cash Flow", "ROI / IRR",
+        "Reservation System", "Marketing Strategy"
       ];
       const labels = {
+        "매물 검증":"매물 검증",
         "Dashboard":"사업 개요",
-        "Input":"입력",
-        "Space Planning":"공간 구성",
         "Cost Structure":"원가 구조",
         "Pricing":"가격표",
         "Competitor Comparison":"경쟁사 비교",
-        "Site Profitability":"여의도·판교 검증",
-        "Subdivided Lease":"분할임대(4T)",
-        "Purchase Test":"공간비 관리",
+        "Cash Flow":"현금흐름",
+        "ROI / IRR":"ROI/IRR",
         "Reservation System":"무인 예약",
         "Marketing Strategy":"마케팅 전략"
       };
@@ -1498,7 +1794,7 @@
     function render() {
       renderInputs();
       const c = calc();
-      renderDashboard(c); renderSpace(c); renderCosts(c); renderPricing(c); renderMonthlyComparison(c); renderCompetitorComparison(c); renderSiteProfitability(); renderSubdividedLease(); renderVacancyPricing(c); renderBep(c); renderPurchase(c); renderScenario(c); renderOperatingPolicy(c); renderReservationSystem(); renderMarketingStrategy();
+      renderExecutiveDashboard(); renderDashboard(c); renderCosts(c); renderPricing(c); renderMonthlyComparison(c); renderCompetitorComparison(c); renderCashFlow(c); renderROI(c); renderScenario(c); renderOperatingPolicy(c); renderReservationSystem(); renderMarketingStrategy();
     }
     renderTabs();
     render();
