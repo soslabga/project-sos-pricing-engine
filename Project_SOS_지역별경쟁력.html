@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project SOS — 지역별 경쟁력 분석</title>
+<style>
+  :root{--navy:#0f1e3d;--ink:#1e293b;--gray:#64748b;--line:#e2e8f0;--blue:#1d4ed8;--soft:#eff6ff;--green:#15803d;--red:#b91c1c;--amber:#b45309;--bg:#eef2f7;}
+  *{box-sizing:border-box;}
+  body{font-family:'Pretendard','맑은 고딕','Malgun Gothic',sans-serif;color:var(--ink);background:var(--bg);margin:0;padding:30px 16px;line-height:1.6;}
+  .wrap{max-width:1060px;margin:0 auto;background:#fff;border-radius:16px;padding:0 0 44px;box-shadow:0 4px 24px rgba(15,30,61,.10);overflow:hidden;}
+  .hd{background:linear-gradient(135deg,#0f1e3d,#1d3a73);color:#fff;padding:34px 44px 28px;}
+  .hd .kick{font-size:12px;letter-spacing:3px;color:#9fb6e0;text-transform:uppercase;margin-bottom:8px;}
+  .hd h1{font-size:27px;margin:0 0 8px;font-weight:800;letter-spacing:-.5px;}
+  .hd p{margin:0;color:#c7d6ef;font-size:13.5px;max-width:790px;}
+  .meta{display:flex;gap:26px;margin-top:18px;flex-wrap:wrap;font-size:12px;color:#aebfdc;}
+  .meta b{color:#fff;font-weight:600;}
+  .body{padding:8px 44px 0;}
+  h2{font-size:18px;margin:34px 0 4px;color:var(--navy);font-weight:800;}
+  h2 .n{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;background:var(--blue);color:#fff;border-radius:7px;font-size:14px;margin-right:9px;vertical-align:2px;}
+  h4{margin:16px 0 2px;color:var(--navy);font-size:13.5px;}
+  .rule{height:3px;background:linear-gradient(90deg,var(--blue),transparent);border-radius:3px;margin:8px 0 16px;}
+  .key{background:var(--soft);border:1px solid #dbe6fb;border-left:5px solid var(--blue);border-radius:10px;padding:18px 22px;margin:18px 0;font-size:14px;}
+  .key b{color:var(--navy);}
+  table{width:100%;border-collapse:collapse;font-size:12.4px;margin:10px 0;}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:right;vertical-align:top;}
+  th{background:#eef3fb;color:var(--navy);text-align:center;font-weight:700;font-size:11.8px;}
+  td.l,th.l{text-align:left;}
+  tbody tr:nth-child(even){background:#fafcff;}
+  tr.sum td{font-weight:800;background:#eef3fb;color:var(--navy);}
+  tr.hi td{background:#f0fdf4;}
+  .pos{color:var(--green);font-weight:800;}.neg{color:var(--red);font-weight:700;}
+  .strong{font-weight:800;color:var(--navy);}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0;}
+  @media(max-width:740px){.two{grid-template-columns:1fr;}}
+  .panel{border:1px solid var(--line);border-radius:12px;padding:16px 20px;}
+  .panel.ok{background:#f0fdf4;border-color:#bbf7d0;}.panel.no{background:#fffbeb;border-color:#fde68a;}
+  .panel h4{margin:0 0 8px;}.panel.ok h4{color:var(--green);}.panel.no h4{color:var(--amber);}
+  .panel ul{margin:0;padding-left:18px;font-size:12.5px;}.panel ul li{margin:6px 0;}
+  .note{font-size:11px;color:var(--gray);margin-top:6px;line-height:1.55;}
+  .fn{background:#fffbeb;border-left:4px solid var(--amber);border-radius:8px;padding:10px 14px;font-size:11.5px;margin:8px 0;}
+  .final{background:linear-gradient(135deg,#0f1e3d,#1d3a73);color:#fff;border-radius:12px;padding:20px 24px;margin:20px 0 0;font-size:13.5px;}
+  .final b{color:#bfdbfe;}
+  @media print{body{padding:0;background:#fff;}.wrap{box-shadow:none;border-radius:0;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hd">
+    <div class="kick">PROJECT&nbsp;SOS&nbsp;·&nbsp;EXPANSION&nbsp;REVIEW</div>
+    <h1>지역별 경쟁력 분석</h1>
+    <p>판교 · 분당 · 여의도 경쟁사 가격으로 검증한 Project SOS 전국 확장 가능성</p>
+    <div class="meta">
+      <span>보고 대상 &nbsp;<b>부사장</b></span>
+      <span>작성일 &nbsp;<b>2026.06.29</b></span>
+      <span>기준 &nbsp;<b>QQ부동산 매물 · 패스트파이브·스파크플러스 실거래/제안 · 권역 관리비 실측</b></span>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <div class="key">
+      <b>한 줄 결론 —</b> SOS는 <b>1·2·4인 소형 프로젝트룸</b>을 지역 경쟁가 아래로 공급하는 <b>무인 실속</b> 모델이다.
+      마케팅·전기·보험·세무·원복충당까지 비용을 모두 깐 기준으로 <b>판교·분당·여의도 3개 권역 모두 70% 가동에서 흑자</b>(+1,103~+1,426만/월)이며,
+      손익분기 점유율이 <b>38~43%</b>라 <b>반만 차도 흑자</b>다. 성패는 지역이 아니라 <b>근생·저평당가 매물 선별</b>에 달려 있다.
+    </div>
+
+    <h2><span class="n">1</span>프로젝트 컨셉</h2>
+    <div class="rule"></div>
+    <table>
+      <thead><tr><th class="l">구분</th><th class="l">Project SOS 운영안</th><th class="l">기존 공유오피스와 차이</th></tr></thead>
+      <tbody>
+        <tr><td class="l strong">상품</td><td class="l">1·2·4인 소형 프로젝트룸. 최대 4인실 중심.</td><td class="l">대형 라운지·공용부가 아니라 독립 소형호실 중심</td></tr>
+        <tr><td class="l strong">계약</td><td class="l">1주·1개월·1년 운영</td><td class="l">월·3개월 유연계약 대비 1주 단기·저총액 소형실로 차별화</td></tr>
+        <tr><td class="l strong">가격</td><td class="l">실속 인테리어·무인·라운지/회의실 최소화로 합리적 가격</td><td class="l">고급 공용부 비용을 줄여 소형 독립실에 집중</td></tr>
+        <tr><td class="l strong">확장</td><td class="l">수도권 업무권역 + 지방 광역시 핵심권역</td><td class="l">FF·SP가 약한 지방/비서울권에서도 진입 가능</td></tr>
+        <tr><td class="l strong">입지·용도</td><td class="l"><b>근린생활시설(근생)</b> 위주 — 지하·저층 저평당가</td><td class="l">근생은 4T 면제로 풀코워킹 합법, 용도·전대 이슈 회피</td></tr>
+      </tbody>
+    </table>
+    <div class="note">핵심: 방음·가구·출입통제를 갖춘 소형 독립실을 <b>실속 원가구조</b>로 제공하는 프로젝트룸 전략. 회원은 전대차가 아닌 <b>시설이용계약</b>.</div>
+
+    <h2><span class="n">2</span>지역별 결론</h2>
+    <div class="rule"></div>
+    <table>
+      <thead><tr><th class="l">지역</th><th>전용평당</th><th>월세</th><th>전용</th><th class="l">경쟁사 기준(실거래)</th><th class="l">SOS 1·2·4인 가격</th><th class="l">판단</th></tr></thead>
+      <tbody>
+        <tr><td class="l strong">판교</td><td>6.2만</td><td>650만</td><td>104평</td><td class="l">FF 4인 실거래 222만</td><td class="l pos">60 / 100 / 160만</td><td class="l pos">가장 강함</td></tr>
+        <tr><td class="l strong">분당</td><td>3.6만</td><td>433만</td><td>121평</td><td class="l">SP 6인 파격가 33만/석</td><td class="l pos">40 / 70 / 124만</td><td class="l">소폭 언더컷 가능</td></tr>
+        <tr><td class="l strong">여의도</td><td>5.8만</td><td>761만</td><td>130.4평</td><td class="l">FF 4인 175.5만 / SP 2인 130만</td><td class="l pos">55 / 90 / 140만</td><td class="l">도심형 가능</td></tr>
+      </tbody>
+    </table>
+
+    <h2><span class="n">3</span>핵심 가격경쟁력 — SOS 소형호실 vs 경쟁사</h2>
+    <div class="rule"></div>
+    <table>
+      <thead><tr><th class="l">지역</th><th class="l">비교 경쟁사</th><th>경쟁사 단가</th><th>SOS 1인</th><th>SOS 2인</th><th>SOS 4인</th><th class="l">가격경쟁력</th></tr></thead>
+      <tbody>
+        <tr><td class="l strong">판교</td><td class="l">FF 4인실</td><td>2,224,800<br><span class="note">556,200/석</span></td><td>600,000<br><span class="note">60.0만/석</span></td><td>1,000,000<br><span class="note">50.0만/석</span></td><td class="pos">1,600,000<br><span class="note">40.0만/석</span></td><td class="l">4인 총액 <b>−28%</b> (정가 대비 −48%)</td></tr>
+        <tr><td class="l strong">분당</td><td class="l">SP 6인 파격가</td><td>1,980,000<br><span class="note">330,000/석</span></td><td>400,000<br><span class="note">40.0만/석</span></td><td>700,000<br><span class="note">35.0만/석</span></td><td class="pos">1,240,000<br><span class="note">31.0만/석</span></td><td class="l">4인 좌석당 <b>−6%</b></td></tr>
+        <tr><td class="l strong">여의도</td><td class="l">FF 4인 / SP 2인</td><td>FF 1,755,000<br><span class="note">SP 2인 1,300,000</span></td><td>550,000<br><span class="note">55.0만/석</span></td><td>900,000<br><span class="note">45.0만/석</span></td><td class="pos">1,400,000<br><span class="note">35.0만/석</span></td><td class="l">FF 4인 <b>−20%</b> / SP 2인 총액 <b>−31%</b></td></tr>
+      </tbody>
+    </table>
+    <div class="note">SOS 가격은 1개월 기준 예시. 차별점 = 더 낮은 소형실 총액 + 1주 프로젝트룸 + 단기 운영. 1주·1년은 추후 일할·장기 가격표로 세분화. 회의실 크레딧 좌석당 월 4개(11,000원/개 기준).</div>
+
+    <h2><span class="n">4</span>예상 공간구성 (1·2·4인실만 운영)</h2>
+    <div class="rule"></div>
+    <table>
+      <thead><tr><th class="l">지역</th><th>전용</th><th>좌석<br>(전용÷0.89)</th><th>룸 수</th><th>회의실</th><th>라운지</th><th>만실 매출</th></tr></thead>
+      <tbody>
+        <tr><td class="l strong">판교</td><td>104평</td><td>117석</td><td>약 41</td><td>4인·6인 각1</td><td>최소</td><td>5,083만</td></tr>
+        <tr><td class="l strong">분당</td><td>121평</td><td>136석</td><td>약 48</td><td>4인·6인 각1</td><td>최소</td><td>4,415만</td></tr>
+        <tr><td class="l strong">여의도</td><td>130.4평</td><td>147석</td><td>약 52</td><td>4인·6인 각1</td><td>최소</td><td>5,642만</td></tr>
+      </tbody>
+    </table>
+    <div class="fn">
+      <b>밀도 각주(중요):</b> 0.89평/석은 룸 내부 순면적이 아니라, <b>라운지·회의실·복도·OA를 최소화한 실속형 전체 전용면적 기준 유효 밀도</b>(패스트파이브 판교 현장조사값)다. 따라서 좌석 = 전용 ÷ 0.89이며, 공용부를 별도 차감하지 않는다(이중계상 방지).
+    </div>
+
+    <h2><span class="n">5</span>초기투자비(CAPEX) — 실속형</h2>
+    <div class="rule"></div>
+    <table>
+      <thead><tr><th class="l">CAPEX 항목</th><th class="l">단가</th><th>판교</th><th>분당</th><th>여의도</th></tr></thead>
+      <tbody>
+        <tr><td class="l">인테리어·칸막이</td><td class="l">120만/평 (오픈천장 X·깔끔 표준마감)</td><td>1.25억</td><td>1.45억</td><td>1.56억</td></tr>
+        <tr><td class="l">방음</td><td class="l">22만/평 (적당 차음, 완전방음 아님)</td><td>2,288만</td><td>2,662만</td><td>2,869만</td></tr>
+        <tr><td class="l">전기·통신</td><td class="l">13만/평</td><td>1,352만</td><td>1,573만</td><td>1,695만</td></tr>
+        <tr><td class="l">출입통제·CCTV</td><td class="l">룸당 23만 + 보안 550만</td><td>1,493만</td><td>1,654만</td><td>1,746만</td></tr>
+        <tr><td class="l">가구 (신품)</td><td class="l">좌석당 15만</td><td>1,755만</td><td>2,040만</td><td>2,205만</td></tr>
+        <tr><td class="l">사인·예비비</td><td class="l">5%</td><td>968만</td><td>1,122만</td><td>1,208만</td></tr>
+        <tr class="sum"><td class="l">초기투자비 총액</td><td class="l">─</td><td>2.03억</td><td>2.36억</td><td>2.54억</td></tr>
+        <tr><td class="l">평당 투자비</td><td class="l">총액 ÷ 전용</td><td>196만/평</td><td>195만/평</td><td>195만/평</td></tr>
+        <tr><td class="l">월 상각 (60개월)</td><td class="l">총액 ÷ 60</td><td>339만</td><td>393만</td><td>423만</td></tr>
+      </tbody>
+    </table>
+    <div class="note">오픈천장·고급 라운지 마감 제외(프리미엄 268~288만/평 → 실속 195만/평). 방음·독립실 칸막이·가구·출입통제는 포함. 시장 "기본~중급" 구간.</div>
+
+    <h2><span class="n">6</span>위치별 손익 — 가동률 시나리오</h2>
+    <div class="rule"></div>
+    <table>
+      <thead><tr><th class="l">항목 (월)</th><th>판교</th><th>분당</th><th>여의도</th></tr></thead>
+      <tbody>
+        <tr><td class="l">좌석 / 만실매출</td><td>117석 / 5,083만</td><td>136석 / 4,415만</td><td>147석 / 5,642만</td></tr>
+        <tr><td class="l">고정비 합계</td><td>1,723만</td><td>1,632만</td><td>2,127만</td></tr>
+        <tr><td class="l">초기 50% 손익</td><td class="pos">+526만</td><td class="pos">+322만</td><td class="pos">+370만</td></tr>
+        <tr><td class="l">중기 60% 손익</td><td class="pos">+976만</td><td class="pos">+712만</td><td class="pos">+869만</td></tr>
+        <tr class="sum hi"><td class="l">활성화 70% 손익</td><td class="pos">+1,426만</td><td class="pos">+1,103만</td><td class="pos">+1,368만</td></tr>
+        <tr><td class="l">BEP 점유율</td><td>38.3%</td><td>41.8%</td><td>42.6%</td></tr>
+        <tr><td class="l">ROI (연/CAPEX)</td><td>84%</td><td>56%</td><td>65%</td></tr>
+        <tr><td class="l">현금회수 (CAPEX÷영업손익)</td><td>14개월</td><td>21개월</td><td>19개월</td></tr>
+      </tbody>
+    </table>
+    <div class="note">변동비·마케팅 11.5%(마케팅 7% + PG·환불 4.5%) 차감 후 고정비 비교. <b>BEP 38~43%라 50% 가동만으로도 세 지역 전부 흑자</b> — 매출 천장이 아니라 바닥이 안전한 모델.</div>
+
+    <h2><span class="n">7</span>지점당 총 소요자금</h2>
+    <div class="rule"></div>
+    <table>
+      <thead><tr><th class="l">지역</th><th>CAPEX</th><th>보증금(≈10개월)</th><th>운전자금</th><th>총 소요자금</th><th>회수</th></tr></thead>
+      <tbody>
+        <tr><td class="l strong">판교</td><td>2.03억</td><td>0.65억</td><td>0.05억</td><td class="strong">≈2.7억</td><td>14개월</td></tr>
+        <tr><td class="l strong">분당</td><td>2.36억</td><td>0.43억</td><td>0.05억</td><td class="strong">≈2.8억</td><td>21개월</td></tr>
+        <tr><td class="l strong">여의도</td><td>2.54억</td><td>0.76억</td><td>0.05억</td><td class="strong">≈3.4억</td><td>19개월</td></tr>
+      </tbody>
+    </table>
+    <div class="note">보증금은 매물별 확정(여의도 실매물 1억). 운전자금이 적은 이유 = BEP 38~43%라 초기 1~2개월만 적자(50%부터 흑자). 보증금은 회수성 자산.</div>
+
+    <h2><span class="n">8</span>임대료 민감도 · 매물 기준</h2>
+    <div class="rule"></div>
+    <table>
+      <thead><tr><th class="l">전용평당 월세</th><th>BEP 50% 최소면적</th><th>1인 운영 상한</th><th class="l">매물 판단</th></tr></thead>
+      <tbody>
+        <tr><td class="l">3만/평</td><td>63평</td><td>130평</td><td class="l">가능. 실무상 100~130평 선호</td></tr>
+        <tr><td class="l">4만/평</td><td>76평</td><td>130평</td><td class="l">가능. 100~130평 안정권</td></tr>
+        <tr><td class="l">5만/평</td><td>94평</td><td>130평</td><td class="l">핵심 타겟. 100~130평 적정</td></tr>
+        <tr><td class="l">6만/평</td><td>124평</td><td>130평</td><td class="l">상한 근접. 예외 검토</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>1차 필터: 근생 용도 · 전용 100~130평 · 전용평당 월세 5만 이하.</b> 7만/평 이상 원칙 제외. 1인 운영 상한 = 전용 100~130평 / 룸 40~50개 / 좌석 110~150석 / 월 신규계약 10~15건(자동결제·자동출입·외주청소 전제).</div>
+    <div class="note"><b>서울 우선순위:</b> ①마곡 ②구로·가산디지털 ③여의도 130평급 ④영등포·문래·당산 ⑤상암DMC ⑥홍대·합정 — 전부 근생·전용 100~130평·평당 5만 이하 필터. <b>지방:</b> 광교·송도·부산센텀·대전둔산·대구수성 5만 이하 우선 검토.</div>
+
+    <h2><span class="n">9</span>비용 구조 · 누락 점검</h2>
+    <div class="rule"></div>
+    <table>
+      <thead><tr><th class="l">구분</th><th class="l">항목</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr><td class="l">공간비</td><td class="l">월세 · 관리비(권역실측 2.7~3.6만/평) · 보증금 기회비용 · 전용 전기냉난방</td><td class="pos">반영</td></tr>
+        <tr><td class="l">공사비</td><td class="l">인테리어 · 방음 · 가구(신품) · 출입통제 · CCTV · 사인 · 원복충당</td><td class="pos">반영</td></tr>
+        <tr><td class="l">운영비</td><td class="l">무인 순회관리 · 시스템 · 인터넷 · 보험 · 세무·회계·법무 · 렌탈 · 소모품 · 청소(외주)</td><td class="pos">반영(공통 370만)</td></tr>
+        <tr><td class="l">영업·변동</td><td class="l">마케팅 7% · PG·플랫폼·환불 4.5%</td><td class="pos">반영</td></tr>
+        <tr><td class="l">매출 상방</td><td class="l">단기 데이패스 · 락커 · 프린트 종량 · 주소지 등록 옵션 · 외부 대관</td><td class="l">보수적 제외(상방 여력)</td></tr>
+        <tr><td class="l">세금</td><td class="l">VAT 중립 · 법인세 10% 별도</td><td class="l">별도</td></tr>
+        <tr><td class="l">계약 전 실사</td><td class="l"><b>근생 용도·전대 허용 확인</b> · 권리금 · 소방/냉난방 증설 · 관리단 요구공사</td><td class="neg">미확정 → CAPEX 추가</td></tr>
+      </tbody>
+    </table>
+
+    <h2><span class="n">10</span>경쟁사 가격 원자료</h2>
+    <div class="rule"></div>
+    <div class="two">
+      <div>
+        <h4>판교 — 패스트파이브</h4>
+        <table>
+          <thead><tr><th class="l">인실</th><th>정가</th><th>실거래</th><th>인당</th></tr></thead>
+          <tbody>
+            <tr><td class="l">4인</td><td>3,090,000</td><td class="strong">2,224,800</td><td>556,200</td></tr>
+            <tr><td class="l">7인</td><td>4,060,000</td><td>~2,923,200</td><td>~417,600</td></tr>
+            <tr><td class="l">10인</td><td>5,590,000</td><td>~4,024,800</td><td>~402,480</td></tr>
+          </tbody>
+        </table>
+        <h4>분당 — 스파크플러스</h4>
+        <table>
+          <thead><tr><th class="l">인실</th><th>실거래(12개월)</th><th>인당</th><th>크레딧</th></tr></thead>
+          <tbody>
+            <tr><td class="l">5인</td><td class="strong">1,650,000</td><td>330,000</td><td>32</td></tr>
+            <tr><td class="l">6인</td><td class="strong">1,980,000</td><td>330,000</td><td>34</td></tr>
+            <tr><td class="l">7인</td><td class="strong">2,310,000</td><td>330,000</td><td>36</td></tr>
+            <tr><td class="l">8인</td><td class="strong">2,640,000</td><td>330,000</td><td>37</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h4>여의도 — FF · SP</h4>
+        <table>
+          <thead><tr><th class="l">사</th><th class="l">인실</th><th>실거래</th><th>인당</th><th>크레딧</th></tr></thead>
+          <tbody>
+            <tr><td class="l">FF</td><td class="l">4인</td><td class="strong">1,755,000</td><td>438,750</td><td>~23</td></tr>
+            <tr><td class="l">SP</td><td class="l">2인</td><td class="strong">1,300,000</td><td>650,000</td><td>14</td></tr>
+            <tr><td class="l">SP</td><td class="l">5인</td><td class="strong">2,700,000</td><td>540,000</td><td>27</td></tr>
+            <tr><td class="l">SP</td><td class="l">8인</td><td class="strong">3,350,000</td><td>418,750</td><td>37</td></tr>
+          </tbody>
+        </table>
+        <div class="fn">
+          <b>판교 단가 주의:</b> 본 보고서는 <b>실거래 2,224,800(정가 −28%)</b>을 기준으로 한다. 일부 자료의 250만(정가 −19% 추정)은 추정치이며, 보수적으로 실거래값을 사용했다. 크레딧 11,000원/개(SP 공통, 야간 무료·피크 차감·이월 불가). FF 크레딧은 SP 패턴 유추(추정).
+        </div>
+      </div>
+    </div>
+
+    <h2><span class="n">11</span>최종 판단</h2>
+    <div class="rule"></div>
+    <div class="two">
+      <div class="panel ok">
+        <h4>✅ 검증된 것</h4>
+        <ul>
+          <li><b>3개 권역 모두 70% 흑자</b>(+1,103~+1,426만), BEP 38~43%로 <b>50%만 차도 흑자</b>.</li>
+          <li>비용 누락 없음 — 마케팅·전기·보험·세무·원복까지 반영, 실속 CAPEX(195만/평).</li>
+          <li>판교(ROI 84%·회수 14개월) &gt; 여의도(65%·19) &gt; 분당(56%·21). 셋 다 회수 24개월 내.</li>
+          <li>매출은 보수 산정(단기·락커·프린트·주소지 옵션은 상방 여력).</li>
+        </ul>
+      </div>
+      <div class="panel no">
+        <h4>⚠️ 관리 포인트 (실사·각주)</h4>
+        <ul>
+          <li><b>근생 용도 매물</b> 소싱 — 용도·전대 이슈 해소(판교도 B1 근생 가능).</li>
+          <li>권리금 0 가정 — 발생 시 CAPEX 추가·회수 지연.</li>
+          <li>1인 운영 백업(휴가·병가·야간 사고) 순회 매니저 풀 운영.</li>
+          <li>여의도는 전용평당 5만 이하 매물일 때 안전(공간비 높음).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="final">
+      <b>최종 메시지 —</b> Project SOS 운영안은 전국 확장 가능성이 있다. 마케팅·전기·보험·원복충당까지 빠짐없이 넣은 실속 비용으로도 판교·분당·여의도 세 권역 모두 70% 가동 흑자이며, <b>손익분기 점유율이 38~43%라 절반만 차도 흑자</b>다.
+      확장 공식 = <b>근생·저평당가 매물 + 전용 100~130평 + 무인 실속 운영 + 지역 경쟁가 아래 소형실 총액</b>. 성패는 지역이 아니라 <b>매물 선별</b>에 달려 있다.
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
