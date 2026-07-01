@@ -5,7 +5,7 @@ let s=[],seat=0,rm=0;const mix={4:0,2:0,1:0};
 s.push(`<svg xmlns="http://www.w3.org/2000/svg" width="1140" height="920" font-family="Malgun Gothic,Pretendard,sans-serif">`);
 s.push(`<rect width="1140" height="920" fill="#fff"/>`);
 s.push(`<text x="160" y="40" font-size="18.5" font-weight="800" fill="#0f1e3d">판교1 — 전용 100평 · 줄1 풀폭 가로형 · 줄4 2인+1인 전용</text>`);
-s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,670×2,400(풀폭·가로형) · 줄2~3: 4인 3,440×2,900 · 줄4: 2인 2,200×2,900 · 1인 1,890×1,400 · 우편·창고 · 복도1,100</text>`);
+s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,670×2,400(풀폭·가로형) · 줄2~3: 4인 3,440×2,900 · 줄4: 2인 2,200×2,900 · 1인 1,890×1,400 · 복도1,100</text>`);
 s.push(`<rect x="${X(0)}" y="${Y(0)}" width="${FW*S}" height="${FH*S}" fill="#3a4a63"/>`);
 s.push(`<rect x="${X(0.05)}" y="${Y(0.05)}" width="${(FW-0.1)*S}" height="${(FH-0.1)*S}" fill="#f8fafc" stroke="#0f1e3d" stroke-width="3"/>`);
 const cor=(x,y,w,h,t)=>{
@@ -41,16 +41,14 @@ x=0.12;for(let i=0;i<5;i++){room(x,6.82,3.44,2.9,4,'#e8f0ff','3440×2900');x+=3.
 // 복도2 (양면 — 줄3·줄4): y=9.82
 cor(0,9.82,SPINE,1.1,'복도 1,100  (양면 — 줄3·줄4)');
 
-// 줄4: 2인 4실 + 1인 6실(3열×2행) + 우편함·창고(1열)
+// 줄4: 2인 4실 + 1인 8실(4열×2행) — 4×2.3+4×1.99-0.1=17.18m < SPINE 17.8 ✓
 x=0.12;
 for(let i=0;i<4;i++){room(x,11.02,2.2,2.9,2,'#dce8ff','2200×2900');x+=2.3;}
-for(let i=0;i<3;i++){
+for(let i=0;i<4;i++){
   room(x,11.02,1.89,1.4,1,'#ede8ff','1890×1400');
   room(x,12.52,1.89,1.4,1,'#ede8ff','1890×1400');
   x+=1.99;
 }
-room(x,11.02,1.89,1.4,'우편','#fef9c3','1890×1400');
-room(x,12.52,1.89,1.4,'창고','#f1f5f4','1890×1400');
 
 // 복도3 (공용진입): y=14.02
 cor(0,14.02,SPINE,0.85,'복도 1,100 (공용 진입)');
@@ -64,7 +62,7 @@ const cm=(x,w,n,fl,dim)=>{
 cm(0.05,3.4,'회의실 6인','#eef3fb','3400×2480');
 cm(3.55,2.9,'회의실 4인','#eef3fb','2900×2480');
 cm(6.55,2.3,'탕비·OA','#f1f5f9','2300×2480');
-cm(8.95,1.9,'우편·소포','#fff7ed','1900×2480');
+cm(8.95,1.9,'우편·소포·창고','#fff7ed','1900×2480');
 cm(10.95,6.85,'라운지 + 리셉션 (입구 동선)','#f0fdf4','6850×2480');
 
 s.push(`<text x="${X(9.3)}" y="${OY+FH*S+40}" font-size="13" font-weight="800" fill="#15803d" text-anchor="middle">독립실 ${rm}호실 / ${seat}석 (4인 ${mix[4]}·2인 ${mix[2]}·1인 ${mix[1]}) + 회의실 6/4인 + 라운지·리셉션 + 탕비</text>`);
@@ -80,14 +78,31 @@ dl(OX-50,Y(0),OX-50,Y(17.4),'17,400',true);
 s.push(`<text x="160" y="80" font-size="12" font-weight="700" fill="#15803d">독립실 ${rm}호실 / ${seat}석 — 4인 ${mix[4]}실 · 2인 ${mix[2]}실 · 1인 ${mix[1]}실</text>`);
 fs.writeFileSync('C:/Users/User/Documents/프로젝트/코워킹_평면도_판교1_정밀.svg',s.join('\n')+'</svg>','utf8');
 
-const py=100;
+// CAPEX/고정비 산식 = 부사장_보고용_지역별_SOS_경쟁력_분석.html 8·9장 그대로
+const py=100, rent=650, mgmtRate=2.7, partTime=0;
 const full_rev=mix[4]*180+mix[2]*120+mix[1]*70;
-const capex=Math.round((py*(120+6+11)+rm*25+700+seat*23.65+200+100)*1.05);
+const capex=Math.round((py*130+py*11+rm*25+800+seat*23.65+50)*1.05);
 const dep=Math.round(capex/60);
-const fixed=600+Math.round(py*2.7)+Math.round(py*0.8)+Math.round(py*0.4)+332+135+dep;
+const mgmt=Math.round(py*mgmtRate), elec=Math.round(py*0.8);
+const fixed=rent+mgmt+elec+370+partTime+dep+112;
 const op=g=>full_rev*g*0.885-fixed;
 const bep=fixed/(full_rev*0.885)*100;
 const fk=n=>Math.round(n).toLocaleString();
 console.log(`판교1: ${rm}호실 ${seat}석 (4인${mix[4]} 2인${mix[2]} 1인${mix[1]})`);
-console.log(`만실 ${fk(full_rev)}만원 | CAPEX ${(capex/10000).toFixed(2)}억 | 상각 ${fk(dep)}만/월`);
-console.log(`고정비 ${fk(fixed)}만 | BEP ${bep.toFixed(0)}% | 50%${op(0.5)>=0?'+':''}${fk(op(0.5))} 60%${op(0.6)>=0?'+':''}${fk(op(0.6))} 70%${op(0.7)>=0?'+':''}${fk(op(0.7))}`);
+console.log(`만실 ${fk(full_rev)}만원 | CAPEX ${fk(capex)}만 | 상각 ${fk(dep)}만/월`);
+console.log(`고정비 ${fk(fixed)}만 = 월세${rent}+관리비${mgmt}+전기${elec}+공통370+상각${dep}+기타112`);
+console.log(`BEP ${bep.toFixed(1)}% | 50%${op(0.5)>=0?'+':''}${fk(op(0.5))} 60%${op(0.6)>=0?'+':''}${fk(op(0.6))} 70%${op(0.7)>=0?'+':''}${fk(op(0.7))}`);
+const capex200=Math.round(py*200*1.0); // 200만/평 보수 민감도
+const dep200=Math.round(capex200/60);
+const fixed200=fixed-dep+dep200;
+const bep200=fixed200/(full_rev*0.885)*100;
+console.log(`[민감도] CAPEX 200만/평 가정 시: CAPEX ${fk(capex200)}만·상각${fk(dep200)}만 → 고정비${fk(fixed200)}만 · BEP ${bep200.toFixed(1)}%`);
+
+// 비정형 평면 보정 — 배치도 기준 평균 호실매출로 손실 호실 민감도 계산
+const avgRevPerRoom=full_rev/rm;
+[1,2,3,5].forEach(loss=>{
+  const rev2=full_rev-avgRevPerRoom*loss;
+  const op65=Math.round(rev2*0.65*0.885-fixed);
+  const bep2=fixed/(rev2*0.885)*100;
+  console.log(`  [보정 -${loss}실→${rm-loss}실] 65%손익 ${op65>=0?'+':''}${fk(op65)}만 · BEP ${bep2.toFixed(1)}%`);
+});

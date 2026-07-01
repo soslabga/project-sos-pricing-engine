@@ -78,20 +78,28 @@ dl(OX-50,Y(0),OX-50,Y(FH),'18,000',true);
 s.push(`<text x="160" y="80" font-size="12" font-weight="700" fill="#15803d">독립실 ${rm}호실 / ${seat}석 — 4인 ${mix[4]}실 · 2인 ${mix[2]}실 · 1인 ${mix[1]}실</text>`);
 fs.writeFileSync('C:/Users/User/Documents/프로젝트/코워킹_평면도_120평.svg',s.join('\n')+'</svg>','utf8');
 
-// 분당 수내역 실매물: 전용 105평, 월세 432만, 보증금 7,500만
-// 분당 가격: 4인 124만, 2인 70만, 1인 40만
-const py=105;
-const rent=432, depo=7500;
+// CAPEX/고정비 산식 = 부사장_보고용_지역별_SOS_경쟁력_분석.html 8·9장 그대로. py=모델 명목 평수(120), 배치도(rm/seat/mix)가 기준값.
+const py=120, rent=432, depo=7500, mgmtRate=2.8, partTime=0;
 const full_rev=mix[4]*128+mix[2]*75+mix[1]*45;
-const capex=Math.round((py*(120+6+11)+rm*25+700+seat*23.65+200+100)*1.05);
+const capex=Math.round((py*130+py*11+rm*25+800+seat*23.65+50)*1.05);
 const dep=Math.round(capex/60);
-const fixed=rent+Math.round(py*2.8)+Math.round(py*0.8)+Math.round(py*0.4)+332+135+dep;
-const op=g=>full_rev*g*0.905-fixed;
-const bep=fixed/(full_rev*0.905)*100;
+const mgmt=Math.round(py*mgmtRate), elec=Math.round(py*0.8);
+const fixed=rent+mgmt+elec+370+partTime+dep+112;
+const op=g=>full_rev*g*0.885-fixed;
+const bep=fixed/(full_rev*0.885)*100;
 const totalCash=(capex+depo+500); // 운전자금 500만
 const fk=n=>Math.round(n).toLocaleString();
-console.log(`\n분당 수내역 105평(도면 120평 기준): ${rm}호실 ${seat}석 (4인${mix[4]} 2인${mix[2]} 1인${mix[1]})`);
-console.log(`만실 ${fk(full_rev)}만원 | CAPEX ${(capex/10000).toFixed(2)}억 | 상각 ${fk(dep)}만/월`);
-console.log(`고정비 ${fk(fixed)}만 = 월세${rent}+관리비${Math.round(py*2.8)}+전기${Math.round(py*0.8)}+청소${Math.round(py*0.4)}+인건비332+공통135+상각${dep}`);
-console.log(`만실매출 ${fk(full_rev)}만 | BEP ${bep.toFixed(0)}% | 50%${op(0.5)>=0?'+':''}${fk(op(0.5))} 60%${op(0.6)>=0?'+':''}${fk(op(0.6))} 70%${op(0.7)>=0?'+':''}${fk(op(0.7))}`);
-console.log(`총 소요자금 ${(totalCash/10000).toFixed(2)}억 (CAPEX+보증금7,500+운전500)`);
+console.log(`\n분당 120평형(도면 기준): ${rm}호실 ${seat}석 (4인${mix[4]} 2인${mix[2]} 1인${mix[1]})`);
+console.log(`만실 ${fk(full_rev)}만원 | CAPEX ${fk(capex)}만 | 상각 ${fk(dep)}만/월`);
+console.log(`고정비 ${fk(fixed)}만 = 월세${rent}+관리비${mgmt}+전기${elec}+공통370+상각${dep}+기타112`);
+console.log(`BEP ${bep.toFixed(1)}% | 50%${op(0.5)>=0?'+':''}${fk(op(0.5))} 60%${op(0.6)>=0?'+':''}${fk(op(0.6))} 70%${op(0.7)>=0?'+':''}${fk(op(0.7))}`);
+console.log(`총 소요자금 ${fk(totalCash)}만 (CAPEX+보증금${depo}+운전500)`);
+
+// 비정형 평면 보정 — 배치도 기준 평균 호실매출로 손실 호실 민감도 계산
+const avgRevPerRoom=full_rev/rm;
+[1,2,3,5].forEach(loss=>{
+  const rev2=full_rev-avgRevPerRoom*loss;
+  const op65=Math.round(rev2*0.65*0.885-fixed);
+  const bep2=fixed/(rev2*0.885)*100;
+  console.log(`  [보정 -${loss}실→${rm-loss}실] 65%손익 ${op65>=0?'+':''}${fk(op65)}만 · BEP ${bep2.toFixed(1)}%`);
+});
