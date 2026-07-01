@@ -80,7 +80,8 @@ s.push(`<text x="160" y="80" font-size="12" font-weight="700" fill="#15803d">독
 fs.writeFileSync('C:/Users/User/Documents/프로젝트/코워킹_평면도_판교1_정밀.svg',s.join('\n')+'</svg>','utf8');
 
 // CAPEX/고정비 산식 = 부사장_보고용_지역별_SOS_경쟁력_분석.html 8·9장 그대로
-const py=100, rent=650, mgmtRate=2.7, partTime=0, sales=100;
+// 실매물 확정(판교1.png): 에이치스퀘어 S동 B1, 전용344㎡=104평, 보증금7,500만·월세650만(복합상가·체육시설), 확인매물 26.06.26
+const py=104, rent=650, depo=7500, mgmtRate=2.7, partTime=0, sales=100;
 const full_rev=mix[4]*180+mix[2]*120+mix[1]*70;
 const capex=Math.round((py*130+py*11+rm*25+800+seat*23.65+50)*1.05);
 const dep=Math.round(capex/60);

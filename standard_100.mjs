@@ -77,36 +77,37 @@ s.push(`<text x="160" y="80" font-size="12" font-weight="700" fill="#15803d">독
 fs.writeFileSync('C:/Users/User/Documents/프로젝트/코워킹_평면도_100평_전국형.svg',s.join('\n')+'</svg>','utf8');
 
 // CAPEX/고정비 산식 = 부사장_보고용_지역별_SOS_경쟁력_분석.html 8·9장 동일. 배치도(rm/seat/mix) 기준값.
-// rent: 100평 실매물 미확보 — 확보된 분당 실매물 2건(120평@432만=3.6만/평, 150평@560만=3.733만/평)의
-// 전용평당 월세 "범위"로만 제시(단일 가정치 없음). 100평 실매물 확보 시 이 범위를 실측값으로 교체.
-// 가격: 분당표준가(128/75/45) 대비 +9% 소형매물 프리미엄(판교 +41%보다는 낮은 수준) — 2인4·1인8 배치도(판교와 동일) 기준
-const py=100, rentLow=Math.round(py*432/120), rentHigh=Math.round(py*560/150), mgmtRate=2.8, partTime=0, sales=100;
+// rent: 실매물 확정(분당100평 수정.png) — 전용 347㎡=105평, 보증금7,500만·월세440만, 5/5층·남동향·엘리베이터, 확인매물 26.07.01
+// (이전 오리역 매물 전용97평/월세530만보다 저렴해 이걸로 교체. 같은 리스트에 전용120·121평 매물도 있었으나 120평형과 중복이라 제외)
+// ⚠️ 미확인: 권리금 유무, 근생/업무시설 용도(코워킹 운영 가능 여부 확인 필요)
+// 가격: 분당표준가(128/75/45) 대비 +9% 소형매물 프리미엄(판교 +41%보다는 낮은 수준, 근거 데이터 없는 가정) — 2인4·1인8 배치도(판교와 동일) 기준
+const py=105, rent=440, depo=7500, mgmtRate=2.8, partTime=0, sales=100;
 const full_rev=mix[4]*140+mix[2]*82+mix[1]*49;
 const capex=Math.round((py*130+py*11+rm*25+800+seat*23.65+50)*1.05);
 const dep=Math.round(capex/60);
 const mgmt=Math.round(py*mgmtRate), elec=Math.round(py*0.8);
-const fixedOf=rent=>rent+mgmt+elec+370+partTime+sales+dep+112;
-const bepOf=rent=>fixedOf(rent)/(full_rev*0.885)*100;
+const fixed=rent+mgmt+elec+370+partTime+sales+dep+112;
+const op=g=>full_rev*g*0.885-fixed;
+const bep=fixed/(full_rev*0.885)*100;
 const fk=n=>Math.round(n).toLocaleString();
-console.log(`분당 100평형(도면 기준): ${rm}호실 ${seat}석 (4인${mix[4]} 2인${mix[2]} 1인${mix[1]})`);
-console.log(`월세 범위: ${rentLow}~${rentHigh}만 (분당 실매물 120평@3.6만/평 ~ 150평@3.733만/평 그대로 100평에 대입, 단일 가정 없음)`);
+console.log(`분당 100평형(도면 기준, 실매물 전용105평): ${rm}호실 ${seat}석 (4인${mix[4]} 2인${mix[2]} 1인${mix[1]})`);
+console.log(`월세 ${rent}만·보증금 ${depo}만 (5/5층 상가 실매물, 전용평당 ${(rent/py).toFixed(2)}만 — 확인매물 26.07.01)`);
 console.log(`만실 ${fk(full_rev)}만원 | CAPEX ${fk(capex)}만 | 상각 ${fk(dep)}만/월`);
-console.log(`고정비 ${fk(fixedOf(rentLow))}~${fk(fixedOf(rentHigh))}만`);
-console.log(`BEP ${bepOf(rentLow).toFixed(1)}~${bepOf(rentHigh).toFixed(1)}%`);
+console.log(`고정비 ${fk(fixed)}만 = 월세${rent}+관리비${mgmt}+전기${elec}+공통370+세일즈${sales}+상각${dep}+기타112`);
+console.log(`BEP ${bep.toFixed(1)}% | 50%${op(0.5)>=0?'+':''}${fk(op(0.5))} 60%${op(0.6)>=0?'+':''}${fk(op(0.6))} 70%${op(0.7)>=0?'+':''}${fk(op(0.7))}`);
 
 console.log('');
 console.log('=== 분당 3개 모델 BEP 비교 ===');
-console.log(`100평: ${rm}실/${seat}석 · BEP ${bepOf(rentLow).toFixed(1)}~${bepOf(rentHigh).toFixed(1)}%`);
-console.log('120평: 33실/90석 · BEP 66.6% (참고: pangyo_120.mjs 최신 실행 결과, 실매물 월세 432만 확정치)');
-console.log('150평: 53실/110석 · BEP 64.2% (참고: pangyo_150.mjs 최신 실행 결과, 실매물 월세 560만 확정치)');
-console.log('※ 100평은 배치도가 기준이라 판교11.mjs와 동일한 2인4·1인8 물리 배치 사용(룸믹스로 BEP 조작 안 함). 소형매물 프리미엄(+9%, 판교 +41%보다는 낮음)은 근거 데이터 없는 가정 — 실매물 확보 전까지 참고치.');
+console.log(`100평: ${rm}실/${seat}석 · BEP ${bep.toFixed(1)}%`);
+console.log('120평: 33실/90석 · BEP 66.6% (참고: pangyo_120.mjs 최신 실행 결과, 실매물 월세 432만)');
+console.log('150평: 53실/110석 · BEP 64.2% (참고: pangyo_150.mjs 최신 실행 결과, 실매물 월세 560만)');
+console.log('※ 100평은 소형 상가 매물이라 전용평당 월세(4.19만/평)가 120·150평 오피스형(3.6~3.73만/평)보다 비싸서 BEP가 셋 중 가장 높음. 배치도는 판교11.mjs와 동일한 2인4·1인8(룸믹스로 BEP 조작 안 함).');
 
-// 비정형 평면 보정 (월세 범위 하단 기준)
+// 비정형 평면 보정
 const avgRevPerRoom=full_rev/rm;
-const fixedLow=fixedOf(rentLow);
 [1,2,3,5].forEach(loss=>{
   const rev2=full_rev-avgRevPerRoom*loss;
-  const op65=Math.round(rev2*0.65*0.885-fixedLow);
-  const bep2=fixedLow/(rev2*0.885)*100;
+  const op65=Math.round(rev2*0.65*0.885-fixed);
+  const bep2=fixed/(rev2*0.885)*100;
   console.log(`  [보정 -${loss}실→${rm-loss}실] 65%손익 ${op65>=0?'+':''}${fk(op65)}만 · BEP ${bep2.toFixed(1)}%`);
 });
