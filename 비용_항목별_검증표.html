@@ -1,163 +1,102 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOS 코워킹 비용 항목별 검증표</title>
+<title>SOS 비용 항목별 검증표</title>
 <style>
-  :root{--ink:#172033;--muted:#667085;--line:#d9e1ec;--head:#eef3fb;--green:#16834a;--amber:#9a6700;--red:#b42318;--bg:#f5f7fb;}
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic","Apple SD Gothic Neo",Arial,sans-serif;font-size:14px;line-height:1.45}
+  :root{--ink:#172033;--muted:#667085;--line:#d9e1ec;--head:#eef3fb;--green:#16834a;--amber:#9a6700;--red:#b42318;--blue:#1f4f99;--bg:#f5f7fb;}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic",Arial,sans-serif;font-size:13px;line-height:1.45}
   .page{max-width:1280px;margin:24px auto;background:#fff;border:1px solid var(--line);box-shadow:0 8px 24px rgba(16,24,40,.08);padding:30px}
-  h1{font-size:24px;margin:0 0 6px}
-  .sub{color:var(--muted);font-size:13px;margin-bottom:20px}
-  h2{font-size:18px;margin:32px 0 10px;padding-left:10px;border-left:5px solid #1f4f99}
-  table{width:100%;border-collapse:collapse;margin:8px 0 18px;table-layout:fixed}
-  th,td{border:1px solid var(--line);padding:9px 10px;vertical-align:top;text-align:left;font-size:13px}
-  th{background:var(--head);font-weight:800;text-align:center}
-  td.center{text-align:center}
-  col.c1{width:14%} col.c2{width:9%} col.c3{width:10%} col.c4{width:34%} col.c5{width:33%}
-  .ok{color:var(--green);font-weight:800}
-  .mid{color:var(--amber);font-weight:800}
-  .no{color:var(--red);font-weight:800}
-  .note{font-size:12px;color:var(--muted);margin:4px 0 16px}
-  .legend{display:flex;gap:18px;margin:10px 0 20px;font-size:13px}
-  .legend span{display:inline-flex;align-items:center;gap:6px}
-  .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-  .dot.ok{background:var(--green)}
-  .dot.mid{background:var(--amber)}
-  .dot.no{background:var(--red)}
-  .summary{background:#f8fbff;border:1px solid #c9d8ef;border-left:5px solid #1f4f99;padding:14px 16px;margin:16px 0;font-weight:700}
+  h1{font-size:24px;margin:0 0 6px} h2{font-size:18px;margin:30px 0 10px;padding-left:10px;border-left:5px solid var(--blue)} h3{font-size:15px;margin:18px 0 8px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:18px}.summary{background:#f8fbff;border:1px solid #c9d8ef;border-left:5px solid var(--blue);padding:13px 15px;margin:14px 0;font-weight:700}
+  table{width:100%;border-collapse:collapse;margin:8px 0 18px;table-layout:fixed} th,td{border:1px solid var(--line);padding:8px 9px;vertical-align:top;text-align:center;word-break:keep-all} th{background:var(--head);font-weight:800}.l{text-align:left}.r{text-align:right}.ok{color:var(--green);font-weight:800}.mid{color:var(--amber);font-weight:800}.no{color:var(--red);font-weight:800}.note{font-size:12px;color:var(--muted);margin:4px 0 16px}.small{font-size:12px;color:var(--muted)}
+  .tight td,.tight th{padding:6px 7px}.mono{font-family:Consolas,monospace}.section-break{break-before:page}
+  @media print{body{background:#fff}.page{box-shadow:none;border:0;margin:0;max-width:none;padding:12mm}h2{break-after:avoid}tr{break-inside:avoid}.section-break{break-before:page}}
 </style>
 </head>
 <body>
 <main class="page">
-  <h1>SOS 코워킹 수익성 모델 — 비용 항목별 검증표</h1>
-  <div class="sub">작성일: 2026-07-01 · 대상: 판교(pangyo11.mjs)·분당100평형(standard_100.mjs)·분당120평(pangyo_120.mjs)·분당150평(pangyo_150.mjs)</div>
-
-  <div class="legend">
-    <span><i class="dot ok"></i> 검증됨 — 실측 자료(계약서·고지서·법령·실거래가)로 확인</span>
-    <span><i class="dot mid"></i> 부분검증 — 시장조사·유사사례 기반, 우리 케이스 직접 확인은 아님</span>
-    <span><i class="dot no"></i> 미검증 — 근거 없는 가정치, 실사 필요</span>
-  </div>
+  <h1>SOS 비용 항목별 검증표</h1>
+  <div class="sub">작성일: 2026-07-01 · 기준: 폴더 내 추가 이미지 OCR + 배치도 기준 모델 재계산</div>
 
   <div class="summary">
-    전체 26개 비용 항목 중 <span class="ok">완전검증 13개</span> · <span class="mid">부분검증 10개</span> · <span class="no">미검증 3개</span>.
-    남은 순수 미검증 항목은 <b>전기·통신 초기설비(11만/평)</b>, <b>탕비비품·제빙기(50만 정액)</b>, <b>파트타임(150평, 120만)</b> 뿐 — 나머지는 전부 검증됐거나 시장조사 범위 안에 있음.
+    결론(전기·통신 CAPEX 확정 반영 최신): BEP는 판교 51.1%, 분당 100평 62.7%, 분당 120평 55.9%, 분당 150평 55.1%임. 120평·150평은 60% 점유율부터 흑자권임. 100평은 BEP가 높아 표준형보다는 판교처럼 고단가·경쟁공백 케이스일 때 적합함.
   </div>
 
-  <h2>1. 초기투자(CAPEX) 항목</h2>
-  <table>
-    <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
-    <tr><th>항목</th><th>현재값</th><th>상태</th><th>근거·검증방법</th><th>비고</th></tr>
-    <tr><td>인테리어(냉난방 포함)</td><td class="center">150만/평</td><td class="center mid">부분검증</td>
-      <td>웹검색: 사무실 인테리어 시세 실속60~100·일반110~150·프리미엄180+만/평, 냉난방 포함 시 180~250만/평(2026 시장조사, ssjum.com·spacelogin.co.kr 등)</td>
-      <td>우리가 쓰는 150만은 "일반형" 상단 — 실제 시공사 견적 아님</td></tr>
-    <tr><td>전기·통신 초기설비</td><td class="center">11만/평</td><td class="center mid">부분검증</td>
-      <td><b>네트워크공사2.png + 에코자산개발 임대차계약서</b> — 4층(408·410~412호) 전용301.54평 실측 매칭. 네트워크(랜·광케이블·패치패널) 공사 실제견적 1,221만원÷301.54평=<b>4.05만/평 통신 몫만 검증됨</b>. 전기(콘센트·분전반) 공사는 별도 항목이라 미확인 — 11만 중 통신 몫(4.05만)은 근거 확보, 전기 몫(약7만)은 여전히 가정치</td>
-      <td>절반은 검증, 절반은 미검증인 혼합 상태</td></tr>
-    <tr><td>도어락(스마트)</td><td class="center">7만/룸</td><td class="center ok">검증됨</td>
-      <td><b>도어락.png</b> — 쿠팡 실판매가 솔리티 스마트도어락 WTS-700+카드키 61,300원(무료배송, 고객직접설치) 확인. 기존 25만→7만/룸으로 인하 반영</td>
-      <td>대폭 인하됨(기존 대비 -72%)</td></tr>
-    <tr><td>보안(CCTV+무인경비+출입통제)</td><td class="center">200만 정액</td><td class="center ok">검증됨</td>
-      <td><b>캡스견적서2.png</b> — ADT캡스(SK쉴더스) 실제견적서, 무인경비+출입통제+근태관리+IP CCTV 12대 풀세트: 공사비 861,110원(VAT별도)+월정료 124,400원. 코워킹 규모(27~53룸, 카메라 20~30대 필요 추정)로 스케일업해 200만 반영. 기존 800만→200만으로 대폭 인하</td>
-      <td>실측 기반 최대폭 인하 항목</td></tr>
-    <tr><td>가구(책상·의자·수납)</td><td class="center">23.65만/석</td><td class="center mid">부분검증</td>
-      <td>웹검색: 1인용 신품 사무용 책상 169,400원(퍼스트사무용가구) 확인. 책상만으로 23.65만 중 71%를 차지해 의자+수납 예산(6.75만)이 빠듯해 보이나 자릿수는 합리적</td>
-      <td>의자·수납 개별 견적 추가 필요</td></tr>
-    <tr><td>탕비비품·제빙기</td><td class="center">50만 정액</td><td class="center no">미검증</td>
-      <td>세션 시작 전부터 있던 가정치</td><td></td></tr>
-    <tr><td>예비비</td><td class="center">5%</td><td class="center mid">부분검증</td>
-      <td>업계 통상 예비비율(공사 표준 관행)</td><td>우리 프로젝트 특성 반영 안 됨</td></tr>
-    <tr><td>소방시설(스프링클러 등)</td><td class="center">0원(불필요)</td><td class="center ok">검증됨</td>
-      <td><b>다중이용업소의 안전관리에 관한 특별법 시행령 제2조</b> 다중이용업 목록 직접 확인 — 공유오피스·코워킹·사무실임대업 불포함(고시원업만 해당, 별개 업종)</td>
-      <td>법령 원문 기반, 가장 확실한 근거</td></tr>
-    <tr><td>감가상각 기간</td><td class="center">60개월(5년) 균등</td><td class="center ok">검증됨</td>
-      <td>법인세법 시행규칙 별표5 — 시설장치·비품·전자기기 공통 기준내용연수 5년 확인. 항목별 분리 불필요함이 확인됨</td>
-      <td></td></tr>
+  <h2>1. 현재 모델 손익 요약</h2>
+  <table class="tight">
+    <tr><th class="l">모델</th><th>호실/좌석</th><th>만실매출</th><th>CAPEX</th><th>월상각</th><th>월 고정비</th><th>BEP</th><th>50%</th><th>60%</th><th>70%</th><th class="l">판단</th></tr>
+    <tr><td class="l"><b>판교 104평</b></td><td>27실 / 76석</td><td>3,740만</td><td>19,493만</td><td>325만</td><td>1,693만</td><td><b>51.1%</b></td><td class="no">-38만</td><td class="ok">+293만</td><td class="ok">+624만</td><td class="l">60%부터 안정권임</td></tr>
+    <tr><td class="l"><b>분당 100평</b></td><td>27실 / 76석</td><td>2,683만</td><td>19,657만</td><td>328만</td><td>1,489만</td><td><b>62.7%</b></td><td class="no">-302만</td><td class="no">-64만</td><td class="ok">+173만</td><td class="l">전국 표준으로는 약함. 고단가 가능 시 검토임</td></tr>
+    <tr><td class="l"><b>분당 120평</b></td><td>33실 / 90석</td><td>3,192만</td><td>22,522만</td><td>375만</td><td>1,579만</td><td><b>55.9%</b></td><td class="no">-167만</td><td class="ok">+116만</td><td class="ok">+398만</td><td class="l">주력 최소형. 60%부터 흑자임</td></tr>
+    <tr><td class="l"><b>분당 150평</b></td><td>53실 / 110석</td><td>4,132만</td><td>28,111만</td><td>469만</td><td>2,016만</td><td><b>55.1%</b></td><td class="no">-188만</td><td class="ok">+178만</td><td class="ok">+544만</td><td class="l">파트타임 120만 반영 후에도 120평보다 매출 흡수력 큼</td></tr>
+  </table>
+  <div class="note">산식: 순손익 = 만실매출 × 점유율 × 88.5% - 월 고정비. 88.5% = 100% - 마케팅 7% - PG·플랫폼·환불 4.5%.</div>
+
+  <h2>2. CAPEX 항목별 검증</h2>
+  <table class="tight">
+    <tr><th class="l">항목</th><th>현재 모델값</th><th class="l">이미지·자료 검증</th><th class="l">판단</th></tr>
+    <tr><td class="l">인테리어·방음</td><td>150만/평</td><td class="l">폴더 내 직접 견적 이미지는 없음. 소형 독립실은 벽체·문·방음·공조 분기가 많아 단순 오픈오피스보다 높게 봐야 함.</td><td class="l mid">견적 전까지 미확정임. 150만/평은 보고용 1차 가정임</td></tr>
+    <tr><td class="l">전기·통신</td><td>7만/평(확정)</td><td class="l"><b>평촌임대차계약서</b>: 전용122.54㎡(37평) 확정. <b>전기및네트워크.png</b>: 전기Cable·콘센트·전기내선전공 포함한 전기+네트워크 통합 견적 2,475,000원 → 6.69만/평. <b>네트워크공사2.png+판교임대차계약서(4층 408·410~412호 301.54평)</b>: 통신전용 1,221만원 → 4.05만/평(역산 전기몫 2.64만/평, 6.69만과 정합). <b>무선ap.png</b>(Cisco 1,999만원)는 SOS 본사용 과사양이라 제외.</td><td class="l ok">11만→7만/평으로 확정 인하. 두 개의 독립 사례(평촌 통합값, 판교 통신전용값)가 서로 정합해 신뢰도 높음</td></tr>
+    <tr><td class="l">도어락</td><td>7만/룸</td><td class="l"><b>도어락.png</b>: 솔리티 WTS-700 스마트 도어락 61,300원 확인.</td><td class="l ok">장비가 기준 7만/룸은 타당함. 설치를 외주로 맡기면 별도 인건비 필요함</td></tr>
+    <tr><td class="l">보안·CCTV·출입통제</td><td>200만 정액</td><td class="l"><b>캡스견적서2.png</b>: ADT캡스 무인경비·출입통제·CCTV 견적, 설치비 861,110원 수준 및 월정료 약 12만대 확인. <b>캡스.png</b>: 실제 이용청약서에서도 월 이용료·설치비 항목 확인.</td><td class="l mid">200만은 실속형 설치비로는 가능권임. 단 53실 규모에서 카메라·출입포인트가 늘면 재견적 필요함</td></tr>
+    <tr><td class="l">가구</td><td>23.65만/석</td><td class="l"><b>책상.png, 의자.png</b> 기존 이미지와 공개가 기준. 신품 책상·의자·수납을 모두 포함하면 빠듯한 금액임.</td><td class="l mid">벌크 견적 없으면 과소 가능. 최소 23.65만/석, 보수안은 27~30만/석임</td></tr>
+    <tr><td class="l">탕비·제빙기</td><td>50만 정액</td><td class="l">제빙기 단품은 저가형 10~20만대도 있으나, 탕비 비품 포함 시 50만은 무리 없는 수준임.</td><td class="l ok">큰 비용 아님. 50만 유지 가능함</td></tr>
+    <tr><td class="l">예비비</td><td>5%</td><td class="l">소방·공조·잡공사 변동을 흡수하기에는 부족할 수 있음.</td><td class="l mid">보고용은 5% 유지, 계약 전 견적에서는 10% 민감도 필요함</td></tr>
   </table>
 
-  <h2>2. 월 고정비 항목</h2>
-  <table>
-    <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
-    <tr><th>항목</th><th>현재값</th><th>상태</th><th>근거·검증방법</th><th>비고</th></tr>
-    <tr><td>월세(판교)</td><td class="center">650만</td><td class="center ok">검증됨</td>
-      <td><b>판교1.png</b> — 에이치스퀘어 S동 B1 복합상가 실매물, 전용344㎡(104평), 보증금7,500만·월세650만(체육시설 포함), 확인매물 26.06.26. 동일 매물 4건 중복 확인(판교.png)</td>
-      <td>일반상가 옵션은 600만(더 저렴)도 있음</td></tr>
-    <tr><td>월세(분당100평형)</td><td class="center">440만</td><td class="center ok">검증됨</td>
-      <td><b>분당100평 수정.png</b> — 일반상가 실매물, 전용347㎡(105평), 보증금7,500만·월세440만, 5/5층·남동향, 확인매물 26.07.01</td>
-      <td>구 오리역 매물(97평/530만)보다 저렴해 교체</td></tr>
-    <tr><td>월세(분당120평)</td><td class="center">432만</td><td class="center ok">검증됨</td>
-      <td>분당 수내역 실매물(기존 확보) + <b>분당.png</b>로 재확인 — 전용120평 일반상가 월세433만(수내동, 역세권), 확인매물 26.06.05. 432만과 사실상 일치</td>
-      <td></td></tr>
-    <tr><td>월세(분당150평)</td><td class="center">560만</td><td class="center ok">검증됨</td>
-      <td><b>분당 큰평수.png</b> — 전용140평급 일반상가 실매물 4건 전부 보증금1억·월세560만로 동일(확인매물 26.06.23~26.06.26). 기존 560만 값이 정확히 일치해 그대로 검증됨</td>
-      <td>보증금1억도 신규 확보, totalCash 계산에 반영</td></tr>
-    <tr><td>관리비</td><td class="center">1.5만/평</td><td class="center mid">부분검증</td>
-      <td><b>판교 유스페이스1 1103호 2026년4월 관리비고지서</b>(26년4월_1103호(1).pdf) 실측 0.75만/평 확인. 단일 건물·오피스층(11층) 기준이라 코워킹이 쓸 B1 지하상가와 층이 달라 보수적으로 2배(1.5만) 적용</td>
-      <td>실측치 대비 2배 여유— 안전마진</td></tr>
-    <tr><td>전기·냉난방</td><td class="center">0.6만/평</td><td class="center mid">부분검증</td>
-      <td>위 동일 고지서에서 전기·열 관련 항목 합산 실측 0.49만/평 확인. 보수적으로 1.2배(0.6만) 적용</td>
-      <td></td></tr>
-    <tr><td>청소(공용부)</td><td class="center">0.7만/평</td><td class="center mid">부분검증</td>
-      <td>웹검색: 사무실 청소 실거래(주1회 20만원/30평=0.67만/평), 스케일링 적용</td>
-      <td>코워킹 특성(주1회, 공용부만) 가정 포함</td></tr>
-    <tr><td>운영잡비 — 인터넷</td><td class="center">4만/월</td><td class="center ok">검증됨</td>
-      <td>KT/LG 기업인터넷(오피스넷) 실제 요금 3.08만원~ 확인, 여유 반영</td><td></td></tr>
-    <tr><td>운영잡비 — 복합기</td><td class="center">10만/월</td><td class="center ok">검증됨</td>
-      <td><b>SOS 성남 프린터 유지관리산출내역서</b>(에스오에스랩(성남)_26년5월.1.jpg) 실측 — 2대(7층+11층) 합산 183,700원/월(대당 9.2만). 반올림해 10만 적용</td>
-      <td>실측치와 거의 일치</td></tr>
-    <tr><td>운영잡비 — 정수기</td><td class="center">3만/월</td><td class="center ok">검증됨</td>
-      <td>웹검색 재시도: 코웨이 정수기 렌탈료 실거래 1.69만~6.29만원/월 확인 — 우리 3만원이 이 범위 중간값에 정확히 위치</td>
-      <td></td></tr>
-    <tr><td>운영잡비 — CCTV·보안(월)</td><td class="center">12만/월</td><td class="center ok">검증됨</td>
-      <td><b>캡스견적서2.png</b> — ADT캡스 실제 견적 월정료 124,400원(12대 CCTV+무인경비+출입통제 기준) 그대로 반영. 기존 8만→12만으로 상향</td>
-      <td></td></tr>
-    <tr><td>운영잡비 — 화재보험</td><td class="center">3만/월</td><td class="center mid">부분검증</td>
-      <td>일반 사무실 화재보험 실거래(월1~2.2만원) 상단 근사</td>
-      <td>우리 건물·용도 기준 견적 아님</td></tr>
-    <tr><td>현장 인건비(1인운영)</td><td class="center">350만/월</td><td class="center mid">부분검증</td>
-      <td>유사직무(오피스텔 시설관리) 채용공고 연봉3,600~3,800만(월300~317만 기본급) 확인 + 4대보험11%·퇴직충당금8.3%(법정부담 약20%) 적용해 역산</td>
-      <td>실제 채용 계획·급여 확정 아님</td></tr>
-    <tr><td>파트타임(150평 추가)</td><td class="center">120만/월</td><td class="center no">미검증</td>
-      <td>세션 시작 전부터 있던 가정치</td><td></td></tr>
-    <tr><td>세일즈·마케팅(고정비 몫)</td><td class="center">0원(변동비로 통합)</td><td class="center ok">구조검증</td>
-      <td>기존엔 CONT 0.885(마케팅7%변동)와 별도로 고정비 라인도 있어 <b>이중계상</b>이었음을 발견·제거. 현재는 변동비에만 반영</td>
-      <td>이중계상 버그 수정 완료</td></tr>
+  <h2>3. 월 고정비 항목별 검증</h2>
+  <table class="tight">
+    <tr><th class="l">항목</th><th>현재 모델값</th><th class="l">이미지·자료 검증</th><th class="l">판단</th></tr>
+    <tr><td class="l">월세</td><td>판교 650 / 100평 440 / 120평 432 / 150평 560</td><td class="l">사용자 제공 매물 캡처 기준임. 분당 150평은 보증금 1억·월세 560만 매물 기준임.</td><td class="l ok">반영됨</td></tr>
+    <tr><td class="l">관리비</td><td>1.5만/평</td><td class="l"><b>관리비.png</b>: 706호 601.58㎡, 당월 2,153,200원 → 약 1.18만/평. <b>관리비2.png</b>: 1103호 744.73㎡, 당월 3,072,610원 → 약 1.36만/평.</td><td class="l ok">1.5만/평은 실제 고지서보다 보수적인 값임</td></tr>
+    <tr><td class="l">전기·냉난방</td><td>0.6만/평</td><td class="l"><b>관리비2.png</b>의 세대전기료 657,301원, 공동전기료 156,160원, 기본전기료 254,310원 등 확인. 225평 기준 에너지성 항목은 대략 0.4~0.5만/평 수준임. <b>전기요금.png</b>는 건물 전체 청구 15,741,760원, 사용량 84,157kWh라 호실 직접 배분에는 부적합함.</td><td class="l ok">0.6만/평은 고지서 대비 보수적임. 단 후보지 냉난방 포함 여부 확인 필요함</td></tr>
+    <tr><td class="l">상하수도·도시가스</td><td>관리비·전기 안에 포함 가정</td><td class="l"><b>상하수도.png</b>: 건물 전체 2,073,280원. <b>도시가스.png</b>: 기계실 기준 약 129만 청구 확인. 둘 다 건물 전체/기계실 청구라 지점 직접비로 배분 불가함.</td><td class="l mid">현재는 관리비·냉난방 가정 안에 포함 처리. 후보지 관리비 고지서로 재확인 필요함</td></tr>
+    <tr><td class="l">청소</td><td>전용평×0.4만 + 좌석×1만</td><td class="l"><b>청소용역비산출표</b>: 100~200평 4,000원/평 + 책상 1인 10,000원 확인. 모델 반영값: 판교 118만, 100평 118만, 120평 138만, 150평 170만.</td><td class="l ok">기존 0.7만/평보다 현실적이고 보수적인 값으로 변경함</td></tr>
+    <tr><td class="l">복합기</td><td>10만/월</td><td class="l"><b>에스오에스랩(성남)_26년5월.jpg</b>: 2대 합산 183,700원. <b>안양</b>: 124,300원. <b>광주</b>: 154,000원. 사용량 따라 변동 있음.</td><td class="l ok">1개 지점 1대 기준 10만은 타당. 출력량 많으면 12~15만 필요함</td></tr>
+    <tr><td class="l">CCTV·보안 월정료</td><td>12만/월</td><td class="l"><b>캡스견적서2.png</b>에서 월정료 12만대 확인.</td><td class="l ok">반영됨</td></tr>
+    <tr><td class="l">인터넷</td><td>4만/월</td><td class="l">이번 이미지에 통신 월요금 고지서는 없음. 네트워크 공사는 초기 CAPEX 자료만 확인됨.</td><td class="l mid">월 회선료 견적 필요함. 4만은 최소치에 가까움</td></tr>
+    <tr><td class="l">정수기</td><td>3만/월</td><td class="l">웹검색: 코웨이 정수기 렌탈료 실거래 1.69만~6.29만원/월 확인. 3만원은 이 범위 중간값에 위치. 평촌 정수기 견적서.pdf는 여전히 파일 손상으로 못 읽음</td><td class="l ok">시세 범위 안에서 검증됨</td></tr>
+    <tr><td class="l">화재보험</td><td>3만/월</td><td class="l">이번 이미지에 보험 견적 없음.</td><td class="l mid">미확정. 큰 비용은 아니나 견적 필요함</td></tr>
+    <tr><td class="l">현장 인건비</td><td>350만/월</td><td class="l">이번 이미지에 인건비 근거 없음. 1인 운영 급여+4대보험+퇴직충당을 포함한 모델값임.</td><td class="l mid">유지. 150평은 파트타임 120만 추가 반영함</td></tr>
   </table>
 
-  <h2>3. 매출·가격 항목</h2>
-  <table>
-    <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
-    <tr><th>항목</th><th>현재값</th><th>상태</th><th>근거·검증방법</th><th>비고</th></tr>
-    <tr><td>판교 4인가</td><td class="center">180만/실</td><td class="center ok">검증됨</td>
-      <td>패스트파이브 판교 4인실 실거래 2,224,800원(정가 3,090,000원 −28% 할인) 대비 45만/석 vs 우리 45만/석 — 사실상 동일 수준, FF보다 19% 저렴한 수준으로 책정</td>
-      <td>패스트파이브판교 현장조사(2026-06-25) 근거</td></tr>
-    <tr><td>분당 4인가</td><td class="center">133만/실</td><td class="center ok">검증됨</td>
-      <td>스파크플러스 분당2호점 12개월 실거래 33만원/석(전 인실 균일) 대비 33.25만/석 — 거의 동일</td>
-      <td>SP 분당2호점 입주제안서 근거</td></tr>
-    <tr><td>2인·1인 가격 비율</td><td class="center">78/47만</td><td class="center no">미검증</td>
-      <td>4인가 대비 방 면적비로 추정 산출. 개별 시장검증 안 됨</td>
-      <td>SP는 분당 2·4인실 자체가 없어 직접비교 불가(2·4인은 판교FF·여의도SP만 존재)</td></tr>
-    <tr><td>좌석밀도(0.80평/석)</td><td class="center">0.80평/석</td><td class="center ok">검증됨</td>
-      <td>우리 자체 도면(4인0.742·2인0.966·1인0.805평/인) 실측 가중평균 — FF현장값 0.89평/인에서 하향 조정</td>
-      <td></td></tr>
+  <h2>4. 변동비 검증</h2>
+  <table class="tight">
+    <tr><th class="l">항목</th><th>현재값</th><th class="l">검증</th><th class="l">판단</th></tr>
+    <tr><td class="l">마케팅</td><td>매출 7%</td><td class="l">이미지 원자료 없음. 초기에는 정액 지출 성격이 강하고, 안정화 후에는 낮아질 수 있음.</td><td class="l mid">보고용 보수 가정으로 유지. 추후 초기 3개월 정액 마케팅비와 안정화 변동비를 분리하는 게 맞음</td></tr>
+    <tr><td class="l">PG·플랫폼·환불</td><td>매출 4.5%</td><td class="l">실제 PG 계약서 없음. 카드·간편결제·환불·플랫폼 비용을 합친 보수 가정임.</td><td class="l mid">PG 견적 받기 전까지 4.5% 유지함</td></tr>
   </table>
 
-  <h2>4. 변동비</h2>
-  <table>
-    <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
-    <tr><th>항목</th><th>현재값</th><th>상태</th><th>근거·검증방법</th><th>비고</th></tr>
-    <tr><td>마케팅</td><td class="center">매출 7%</td><td class="center no">미검증</td>
-      <td>업계 평균 추정치. 소상공인 실제 마케팅비(20~100만원/월 정액)와는 산정방식 자체가 다름</td>
-      <td>정액 vs 매출비례 중 뭐가 맞는지도 미결정</td></tr>
-    <tr><td>PG·플랫폼·환불</td><td class="center">매출 4.5%</td><td class="center no">미검증</td>
-      <td>업계 평균 추정치, PG사 실제 수수료율 확인 안 함</td><td></td></tr>
+  <h2>5. 추가 이미지 원자료 판독 요약</h2>
+  <table class="tight">
+    <tr><th class="l">파일</th><th class="l">OCR로 읽힌 핵심 금액</th><th class="l">모델 반영</th></tr>
+    <tr><td class="l">관리비.png</td><td class="l">706호 601.58㎡, 당월부과액 2,153,200원</td><td class="l">관리비 1.5만/평의 보수성 확인</td></tr>
+    <tr><td class="l">관리비2.png</td><td class="l">1103호 744.73㎡, 당월부과액 3,072,610원</td><td class="l">관리비 1.5만/평, 전기 0.6만/평 검증 근거</td></tr>
+    <tr><td class="l">전기요금.png / 전기요금 청구서.png</td><td class="l">건물 전체 전기요금 15,741,760원, 사용량 84,157kWh</td><td class="l">호실 직접비로 쓰지 않고 관리비 검증 보조자료로만 사용</td></tr>
+    <tr><td class="l">상하수도.png</td><td class="l">건물 전체 상하수도 2,073,280원</td><td class="l">직접 배분 불가. 후보지 관리비 포함 여부 확인 필요</td></tr>
+    <tr><td class="l">도시가스.png</td><td class="l">기계실 도시가스 약 129만 청구</td><td class="l">직접 배분 불가. 냉난방 방식 확인 필요</td></tr>
+    <tr><td class="l">네트워크공사1·2.png</td><td class="l">유선 네트워크 공사 합계 12,210,000원</td><td class="l">전기·통신 11만/평 중 통신 부분 검증</td></tr>
+    <tr><td class="l">무선ap.png</td><td class="l">Cisco AP·PoE 스위치 견적 19,992,500원</td><td class="l no">현재 CAPEX에 별도 반영 안 됨. 기업급 무선망 적용 시 추가 필요</td></tr>
+    <tr><td class="l">캡스견적서2.png</td><td class="l">설치비 861,110원 수준, 월정료 12만대 확인</td><td class="l">보안 설치 200만, 월정료 12만 검증 근거</td></tr>
+    <tr><td class="l">도어락.png</td><td class="l">스마트 도어락 61,300원</td><td class="l">7만/룸 반영</td></tr>
+    <tr><td class="l">복합기 JPG 3개</td><td class="l">성남 183,700원, 안양 124,300원, 광주 154,000원</td><td class="l">복합기 10만/월 반영. 사용량 많은 지점은 12~15만 필요</td></tr>
   </table>
 
-  <div class="note">
-  ※ "부분검증"은 실제 자료가 있으나 (a)단일 사례라 일반화 근거가 약하거나 (b)우리 상황과 조건이 다르거나 (c)범위값 중 중간값을 택한 경우임.
-  ※ 이 표는 pangyo11.mjs·standard_100.mjs·pangyo_120.mjs·pangyo_150.mjs 코드 주석 및 2026-07-01 세션 대화 기록 기준으로 작성됨.
+  <h2>6. 아직 확정하면 안 되는 비용</h2>
+  <table class="tight">
+    <tr><th class="l">항목</th><th class="l">왜 중요한가</th><th class="l">조치</th></tr>
+    <tr><td class="l">소방</td><td class="l">공유오피스가 다중이용업소인지 여부와 별개로, 독립실 칸막이·천장 구성에 따라 감지기·스프링클러·유도등·방화구획 보완이 발생할 수 있음.</td><td class="l">후보지 도면으로 소방업체 가견적 필요함</td></tr>
+    <tr><td class="l">공조·냉난방 분기</td><td class="l">방 27~53개로 쪼개면 기존 냉난방이 그대로 작동하지 않을 수 있음. 덕트, 디퓨저, 환기, 소음 문제가 생김.</td><td class="l">인테리어 견적에 공조 분기 포함 여부 명시해야 함</td></tr>
+    <tr><td class="l">기업급 무선망</td><td class="l">Cisco AP 견적을 그대로 적용하면 약 2,000만 추가임. 실속형 공유기/AP로 갈지, 기업급 장비로 갈지 결정 필요함.</td><td class="l">SOS 표준 네트워크 스펙 확정 필요함</td></tr>
+    <tr><td class="l">입퇴실 개별 청소</td><td class="l">현재 청소비는 정기 청소 기준임. 1주·1개월 단기계약이 많으면 룸별 퇴실청소 건당 비용이 생김.</td><td class="l">단기계약 비중 제한 또는 퇴실청소비 별도 부과 필요함</td></tr>
+    <tr><td class="l">보증금 기회비용</td><td class="l">월 손익에는 넣지 않았지만 총소요자금·자금 회전에는 영향 있음.</td><td class="l">P&L과 투자금표를 분리해 보고해야 함</td></tr>
+  </table>
+
+  <h2>7. 결론</h2>
+  <div class="summary">
+    현재 기준에서 큰 오류는 좌석수처럼 치명적인 수준으로 보이지 않음. 다만 네트워크/AP, 소방, 공조는 견적을 받으면 CAPEX가 크게 바뀔 수 있는 항목임. 보고용 손익은 현재 모델 기준으로 쓰되, 계약 전에는 후보지 도면 기준 소방·공조·네트워크 3개 견적을 반드시 받아야 함.
   </div>
 </main>
 </body>
