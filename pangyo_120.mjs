@@ -38,14 +38,16 @@ x=0.12;for(let i=0;i<6;i++){room(x,3.82,3.38,2.9,4,'#e8f0ff','3380×2900');x+=3.
 x=0.12;for(let i=0;i<6;i++){room(x,6.82,3.38,2.9,4,'#e8f0ff','3380×2900');x+=3.48;}
 cor(0,9.82,SPINE,1.1,'복도 1,100  (양면 — 줄3·줄4)');
 
-// 줄4: 1인실 최대화 — 10열×2행=20실 (BEP 최소화)
-// col10 끝: 0.12+9×1.99+1.89=19.92m < SPINE 20.9m ✓
+// 줄4: 2인 4실 + 1인 8실(4열×2행) + 우편함·창고(1열)
 x=0.12;
-for(let i=0;i<10;i++){
+for(let i=0;i<4;i++){room(x,11.02,2.2,2.9,2,'#dce8ff','2200×2900');x+=2.3;}
+for(let i=0;i<4;i++){
   room(x,11.02,1.89,1.4,1,'#ede8ff','1890×1400');
   room(x,12.52,1.89,1.4,1,'#ede8ff','1890×1400');
   x+=1.99;
 }
+room(x,11.02,1.89,1.4,'우편','#fef9c3','1890×1400');
+room(x,12.52,1.89,1.4,'창고','#f1f5f4','1890×1400');
 
 cor(0,14.02,SPINE,0.85,'복도 1,100 (공용 진입)');
 
@@ -83,8 +85,8 @@ const full_rev=mix[4]*124+mix[2]*70+mix[1]*40;
 const capex=Math.round((py*(120+6+11)+rm*25+700+seat*23.65+200+100)*1.05);
 const dep=Math.round(capex/60);
 const fixed=rent+Math.round(py*2.8)+Math.round(py*0.8)+Math.round(py*0.4)+332+135+dep;
-const op=g=>full_rev*g*0.885-fixed;
-const bep=fixed/(full_rev*0.885)*100;
+const op=g=>full_rev*g*0.905-fixed;
+const bep=fixed/(full_rev*0.905)*100;
 const totalCash=(capex+depo+500); // 운전자금 500만
 const fk=n=>Math.round(n).toLocaleString();
 console.log(`\n분당 수내역 105평(도면 120평 기준): ${rm}호실 ${seat}석 (4인${mix[4]} 2인${mix[2]} 1인${mix[1]})`);
