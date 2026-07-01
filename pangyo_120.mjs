@@ -79,19 +79,19 @@ s.push(`<text x="160" y="80" font-size="12" font-weight="700" fill="#15803d">독
 fs.writeFileSync('C:/Users/User/Documents/프로젝트/코워킹_평면도_120평.svg',s.join('\n')+'</svg>','utf8');
 
 // CAPEX/고정비 산식 = 부사장_보고용_지역별_SOS_경쟁력_분석.html 8·9장 그대로. py=모델 명목 평수(120), 배치도(rm/seat/mix)가 기준값.
-const py=120, rent=432, depo=7500, mgmtRate=2.8, partTime=0;
+const py=120, rent=432, depo=7500, mgmtRate=2.8, partTime=0, sales=100;
 const full_rev=mix[4]*128+mix[2]*75+mix[1]*45;
 const capex=Math.round((py*130+py*11+rm*25+800+seat*23.65+50)*1.05);
 const dep=Math.round(capex/60);
 const mgmt=Math.round(py*mgmtRate), elec=Math.round(py*0.8);
-const fixed=rent+mgmt+elec+370+partTime+dep+112;
+const fixed=rent+mgmt+elec+370+partTime+sales+dep+112;
 const op=g=>full_rev*g*0.885-fixed;
 const bep=fixed/(full_rev*0.885)*100;
 const totalCash=(capex+depo+500); // 운전자금 500만
 const fk=n=>Math.round(n).toLocaleString();
 console.log(`\n분당 120평형(도면 기준): ${rm}호실 ${seat}석 (4인${mix[4]} 2인${mix[2]} 1인${mix[1]})`);
 console.log(`만실 ${fk(full_rev)}만원 | CAPEX ${fk(capex)}만 | 상각 ${fk(dep)}만/월`);
-console.log(`고정비 ${fk(fixed)}만 = 월세${rent}+관리비${mgmt}+전기${elec}+공통370+상각${dep}+기타112`);
+console.log(`고정비 ${fk(fixed)}만 = 월세${rent}+관리비${mgmt}+전기${elec}+공통370+세일즈${sales}+상각${dep}+기타112`);
 console.log(`BEP ${bep.toFixed(1)}% | 50%${op(0.5)>=0?'+':''}${fk(op(0.5))} 60%${op(0.6)>=0?'+':''}${fk(op(0.6))} 70%${op(0.7)>=0?'+':''}${fk(op(0.7))}`);
 console.log(`총 소요자금 ${fk(totalCash)}만 (CAPEX+보증금${depo}+운전500)`);
 
