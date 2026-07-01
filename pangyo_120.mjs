@@ -86,14 +86,15 @@ const full_rev=mix[4]*128+mix[2]*75+mix[1]*45;
 const capex=Math.round((py*150+py*11+rm*25+800+seat*23.65+50)*1.05);
 const dep=Math.round(capex/60);
 const mgmt=Math.round(py*mgmtRate), elec=Math.round(py*0.8);
-const fixed=rent+mgmt+elec+370+partTime+sales+dep+112;
+const clean=Math.round(py*0.7), opexFlat=41;
+const fixed=rent+mgmt+elec+clean+opexFlat+partTime+sales+dep;
 const op=g=>full_rev*g*0.885-fixed;
 const bep=fixed/(full_rev*0.885)*100;
 const totalCash=(capex+depo+500); // 운전자금 500만
 const fk=n=>Math.round(n).toLocaleString();
 console.log(`\n분당 120평형(도면 기준): ${rm}호실 ${seat}석 (4인${mix[4]} 2인${mix[2]} 1인${mix[1]})`);
 console.log(`만실 ${fk(full_rev)}만원 | CAPEX ${fk(capex)}만 | 상각 ${fk(dep)}만/월`);
-console.log(`고정비 ${fk(fixed)}만 = 월세${rent}+관리비${mgmt}+전기${elec}+공통370+세일즈${sales}+상각${dep}+기타112`);
+console.log(`고정비 ${fk(fixed)}만 = 월세${rent}+관리비${mgmt}+전기${elec}+청소${clean}+운영잡비${opexFlat}+세일즈${sales}+상각${dep}`);
 console.log(`BEP ${bep.toFixed(1)}% | 50%${op(0.5)>=0?'+':''}${fk(op(0.5))} 60%${op(0.6)>=0?'+':''}${fk(op(0.6))} 70%${op(0.7)>=0?'+':''}${fk(op(0.7))}`);
 console.log(`총 소요자금 ${fk(totalCash)}만 (CAPEX+보증금${depo}+운전500)`);
 

@@ -88,21 +88,22 @@ const full_rev=mix[4]*140+mix[2]*82+mix[1]*49;
 const capex=Math.round((py*150+py*11+rm*25+800+seat*23.65+50)*1.05);
 const dep=Math.round(capex/60);
 const mgmt=Math.round(py*mgmtRate), elec=Math.round(py*0.8);
-const fixed=rent+mgmt+elec+370+partTime+sales+dep+112;
+const clean=Math.round(py*0.7), opexFlat=41;
+const fixed=rent+mgmt+elec+clean+opexFlat+partTime+sales+dep;
 const op=g=>full_rev*g*0.885-fixed;
 const bep=fixed/(full_rev*0.885)*100;
 const fk=n=>Math.round(n).toLocaleString();
 console.log(`분당 100평형(도면 기준, 실매물 전용105평): ${rm}호실 ${seat}석 (4인${mix[4]} 2인${mix[2]} 1인${mix[1]})`);
 console.log(`월세 ${rent}만·보증금 ${depo}만 (5/5층 상가 실매물, 전용평당 ${(rent/py).toFixed(2)}만 — 확인매물 26.07.01)`);
 console.log(`만실 ${fk(full_rev)}만원 | CAPEX ${fk(capex)}만 | 상각 ${fk(dep)}만/월`);
-console.log(`고정비 ${fk(fixed)}만 = 월세${rent}+관리비${mgmt}+전기${elec}+공통370+세일즈${sales}+상각${dep}+기타112`);
+console.log(`고정비 ${fk(fixed)}만 = 월세${rent}+관리비${mgmt}+전기${elec}+청소${clean}+운영잡비${opexFlat}+세일즈${sales}+상각${dep}`);
 console.log(`BEP ${bep.toFixed(1)}% | 50%${op(0.5)>=0?'+':''}${fk(op(0.5))} 60%${op(0.6)>=0?'+':''}${fk(op(0.6))} 70%${op(0.7)>=0?'+':''}${fk(op(0.7))}`);
 
 console.log('');
 console.log('=== 분당 3개 모델 BEP 비교 ===');
 console.log(`100평: ${rm}실/${seat}석 · BEP ${bep.toFixed(1)}%`);
-console.log('120평: 33실/90석 · BEP 68.2% (참고: pangyo_120.mjs 최신 실행 결과, 실매물 월세 432만)');
-console.log('150평: 53실/110석 · BEP 65.7% (참고: pangyo_150.mjs 최신 실행 결과, 실매물 월세 560만)');
+console.log('120평: 33실/90석 · BEP 55.0% (참고: pangyo_120.mjs 최신 실행 결과, 실매물 월세 432만)');
+console.log('150평: 53실/110석 · BEP 56.1% (참고: pangyo_150.mjs 최신 실행 결과, 실매물 월세 560만)');
 console.log('※ 100평은 소형 상가 매물이라 전용평당 월세(4.19만/평)가 120·150평 오피스형(3.6~3.73만/평)보다 비싸서 BEP가 셋 중 가장 높음. 배치도는 판교11.mjs와 동일한 2인4·1인8(룸믹스로 BEP 조작 안 함).');
 
 // 비정형 평면 보정
