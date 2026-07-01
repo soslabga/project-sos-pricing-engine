@@ -6,8 +6,8 @@ const X=m=>OX+m*S,Y=m=>OY+m*S;
 let s=[],seat=0,rm=0;const mix={4:0,2:0,1:0};
 s.push(`<svg xmlns="http://www.w3.org/2000/svg" width="1140" height="920" font-family="Malgun Gothic,Pretendard,sans-serif">`);
 s.push(`<rect width="1140" height="920" fill="#fff"/>`);
-s.push(`<text x="160" y="40" font-size="18.5" font-weight="800" fill="#0f1e3d">100평 전국 표준 모델 — 분당표준가+소형프리미엄6~7% · 줄4 1인실 최대화</text>`);
-s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,670×2,400(풀폭·가로형) · 줄2~3: 4인 3,440×2,900 · 줄4: 1인 1,890×1,400×16실 · 복도1,100</text>`);
+s.push(`<text x="160" y="40" font-size="18.5" font-weight="800" fill="#0f1e3d">100평 전국 표준 모델 — 분당표준가+소형프리미엄9% · 판교와 동일 배치도</text>`);
+s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,670×2,400(풀폭·가로형) · 줄2~3: 4인 3,440×2,900 · 줄4: 2인 2,200×2,900 · 1인 1,890×1,400 · 복도1,100</text>`);
 s.push(`<rect x="${X(0)}" y="${Y(0)}" width="${FW*S}" height="${FH*S}" fill="#3a4a63"/>`);
 s.push(`<rect x="${X(0.05)}" y="${Y(0.05)}" width="${(FW-0.1)*S}" height="${(FH-0.1)*S}" fill="#f8fafc" stroke="#0f1e3d" stroke-width="3"/>`);
 const cor=(x,y,w,h,t)=>{
@@ -37,9 +37,10 @@ x=0.12;for(let i=0;i<5;i++){room(x,3.82,3.44,2.9,4,'#e8f0ff','3440×2900');x+=3.
 x=0.12;for(let i=0;i<5;i++){room(x,6.82,3.44,2.9,4,'#e8f0ff','3440×2900');x+=3.54;}
 cor(0,9.82,SPINE,1.1,'복도 1,100  (양면 — 줄3·줄4)');
 
-// 줄4: 1인실 최대화 — 8열×2행=16실 (2인 없음, BEP 최소화 확인됨. 8열 끝=15.94m<SPINE17.8, 잔여 1.86m)
+// 줄4: 2인 4실 + 1인 8실(4열×2행) — 판교11.mjs와 동일 배치도(배치도가 기준, 가격만 다름)
 x=0.12;
-for(let i=0;i<8;i++){
+for(let i=0;i<4;i++){room(x,11.02,2.2,2.9,2,'#dce8ff','2200×2900');x+=2.3;}
+for(let i=0;i<4;i++){
   room(x,11.02,1.89,1.4,1,'#ede8ff','1890×1400');
   room(x,12.52,1.89,1.4,1,'#ede8ff','1890×1400');
   x+=1.99;
@@ -55,11 +56,12 @@ const cm=(x,w,n,fl,dim)=>{
 };
 cm(0.05,3.4,'회의실 6인','#eef3fb','3400×2480');
 cm(3.55,2.9,'회의실 4인','#eef3fb','2900×2480');
-cm(6.55,2.3,'탕비·OA','#f1f5f9','2300×2480');
-cm(8.95,1.9,'우편·소포·창고','#fff7ed','1900×2480');
-cm(10.95,6.85,'라운지 + 리셉션 (입구 동선)','#f0fdf4','6850×2480');
+cm(6.55,1.8,'OA','#f1f5f9','1800×2480');
+cm(8.45,1.5,'우편·소포','#fff7ed','1500×2480');
+cm(10.05,1.5,'창고','#f1f5f4','1500×2480');
+cm(11.65,6.15,'라운지 + 탕비 + 리셉션 (입구 동선)','#f0fdf4','6150×2480');
 
-s.push(`<text x="${X(9.3)}" y="${OY+FH*S+40}" font-size="13" font-weight="800" fill="#15803d" text-anchor="middle">독립실 ${rm}호실 / ${seat}석 (4인 ${mix[4]}·1인 ${mix[1]}) + 회의실 6/4인 + 라운지·리셉션 + 탕비</text>`);
+s.push(`<text x="${X(9.3)}" y="${OY+FH*S+40}" font-size="13" font-weight="800" fill="#15803d" text-anchor="middle">독립실 ${rm}호실 / ${seat}석 (4인 ${mix[4]}·2인 ${mix[2]}·1인 ${mix[1]}) + 회의실 6/4인 + OA + 우편·소포 + 창고 + 라운지·탕비·리셉션</text>`);
 
 s.push(`<defs><marker id="a" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="none" stroke="#b91c1c" stroke-width="1.3"/></marker></defs>`);
 const dl=(x1,y1,x2,y2,t,v)=>{
@@ -69,14 +71,14 @@ const dl=(x1,y1,x2,y2,t,v)=>{
 dl(X(0),OY-32,X(19),OY-32,'19,000');
 dl(OX-50,Y(0),OX-50,Y(17.4),'17,400',true);
 
-s.push(`<text x="160" y="80" font-size="12" font-weight="700" fill="#15803d">독립실 ${rm}호실 / ${seat}석 — 4인 ${mix[4]}실 · 1인 ${mix[1]}실 (2인 없음, 1인 최대화)</text>`);
+s.push(`<text x="160" y="80" font-size="12" font-weight="700" fill="#15803d">독립실 ${rm}호실 / ${seat}석 — 4인 ${mix[4]}실 · 2인 ${mix[2]}실 · 1인 ${mix[1]}실</text>`);
 fs.writeFileSync('C:/Users/User/Documents/프로젝트/코워킹_평면도_100평_전국형.svg',s.join('\n')+'</svg>','utf8');
 
 // CAPEX/고정비 산식 = 부사장_보고용_지역별_SOS_경쟁력_분석.html 8·9장 동일. 배치도(rm/seat/mix) 기준값.
 // rent는 실매물 아님 — 120·150평 분당 실매물 rent/py 평균(3.667만/평)을 표준가정으로 사용. 실사 시 교체 필요.
-// 가격: 분당표준가(128/75/45) 대비 +6~7% 소형매물 프리미엄(판교 +41%보다는 낮은 수준) — BEP 65% 타겟 캘리브레이션
+// 가격: 분당표준가(128/75/45) 대비 +9% 소형매물 프리미엄(판교 +41%보다는 낮은 수준) — 2인4·1인8 배치도(판교와 동일) 기준 BEP 65% 타겟
 const py=100, rentRate=(432/120+560/150)/2, rent=Math.round(py*rentRate), mgmtRate=2.8, partTime=0, sales=100;
-const full_rev=mix[4]*136+mix[2]*80+mix[1]*48;
+const full_rev=mix[4]*140+mix[2]*82+mix[1]*49;
 const capex=Math.round((py*130+py*11+rm*25+800+seat*23.65+50)*1.05);
 const dep=Math.round(capex/60);
 const mgmt=Math.round(py*mgmtRate), elec=Math.round(py*0.8);
@@ -93,9 +95,9 @@ console.log(`BEP ${bep.toFixed(1)}% | 50%${op(0.5)>=0?'+':''}${fk(op(0.5))} 60%$
 console.log('');
 console.log('=== 3개 전국모델 BEP 비교(분당표준가 공통) ===');
 console.log(`100평: ${rm}실/${seat}석 · BEP ${bep.toFixed(1)}%`);
-console.log('120평: 33실/90석 · BEP 62.9% (참고: pangyo_120.mjs)');
-console.log('150평: 53실/110석 · BEP 61.4% (참고: pangyo_150.mjs)');
-console.log('※ 100평은 정액 CAPEX/고정비(보안800만·기타112만)가 작은 면적일수록 평당 부담이 커져(희석효과) 분당표준가 그대로면 BEP 69%대까지 상승. 룸믹스 최적화(2인0·1인16)에 더해 소형매물 프리미엄(+6~7%, 판교 +41%보다는 낮음)을 적용해 판교(57%)보다는 높고 120/150평(62~64%)과 근접한 65% 수준으로 캘리브레이션.');
+console.log('120평: 33실/90석 · BEP 66.6% (참고: pangyo_120.mjs 최신 실행 결과)');
+console.log('150평: 53실/110석 · BEP 64.2% (참고: pangyo_150.mjs 최신 실행 결과)');
+console.log('※ 100평은 배치도가 기준이라 판교11.mjs와 동일한 2인4·1인8 물리 배치를 그대로 사용(룸믹스로 BEP를 조작하지 않음). 소형매물 프리미엄(+9%, 판교 +41%보다는 낮음)으로 판교(57.0%)보다는 높은 65% 수준으로 캘리브레이션. 120/150평(66.6%/64.2%, 세일즈비용 반영)은 순수 분당표준가(프리미엄 0%)라 100평보다 오히려 BEP가 높음 — 100평이 구조적으로 더 좋아서가 아니라 가격 프리미엄을 얹었기 때문(비교 시 이 전제 유의).');
 
 // 비정형 평면 보정
 const avgRevPerRoom=full_rev/rm;

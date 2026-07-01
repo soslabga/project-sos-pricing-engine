@@ -66,14 +66,14 @@ const cm=(x,w,n,fl,dim)=>{
   s.push(`<text x="${X(x+w/2)}" y="${Y(20.75)}" font-size="9" font-weight="700" fill="#0f1e3d" text-anchor="middle">${n}</text>`);
   if(dim)s.push(`<text x="${X(x+w/2)}" y="${Y(20.75)+12}" font-size="6.5" fill="#64748b" text-anchor="middle">${dim}</text>`);
 };
+// 우편·소포·창고는 줄4에 별도 룸으로 이미 배치됨(공용부 중복 배치 안 함)
 cm(0.05,3.4,'회의실 6인','#eef3fb','3400×3380');
 cm(3.55,2.9,'회의실 4인','#eef3fb','2900×3380');
 cm(6.55,1.8,'회의실 2인','#e8f4fb','1800×3380');
-cm(8.45,2.3,'탕비·OA','#f1f5f9','2300×3380');
-cm(10.85,1.9,'대기·수납','#fff7ed','1900×3380');
-cm(12.85,8.0,'라운지 + 리셉션 (입구 동선)','#f0fdf4','8000×3380');
+cm(8.45,2.3,'OA','#f1f5f9','2300×3380');
+cm(10.85,10.0,'라운지 + 탕비 + 리셉션 (입구 동선)','#f0fdf4','10000×3380');
 
-s.push(`<text x="${X(FW/2)}" y="${OY+FH*S+40}" font-size="13" font-weight="800" fill="#15803d" text-anchor="middle">독립실 ${rm}호실 / ${seat}석 (4인 ${mix[4]}·2인 ${mix[2]}·1인 ${mix[1]}) + 회의실 6/4/2인 + 라운지·리셉션 + 탕비</text>`);
+s.push(`<text x="${X(FW/2)}" y="${OY+FH*S+40}" font-size="13" font-weight="800" fill="#15803d" text-anchor="middle">독립실 ${rm}호실 / ${seat}석 (4인 ${mix[4]}·2인 ${mix[2]}·1인 ${mix[1]}) + 회의실 6/4/2인 + 우편·소포 + 창고 + OA + 라운지·탕비·리셉션</text>`);
 
 s.push(`<defs><marker id="a" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M2,2 L8,5 L2,8" fill="none" stroke="#b91c1c" stroke-width="1.3"/></marker></defs>`);
 const dl=(x1,y1,x2,y2,t,v)=>{
