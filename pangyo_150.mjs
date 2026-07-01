@@ -6,7 +6,7 @@ let s=[],seat=0,rm=0;const mix={4:0,2:0,1:0};
 s.push(`<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1160" font-family="Malgun Gothic,Pretendard,sans-serif">`);
 s.push(`<rect width="1240" height="1160" fill="#fff"/>`);
 s.push(`<text x="160" y="40" font-size="22" font-weight="800" fill="#0f1e3d">150평 — 전용 22.0×22.5m=495㎡</text>`);
-s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,540×2,400(풀폭 6열) · 줄2~3: 4인 3,380×2,900(6열) · 줄4: 2인 2,200×3,300 · 1인 1,890×1,600 · 우편·창고 / 줄5: 1인 1,890×1,600×20실 · 복도1,100</text>`);
+s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,540×2,400(풀폭 6열) · 줄2~3: 4인 3,380×2,900(6열) · 줄4: 2인 2,200×3,600 · 1인 1,890×1,750 · 우편·창고 / 줄5: 1인 1,890×1,750×20실 · 복도1,100</text>`);
 s.push(`<rect x="${X(0)}" y="${Y(0)}" width="${FW*S}" height="${FH*S}" fill="#3a4a63"/>`);
 s.push(`<rect x="${X(0.05)}" y="${Y(0.05)}" width="${(FW-0.1)*S}" height="${(FH-0.1)*S}" fill="#f8fafc" stroke="#0f1e3d" stroke-width="3"/>`);
 const cor=(x,y,w,h,t)=>{
