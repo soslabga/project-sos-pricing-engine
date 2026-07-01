@@ -16,10 +16,19 @@ const cor=(x,y,w,h,t)=>{
   s.push(`<rect x="${X(x)}" y="${Y(y)}" width="${w*S}" height="${h*S}" fill="#e2e8f0"/>`);
   if(t)s.push(`<text x="${X(x+w/2)}" y="${Y(y+h/2)+3}" font-size="8" fill="#475569" text-anchor="middle">${t}</text>`);
 };
-const room=(x,y,w,h,c,fill,dim)=>{
+const room=(x,y,w,h,c,fill,dim,doorSide)=>{
   s.push(`<rect x="${X(x)}" y="${Y(y)}" width="${w*S}" height="${h*S}" fill="${fill||'#e8f0ff'}" stroke="#1e293b" stroke-width="1.3"/>`);
   s.push(`<text x="${X(x+w/2)}" y="${Y(y+h/2)+1}" font-size="12" font-weight="700" fill="#0f1e3d" text-anchor="middle">${c}</text>`);
   if(dim)s.push(`<text x="${X(x+w/2)}" y="${Y(y+h/2)+12}" font-size="8.5" fill="#64748b" text-anchor="middle">${dim}</text>`);
+  const ds=doorSide||'top';
+  const doorW=Math.min(0.6,w*0.4);
+  let dx1,dy1,dx2,dy2;
+  if(ds==='top'){dx1=X(x+w/2-doorW/2);dy1=Y(y);dx2=X(x+w/2+doorW/2);dy2=Y(y);}
+  else if(ds==='bottom'){dx1=X(x+w/2-doorW/2);dy1=Y(y+h);dx2=X(x+w/2+doorW/2);dy2=Y(y+h);}
+  else if(ds==='left'){dx1=X(x);dy1=Y(y+h/2-doorW/2);dx2=X(x);dy2=Y(y+h/2+doorW/2);}
+  else{dx1=X(x+w);dy1=Y(y+h/2-doorW/2);dx2=X(x+w);dy2=Y(y+h/2+doorW/2);}
+  s.push(`<line x1="${dx1}" y1="${dy1}" x2="${dx2}" y2="${dy2}" stroke="#fff" stroke-width="3.5"/>`);
+  s.push(`<line x1="${dx1}" y1="${dy1}" x2="${dx2}" y2="${dy2}" stroke="#b45309" stroke-width="2.5"/>`);
   if(typeof c==='number'){seat+=c;rm++;mix[c]++;}
 };
 
@@ -31,39 +40,39 @@ s.push(`<polygon points="${X(19)+22},${Y(16.25)} ${X(19)+2},${Y(16.05)} ${X(19)+
 s.push(`<rect x="${X(19)+24}" y="${Y(16.25)-14}" width="46" height="28" rx="4" fill="#1d4ed8"/>`);
 s.push(`<text x="${X(19)+47}" y="${Y(16.25)+5}" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">입구</text>`);
 
-// 줄1: 풀폭 가로형 5x4인
+// 줄1: 풀폭 가로형 5x4인 — 문은 복도1(아래) 방향
 let x=0.12;
-for(let i=0;i<5;i++){room(x,0.12,3.67,2.4,4,'#e8f0ff','3670×2400');x+=3.77;}
+for(let i=0;i<5;i++){room(x,0.12,3.67,2.4,4,'#e8f0ff','3670×2400','bottom');x+=3.77;}
 cor(0,2.62,SPINE,1.1,'복도 1,100  (양면 — 줄1·줄2)');
 
-// 줄2,3: 4인 5실씩 (등맞댐)
-x=0.12;for(let i=0;i<5;i++){room(x,3.82,3.44,2.9,4,'#e8f0ff','3440×2900');x+=3.54;}
-x=0.12;for(let i=0;i<5;i++){room(x,6.82,3.44,2.9,4,'#e8f0ff','3440×2900');x+=3.54;}
+// 줄2,3: 4인 5실씩 (등맞댐) — 문은 각각 인접 복도 방향
+x=0.12;for(let i=0;i<5;i++){room(x,3.82,3.44,2.9,4,'#e8f0ff','3440×2900','top');x+=3.54;}
+x=0.12;for(let i=0;i<5;i++){room(x,6.82,3.44,2.9,4,'#e8f0ff','3440×2900','bottom');x+=3.54;}
 cor(0,9.82,SPINE,1.1,'복도 1,100  (양면 — 줄3·줄4)');
 
-// 줄4: 2인 4실 + 1인 8실(4열×2행) — 판교11.mjs와 동일 배치도(배치도가 기준, 가격만 다름)
+// 줄4: 2인 4실(깊이3.6) + 1인 8실(4열×2행, 깊이1.75m=1.00평/인) — 판교11.mjs와 동일 배치도
 x=0.12;
-for(let i=0;i<4;i++){room(x,11.02,2.2,3.3,2,'#dce8ff','2200×3300');x+=2.3;}
+for(let i=0;i<4;i++){room(x,11.02,2.2,3.6,2,'#dce8ff','2200×3600','top');x+=2.3;}
 for(let i=0;i<4;i++){
-  room(x,11.02,1.89,1.6,1,'#ede8ff','1890×1600');
-  room(x,12.72,1.89,1.6,1,'#ede8ff','1890×1600');
+  room(x,11.02,1.89,1.75,1,'#ede8ff','1890×1750','top');
+  room(x,12.87,1.89,1.75,1,'#ede8ff','1890×1750','bottom');
   x+=1.99;
 }
 
-cor(0,14.42,SPINE,0.85,'복도 1,100 (공용 진입)');
+cor(0,14.72,SPINE,0.85,'복도 1,100 (공용 진입)');
 
-// 공용
+// 공용 (1인실 확장분 0.7m 빌려옴)
 const cm=(x,w,n,fl,dim)=>{
-  s.push(`<rect x="${X(x)}" y="${Y(15.27)}" width="${w*S}" height="${2.08*S}" fill="${fl}" stroke="#1e293b" stroke-width="1.3"/>`);
-  s.push(`<text x="${X(x+w/2)}" y="${Y(16.31)}" font-size="12" font-weight="700" fill="#0f1e3d" text-anchor="middle">${n}</text>`);
-  if(dim)s.push(`<text x="${X(x+w/2)}" y="${Y(16.31)+12}" font-size="8.5" fill="#64748b" text-anchor="middle">${dim}</text>`);
+  s.push(`<rect x="${X(x)}" y="${Y(15.57)}" width="${w*S}" height="${1.78*S}" fill="${fl}" stroke="#1e293b" stroke-width="1.3"/>`);
+  s.push(`<text x="${X(x+w/2)}" y="${Y(16.46)}" font-size="12" font-weight="700" fill="#0f1e3d" text-anchor="middle">${n}</text>`);
+  if(dim)s.push(`<text x="${X(x+w/2)}" y="${Y(16.46)+12}" font-size="8.5" fill="#64748b" text-anchor="middle">${dim}</text>`);
 };
-cm(0.05,3.4,'회의실 6인','#eef3fb','3400×2080');
-cm(3.55,2.9,'회의실 4인','#eef3fb','2900×2080');
-cm(6.55,1.8,'OA','#f1f5f9','1800×2080');
-cm(8.45,1.5,'우편·소포','#fff7ed','1500×2080');
-cm(10.05,1.5,'창고','#f1f5f4','1500×2080');
-cm(11.65,6.15,'라운지 + 탕비 + 리셉션 (입구 동선)','#f0fdf4','6150×2080');
+cm(0.05,3.4,'회의실 6인','#eef3fb','3400×1780');
+cm(3.55,2.9,'회의실 4인','#eef3fb','2900×1780');
+cm(6.55,1.8,'OA','#f1f5f9','1800×1780');
+cm(8.45,1.5,'우편·소포','#fff7ed','1500×1780');
+cm(10.05,1.5,'창고','#f1f5f4','1500×1780');
+cm(11.65,6.15,'라운지 + 탕비 + 리셉션 (입구 동선)','#f0fdf4','6150×1780');
 
 s.push(`<text x="${X(9.3)}" y="${OY+FH*S+40}" font-size="13" font-weight="800" fill="#15803d" text-anchor="middle">독립실 ${rm}호실 / ${seat}석 (4인 ${mix[4]}·2인 ${mix[2]}·1인 ${mix[1]}) + 회의실 6/4인 + OA + 우편·소포 + 창고 + 라운지·탕비·리셉션</text>`);
 
