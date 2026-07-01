@@ -83,8 +83,8 @@ const full_rev=mix[4]*124+mix[2]*70+mix[1]*40;
 const capex=Math.round((py*(120+6+11)+rm*25+700+seat*23.65+200+100)*1.05);
 const dep=Math.round(capex/60);
 const fixed=rent+Math.round(py*2.8)+Math.round(py*0.8)+Math.round(py*0.4)+332+135+dep;
-const op=g=>full_rev*g*0.905-fixed;
-const bep=fixed/(full_rev*0.905)*100;
+const op=g=>full_rev*g*0.885-fixed;
+const bep=fixed/(full_rev*0.885)*100;
 const totalCash=(capex+depo+500); // 운전자금 500만
 const fk=n=>Math.round(n).toLocaleString();
 console.log(`\n분당 수내역 105평(도면 120평 기준): ${rm}호실 ${seat}석 (4인${mix[4]} 2인${mix[2]} 1인${mix[1]})`);
