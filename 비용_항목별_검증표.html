@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOS 코워킹 비용 항목별 검증표</title>
+<style>
+  :root{--ink:#172033;--muted:#667085;--line:#d9e1ec;--head:#eef3fb;--green:#16834a;--amber:#9a6700;--red:#b42318;--bg:#f5f7fb;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic","Apple SD Gothic Neo",Arial,sans-serif;font-size:14px;line-height:1.45}
+  .page{max-width:1280px;margin:24px auto;background:#fff;border:1px solid var(--line);box-shadow:0 8px 24px rgba(16,24,40,.08);padding:30px}
+  h1{font-size:24px;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+  h2{font-size:18px;margin:32px 0 10px;padding-left:10px;border-left:5px solid #1f4f99}
+  table{width:100%;border-collapse:collapse;margin:8px 0 18px;table-layout:fixed}
+  th,td{border:1px solid var(--line);padding:9px 10px;vertical-align:top;text-align:left;font-size:13px}
+  th{background:var(--head);font-weight:800;text-align:center}
+  td.center{text-align:center}
+  col.c1{width:14%} col.c2{width:9%} col.c3{width:10%} col.c4{width:34%} col.c5{width:33%}
+  .ok{color:var(--green);font-weight:800}
+  .mid{color:var(--amber);font-weight:800}
+  .no{color:var(--red);font-weight:800}
+  .note{font-size:12px;color:var(--muted);margin:4px 0 16px}
+  .legend{display:flex;gap:18px;margin:10px 0 20px;font-size:13px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .dot.ok{background:var(--green)}
+  .dot.mid{background:var(--amber)}
+  .dot.no{background:var(--red)}
+  .summary{background:#f8fbff;border:1px solid #c9d8ef;border-left:5px solid #1f4f99;padding:14px 16px;margin:16px 0;font-weight:700}
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>SOS 코워킹 수익성 모델 — 비용 항목별 검증표</h1>
+  <div class="sub">작성일: 2026-07-01 · 대상: 판교(pangyo11.mjs)·분당100평형(standard_100.mjs)·분당120평(pangyo_120.mjs)·분당150평(pangyo_150.mjs)</div>
+
+  <div class="legend">
+    <span><i class="dot ok"></i> 검증됨 — 실측 자료(계약서·고지서·법령·실거래가)로 확인</span>
+    <span><i class="dot mid"></i> 부분검증 — 시장조사·유사사례 기반, 우리 케이스 직접 확인은 아님</span>
+    <span><i class="dot no"></i> 미검증 — 근거 없는 가정치, 실사 필요</span>
+  </div>
+
+  <div class="summary">
+    전체 26개 비용 항목 중 <span class="ok">완전검증 12개</span> · <span class="mid">부분검증 8개</span> · <span class="no">미검증 6개</span>.
+    150평 월세도 실매물(분당 큰평수.png)로 검증 완료. 남은 시급한 미검증 항목은 <b>CAPEX 세부단가(전기통신·보안·도어락·가구·탕비)</b>와 <b>파트타임120만·정수기3만</b>.
+  </div>
+
+  <h2>1. 초기투자(CAPEX) 항목</h2>
+  <table>
+    <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
+    <tr><th>항목</th><th>현재값</th><th>상태</th><th>근거·검증방법</th><th>비고</th></tr>
+    <tr><td>인테리어(냉난방 포함)</td><td class="center">150만/평</td><td class="center mid">부분검증</td>
+      <td>웹검색: 사무실 인테리어 시세 실속60~100·일반110~150·프리미엄180+만/평, 냉난방 포함 시 180~250만/평(2026 시장조사, ssjum.com·spacelogin.co.kr 등)</td>
+      <td>우리가 쓰는 150만은 "일반형" 상단 — 실제 시공사 견적 아님</td></tr>
+    <tr><td>전기·통신 초기설비</td><td class="center">11만/평</td><td class="center no">미검증</td>
+      <td>세션 시작 전부터 있던 가정치(콘센트·랜·AP·분전 보강)</td>
+      <td>오늘 세션에서 손 안 댐. 웹검증 시도 안 함</td></tr>
+    <tr><td>도어락(스마트)</td><td class="center">25만/룸</td><td class="center no">미검증</td>
+      <td>세션 시작 전부터 있던 가정치</td><td>제품 사양·업체 견적 없음</td></tr>
+    <tr><td>보안(공용 CCTV+출입키오스크)</td><td class="center">800만 정액</td><td class="center no">미검증</td>
+      <td>웹검색은 <b>월 렌탈가</b>(1~15만원)만 확인됨. 800만은 <b>구매·설치 1회성 총액</b>이라 직접 비교 불가</td>
+      <td>NVR+카메라+출입키오스크 풀세트 견적 필요</td></tr>
+    <tr><td>가구(책상·의자·수납)</td><td class="center">23.65만/석</td><td class="center no">미검증</td>
+      <td>세션 시작 전부터 있던 가정치</td><td>중고/신품 여부, 실제 견적 없음</td></tr>
+    <tr><td>탕비비품·제빙기</td><td class="center">50만 정액</td><td class="center no">미검증</td>
+      <td>세션 시작 전부터 있던 가정치</td><td></td></tr>
+    <tr><td>예비비</td><td class="center">5%</td><td class="center mid">부분검증</td>
+      <td>업계 통상 예비비율(공사 표준 관행)</td><td>우리 프로젝트 특성 반영 안 됨</td></tr>
+    <tr><td>소방시설(스프링클러 등)</td><td class="center">0원(불필요)</td><td class="center ok">검증됨</td>
+      <td><b>다중이용업소의 안전관리에 관한 특별법 시행령 제2조</b> 다중이용업 목록 직접 확인 — 공유오피스·코워킹·사무실임대업 불포함(고시원업만 해당, 별개 업종)</td>
+      <td>법령 원문 기반, 가장 확실한 근거</td></tr>
+    <tr><td>감가상각 기간</td><td class="center">60개월(5년) 균등</td><td class="center ok">검증됨</td>
+      <td>법인세법 시행규칙 별표5 — 시설장치·비품·전자기기 공통 기준내용연수 5년 확인. 항목별 분리 불필요함이 확인됨</td>
+      <td></td></tr>
+  </table>
+
+  <h2>2. 월 고정비 항목</h2>
+  <table>
+    <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
+    <tr><th>항목</th><th>현재값</th><th>상태</th><th>근거·검증방법</th><th>비고</th></tr>
+    <tr><td>월세(판교)</td><td class="center">650만</td><td class="center ok">검증됨</td>
+      <td><b>판교1.png</b> — 에이치스퀘어 S동 B1 복합상가 실매물, 전용344㎡(104평), 보증금7,500만·월세650만(체육시설 포함), 확인매물 26.06.26. 동일 매물 4건 중복 확인(판교.png)</td>
+      <td>일반상가 옵션은 600만(더 저렴)도 있음</td></tr>
+    <tr><td>월세(분당100평형)</td><td class="center">440만</td><td class="center ok">검증됨</td>
+      <td><b>분당100평 수정.png</b> — 일반상가 실매물, 전용347㎡(105평), 보증금7,500만·월세440만, 5/5층·남동향, 확인매물 26.07.01</td>
+      <td>구 오리역 매물(97평/530만)보다 저렴해 교체</td></tr>
+    <tr><td>월세(분당120평)</td><td class="center">432만</td><td class="center ok">검증됨</td>
+      <td>분당 수내역 실매물(기존 확보) + <b>분당.png</b>로 재확인 — 전용120평 일반상가 월세433만(수내동, 역세권), 확인매물 26.06.05. 432만과 사실상 일치</td>
+      <td></td></tr>
+    <tr><td>월세(분당150평)</td><td class="center">560만</td><td class="center ok">검증됨</td>
+      <td><b>분당 큰평수.png</b> — 전용140평급 일반상가 실매물 4건 전부 보증금1억·월세560만로 동일(확인매물 26.06.23~26.06.26). 기존 560만 값이 정확히 일치해 그대로 검증됨</td>
+      <td>보증금1억도 신규 확보, totalCash 계산에 반영</td></tr>
+    <tr><td>관리비</td><td class="center">1.5만/평</td><td class="center mid">부분검증</td>
+      <td><b>판교 유스페이스1 1103호 2026년4월 관리비고지서</b>(26년4월_1103호(1).pdf) 실측 0.75만/평 확인. 단일 건물·오피스층(11층) 기준이라 코워킹이 쓸 B1 지하상가와 층이 달라 보수적으로 2배(1.5만) 적용</td>
+      <td>실측치 대비 2배 여유— 안전마진</td></tr>
+    <tr><td>전기·냉난방</td><td class="center">0.6만/평</td><td class="center mid">부분검증</td>
+      <td>위 동일 고지서에서 전기·열 관련 항목 합산 실측 0.49만/평 확인. 보수적으로 1.2배(0.6만) 적용</td>
+      <td></td></tr>
+    <tr><td>청소(공용부)</td><td class="center">0.7만/평</td><td class="center mid">부분검증</td>
+      <td>웹검색: 사무실 청소 실거래(주1회 20만원/30평=0.67만/평), 스케일링 적용</td>
+      <td>코워킹 특성(주1회, 공용부만) 가정 포함</td></tr>
+    <tr><td>운영잡비 — 인터넷</td><td class="center">4만/월</td><td class="center ok">검증됨</td>
+      <td>KT/LG 기업인터넷(오피스넷) 실제 요금 3.08만원~ 확인, 여유 반영</td><td></td></tr>
+    <tr><td>운영잡비 — 복합기</td><td class="center">10만/월</td><td class="center ok">검증됨</td>
+      <td><b>SOS 성남 프린터 유지관리산출내역서</b>(에스오에스랩(성남)_26년5월.1.jpg) 실측 — 2대(7층+11층) 합산 183,700원/월(대당 9.2만). 반올림해 10만 적용</td>
+      <td>실측치와 거의 일치</td></tr>
+    <tr><td>운영잡비 — 정수기</td><td class="center">3만/월</td><td class="center no">미검증</td>
+      <td>일반 시세 추정, 웹검색 실패("정수기 렌탈 구체적 정보 찾을 수 없음")</td>
+      <td>본인 자인: "소스 약함"</td></tr>
+    <tr><td>운영잡비 — CCTV·보안(월)</td><td class="center">8만/월</td><td class="center mid">부분검증</td>
+      <td>무인매장 스마트패키지 실거래 범위(1~15만원) 중간값</td>
+      <td>정확한 사양·업체 미확정</td></tr>
+    <tr><td>운영잡비 — 화재보험</td><td class="center">3만/월</td><td class="center mid">부분검증</td>
+      <td>일반 사무실 화재보험 실거래(월1~2.2만원) 상단 근사</td>
+      <td>우리 건물·용도 기준 견적 아님</td></tr>
+    <tr><td>현장 인건비(1인운영)</td><td class="center">350만/월</td><td class="center mid">부분검증</td>
+      <td>유사직무(오피스텔 시설관리) 채용공고 연봉3,600~3,800만(월300~317만 기본급) 확인 + 4대보험11%·퇴직충당금8.3%(법정부담 약20%) 적용해 역산</td>
+      <td>실제 채용 계획·급여 확정 아님</td></tr>
+    <tr><td>파트타임(150평 추가)</td><td class="center">120만/월</td><td class="center no">미검증</td>
+      <td>세션 시작 전부터 있던 가정치</td><td></td></tr>
+    <tr><td>세일즈·마케팅(고정비 몫)</td><td class="center">0원(변동비로 통합)</td><td class="center ok">구조검증</td>
+      <td>기존엔 CONT 0.885(마케팅7%변동)와 별도로 고정비 라인도 있어 <b>이중계상</b>이었음을 발견·제거. 현재는 변동비에만 반영</td>
+      <td>이중계상 버그 수정 완료</td></tr>
+  </table>
+
+  <h2>3. 매출·가격 항목</h2>
+  <table>
+    <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
+    <tr><th>항목</th><th>현재값</th><th>상태</th><th>근거·검증방법</th><th>비고</th></tr>
+    <tr><td>판교 4인가</td><td class="center">180만/실</td><td class="center ok">검증됨</td>
+      <td>패스트파이브 판교 4인실 실거래 2,224,800원(정가 3,090,000원 −28% 할인) 대비 45만/석 vs 우리 45만/석 — 사실상 동일 수준, FF보다 19% 저렴한 수준으로 책정</td>
+      <td>패스트파이브판교 현장조사(2026-06-25) 근거</td></tr>
+    <tr><td>분당 4인가</td><td class="center">133만/실</td><td class="center ok">검증됨</td>
+      <td>스파크플러스 분당2호점 12개월 실거래 33만원/석(전 인실 균일) 대비 33.25만/석 — 거의 동일</td>
+      <td>SP 분당2호점 입주제안서 근거</td></tr>
+    <tr><td>2인·1인 가격 비율</td><td class="center">78/47만</td><td class="center no">미검증</td>
+      <td>4인가 대비 방 면적비로 추정 산출. 개별 시장검증 안 됨</td>
+      <td>SP는 분당 2·4인실 자체가 없어 직접비교 불가(2·4인은 판교FF·여의도SP만 존재)</td></tr>
+    <tr><td>좌석밀도(0.80평/석)</td><td class="center">0.80평/석</td><td class="center ok">검증됨</td>
+      <td>우리 자체 도면(4인0.742·2인0.966·1인0.805평/인) 실측 가중평균 — FF현장값 0.89평/인에서 하향 조정</td>
+      <td></td></tr>
+  </table>
+
+  <h2>4. 변동비</h2>
+  <table>
+    <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
+    <tr><th>항목</th><th>현재값</th><th>상태</th><th>근거·검증방법</th><th>비고</th></tr>
+    <tr><td>마케팅</td><td class="center">매출 7%</td><td class="center no">미검증</td>
+      <td>업계 평균 추정치. 소상공인 실제 마케팅비(20~100만원/월 정액)와는 산정방식 자체가 다름</td>
+      <td>정액 vs 매출비례 중 뭐가 맞는지도 미결정</td></tr>
+    <tr><td>PG·플랫폼·환불</td><td class="center">매출 4.5%</td><td class="center no">미검증</td>
+      <td>업계 평균 추정치, PG사 실제 수수료율 확인 안 함</td><td></td></tr>
+  </table>
+
+  <div class="note">
+  ※ "부분검증"은 실제 자료가 있으나 (a)단일 사례라 일반화 근거가 약하거나 (b)우리 상황과 조건이 다르거나 (c)범위값 중 중간값을 택한 경우임.
+  ※ 이 표는 pangyo11.mjs·standard_100.mjs·pangyo_120.mjs·pangyo_150.mjs 코드 주석 및 2026-07-01 세션 대화 기록 기준으로 작성됨.
+  </div>
+</main>
+</body>
+</html>
