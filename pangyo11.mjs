@@ -4,7 +4,7 @@ const X=m=>OX+m*S,Y=m=>OY+m*S;
 let s=[],seat=0,rm=0;const mix={4:0,2:0,1:0};
 s.push(`<svg xmlns="http://www.w3.org/2000/svg" width="1140" height="920" font-family="Malgun Gothic,Pretendard,sans-serif">`);
 s.push(`<rect width="1140" height="920" fill="#fff"/>`);
-s.push(`<text x="160" y="40" font-size="18.5" font-weight="800" fill="#0f1e3d">판교1 — 전용 100평 · 줄1 풀폭 가로형 · 줄4 2인+1인 전용</text>`);
+s.push(`<text x="160" y="40" font-size="18.5" font-weight="800" fill="#0f1e3d">100평 — 전용 100평 · 줄1 풀폭 가로형 · 줄4 2인+1인 전용</text>`);
 s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,670×2,400(풀폭·가로형) · 줄2~3: 4인 3,440×2,900 · 줄4: 2인 2,200×2,900 · 1인 1,890×1,400 · 복도1,100</text>`);
 s.push(`<rect x="${X(0)}" y="${Y(0)}" width="${FW*S}" height="${FH*S}" fill="#3a4a63"/>`);
 s.push(`<rect x="${X(0.05)}" y="${Y(0.05)}" width="${(FW-0.1)*S}" height="${(FH-0.1)*S}" fill="#f8fafc" stroke="#0f1e3d" stroke-width="3"/>`);

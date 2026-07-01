@@ -5,7 +5,7 @@ const X=m=>OX+m*S,Y=m=>OY+m*S;
 let s=[],seat=0,rm=0;const mix={4:0,2:0,1:0};
 s.push(`<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1160" font-family="Malgun Gothic,Pretendard,sans-serif">`);
 s.push(`<rect width="1240" height="1160" fill="#fff"/>`);
-s.push(`<text x="160" y="40" font-size="18.5" font-weight="800" fill="#0f1e3d">코워킹 150평 주력 모델 — 전용 22.0×22.5m=495㎡=150평</text>`);
+s.push(`<text x="160" y="40" font-size="22" font-weight="800" fill="#0f1e3d">150평 — 전용 22.0×22.5m=495㎡</text>`);
 s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,540×2,400(풀폭 6열) · 줄2~3: 4인 3,380×2,900(6열) · 줄4: 2인 2,200×2,900 · 1인 1,890×1,400 · 우편·창고 / 줄5: 1인 1,890×1,400×20실 · 복도1,100</text>`);
 s.push(`<rect x="${X(0)}" y="${Y(0)}" width="${FW*S}" height="${FH*S}" fill="#3a4a63"/>`);
 s.push(`<rect x="${X(0.05)}" y="${Y(0.05)}" width="${(FW-0.1)*S}" height="${(FH-0.1)*S}" fill="#f8fafc" stroke="#0f1e3d" stroke-width="3"/>`);

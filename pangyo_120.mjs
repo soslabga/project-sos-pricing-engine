@@ -5,7 +5,7 @@ const X=m=>OX+m*S,Y=m=>OY+m*S;
 let s=[],seat=0,rm=0;const mix={4:0,2:0,1:0};
 s.push(`<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="980" font-family="Malgun Gothic,Pretendard,sans-serif">`);
 s.push(`<rect width="1240" height="980" fill="#fff"/>`);
-s.push(`<text x="160" y="40" font-size="18.5" font-weight="800" fill="#0f1e3d">분당 120평 표준 모델 — 전용 22.0×18.0m=396㎡=120평</text>`);
+s.push(`<text x="160" y="40" font-size="22" font-weight="800" fill="#0f1e3d">120평 — 전용 22.0×18.0m=396㎡</text>`);
 s.push(`<text x="160" y="60" font-size="11" fill="#64748b">분당 수내역 · 전용 120평 · 월세 432만·보증금 7,500만 · 4인128/2인75/1인45만 · 복도1,100</text>`);
 s.push(`<rect x="${X(0)}" y="${Y(0)}" width="${FW*S}" height="${FH*S}" fill="#3a4a63"/>`);
 s.push(`<rect x="${X(0.05)}" y="${Y(0.05)}" width="${(FW-0.1)*S}" height="${(FH-0.1)*S}" fill="#f8fafc" stroke="#0f1e3d" stroke-width="3"/>`);
