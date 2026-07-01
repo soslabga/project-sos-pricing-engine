@@ -87,7 +87,7 @@ s.push(`<text x="160" y="80" font-size="12" font-weight="700" fill="#15803d">독
 fs.writeFileSync('C:/Users/User/Documents/프로젝트/코워킹_평면도_150평.svg',s.join('\n')+'</svg>','utf8');
 
 const py=150;
-const full_rev=mix[4]*160+mix[2]*100+mix[1]*60;
+const full_rev=mix[4]*128+mix[2]*75+mix[1]*45;
 const capex=Math.round((py*(120+6+11)+rm*25+700+seat*23.65+200+100)*1.05);
 const dep=Math.round(capex/60);
 const rent_est=650; // 만원 (임시)

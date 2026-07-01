@@ -81,12 +81,12 @@ s.push(`<text x="160" y="80" font-size="12" font-weight="700" fill="#15803d">독
 fs.writeFileSync('C:/Users/User/Documents/프로젝트/코워킹_평면도_판교1_정밀.svg',s.join('\n')+'</svg>','utf8');
 
 const py=100;
-const full_rev=mix[4]*160+mix[2]*100+mix[1]*60;
+const full_rev=mix[4]*180+mix[2]*120+mix[1]*70;
 const capex=Math.round((py*(120+6+11)+rm*25+700+seat*23.65+200+100)*1.05);
 const dep=Math.round(capex/60);
-const fixed=600+Math.round(py*2)+Math.round(py*0.8)+Math.round(py*0.4)+332+135+dep;
-const op=g=>full_rev*g*0.905-fixed;
-const bep=fixed/(full_rev*0.905)*100;
+const fixed=600+Math.round(py*2.7)+Math.round(py*0.8)+Math.round(py*0.4)+332+135+dep;
+const op=g=>full_rev*g*0.885-fixed;
+const bep=fixed/(full_rev*0.885)*100;
 const fk=n=>Math.round(n).toLocaleString();
 console.log(`판교1: ${rm}호실 ${seat}석 (4인${mix[4]} 2인${mix[2]} 1인${mix[1]})`);
 console.log(`만실 ${fk(full_rev)}만원 | CAPEX ${(capex/10000).toFixed(2)}억 | 상각 ${fk(dep)}만/월`);
