@@ -22,8 +22,10 @@ const room=(x,y,w,h,c,fill,dim)=>{
 // 우측 복도: 줄1(y=0~2.52) 이후부터 시작
 cor(SPINE,2.62,1.1,14.73,'');
 s.push(`<text x="${X(SPINE+0.55)}" y="${Y(9.5)}" font-size="8" fill="#475569" text-anchor="middle" transform="rotate(-90 ${X(SPINE+0.55)} ${Y(9.5)})">복도 1,100 (입구연결)</text>`);
-s.push(`<rect x="${X(19)-6}" y="${Y(15.2)}" width="12" height="${2.1*S}" fill="#1d4ed8"/>`);
-s.push(`<text x="${X(18.35)}" y="${Y(16.2)}" font-size="10" font-weight="800" fill="#1d4ed8" text-anchor="middle" transform="rotate(-90 ${X(18.35)} ${Y(16.2)})">입구</text>`);
+s.push(`<rect x="${X(19)-10}" y="${Y(15.2)}" width="20" height="${2.1*S}" fill="#1d4ed8" stroke="#fff" stroke-width="2"/>`);
+s.push(`<polygon points="${X(19)+22},${Y(16.25)} ${X(19)+2},${Y(16.05)} ${X(19)+2},${Y(16.45)}" fill="#1d4ed8"/>`);
+s.push(`<rect x="${X(19)+24}" y="${Y(16.25)-14}" width="46" height="28" rx="4" fill="#1d4ed8"/>`);
+s.push(`<text x="${X(19)+47}" y="${Y(16.25)+5}" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">입구</text>`);
 
 // 줄1: 풀폭 가로형, y=0.12, h=2.4, 5x4인 (w=3.67, step=3.77)
 let x=0.12;
