@@ -79,7 +79,7 @@ s.push(`<text x="160" y="80" font-size="12" font-weight="700" fill="#15803d">독
 fs.writeFileSync('C:/Users/User/Documents/프로젝트/코워킹_평면도_120평.svg',s.join('\n')+'</svg>','utf8');
 
 // CAPEX/고정비 산식 = 부사장_보고용_지역별_SOS_경쟁력_분석.html 8·9장 그대로. py=모델 명목 평수(120), 배치도(rm/seat/mix)가 기준값.
-const py=120, rent=432, depo=7500, mgmtRate=2.8, partTime=0, sales=100;
+const py=120, rent=432, depo=7500, mgmtRate=2.8, partTime=0, sales=50; // 정상화 이후(steady-state), 소상공인 평균(20~100만) 상단. 런칭기(1~6개월)는 200만 별도 민감도 참고
 // 가격 133/78/47만 = 기존 128/75/45 대비 +3.6%(블렌드 평당 27만원 목표, 보수적 상향)
 const full_rev=mix[4]*133+mix[2]*78+mix[1]*47;
 // 인테리어 130→150만/평(냉난방 포함 시세 하단, 웹검증) 반영
@@ -97,6 +97,8 @@ console.log(`\n분당 120평형(도면 기준): ${rm}호실 ${seat}석 (4인${mi
 console.log(`만실 ${fk(full_rev)}만원 | CAPEX ${fk(capex)}만 | 상각 ${fk(dep)}만/월`);
 console.log(`고정비 ${fk(fixed)}만 = 월세${rent}+관리비${mgmt}+전기${elec}+청소${clean}+운영잡비${opexFlat}+세일즈${sales}+상각${dep}`);
 console.log(`BEP ${bep.toFixed(1)}% | 50%${op(0.5)>=0?'+':''}${fk(op(0.5))} 60%${op(0.6)>=0?'+':''}${fk(op(0.6))} 70%${op(0.7)>=0?'+':''}${fk(op(0.7))}`);
+const fixedLaunch=fixed-sales+200, bepLaunch=fixedLaunch/(full_rev*0.885)*100;
+console.log(`[런칭기 참고, 1~6개월] 세일즈200만 가정: 고정비${fk(fixedLaunch)}만 · BEP ${bepLaunch.toFixed(1)}% (정상 BEP 아님, 초기 한시적)`);
 console.log(`총 소요자금 ${fk(totalCash)}만 (CAPEX+보증금${depo}+운전500)`);
 
 // 비정형 평면 보정 — 배치도 기준 평균 호실매출로 손실 호실 민감도 계산
