@@ -6,7 +6,7 @@ let s=[],seat=0,rm=0;const mix={4:0,2:0,1:0};
 s.push(`<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1160" font-family="Malgun Gothic,Pretendard,sans-serif">`);
 s.push(`<rect width="1240" height="1160" fill="#fff"/>`);
 s.push(`<text x="160" y="40" font-size="22" font-weight="800" fill="#0f1e3d">150평 — 전용 22.0×22.5m=495㎡</text>`);
-s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,540×2,400(풀폭 6열) · 줄2~3: 4인 3,380×2,900(6열) · 줄4: 2인 2,200×2,900 · 1인 1,890×1,400 · 우편·창고 / 줄5: 1인 1,890×1,400×20실 · 복도1,100</text>`);
+s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,540×2,400(풀폭 6열) · 줄2~3: 4인 3,380×2,900(6열) · 줄4: 2인 2,200×3,300 · 1인 1,890×1,600 · 우편·창고 / 줄5: 1인 1,890×1,600×20실 · 복도1,100</text>`);
 s.push(`<rect x="${X(0)}" y="${Y(0)}" width="${FW*S}" height="${FH*S}" fill="#3a4a63"/>`);
 s.push(`<rect x="${X(0.05)}" y="${Y(0.05)}" width="${(FW-0.1)*S}" height="${(FH-0.1)*S}" fill="#f8fafc" stroke="#0f1e3d" stroke-width="3"/>`);
 const cor=(x,y,w,h,t)=>{
@@ -15,8 +15,8 @@ const cor=(x,y,w,h,t)=>{
 };
 const room=(x,y,w,h,c,fill,dim)=>{
   s.push(`<rect x="${X(x)}" y="${Y(y)}" width="${w*S}" height="${h*S}" fill="${fill||'#e8f0ff'}" stroke="#1e293b" stroke-width="1.3"/>`);
-  s.push(`<text x="${X(x+w/2)}" y="${Y(y+h/2)+1}" font-size="9" font-weight="700" fill="#0f1e3d" text-anchor="middle">${c}</text>`);
-  if(dim)s.push(`<text x="${X(x+w/2)}" y="${Y(y+h/2)+12}" font-size="6.5" fill="#64748b" text-anchor="middle">${dim}</text>`);
+  s.push(`<text x="${X(x+w/2)}" y="${Y(y+h/2)+1}" font-size="12" font-weight="700" fill="#0f1e3d" text-anchor="middle">${c}</text>`);
+  if(dim)s.push(`<text x="${X(x+w/2)}" y="${Y(y+h/2)+12}" font-size="8.5" fill="#64748b" text-anchor="middle">${dim}</text>`);
   if(typeof c==='number'){seat+=c;rm++;mix[c]++;}
 };
 
@@ -65,8 +65,8 @@ cor(0,19.02,SPINE,0.85,'복도 1,100 (공용 진입)');
 // 공용 (y=19.87, h=2.58 — 줄4·줄5 1인실 깊이 확장분 0.8m을 여기서 빌려옴, 총 FH는 불변)
 const cm=(x,w,n,fl,dim)=>{
   s.push(`<rect x="${X(x)}" y="${Y(19.87)}" width="${w*S}" height="${2.58*S}" fill="${fl}" stroke="#1e293b" stroke-width="1.3"/>`);
-  s.push(`<text x="${X(x+w/2)}" y="${Y(21.16)}" font-size="9" font-weight="700" fill="#0f1e3d" text-anchor="middle">${n}</text>`);
-  if(dim)s.push(`<text x="${X(x+w/2)}" y="${Y(21.16)+12}" font-size="6.5" fill="#64748b" text-anchor="middle">${dim}</text>`);
+  s.push(`<text x="${X(x+w/2)}" y="${Y(21.16)}" font-size="12" font-weight="700" fill="#0f1e3d" text-anchor="middle">${n}</text>`);
+  if(dim)s.push(`<text x="${X(x+w/2)}" y="${Y(21.16)+12}" font-size="8.5" fill="#64748b" text-anchor="middle">${dim}</text>`);
 };
 // 우편·소포·창고는 줄4에 별도 룸으로 이미 배치됨(공용부 중복 배치 안 함)
 cm(0.05,3.4,'회의실 6인','#eef3fb','3400×2580');

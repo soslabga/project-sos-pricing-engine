@@ -15,8 +15,8 @@ const cor=(x,y,w,h,t)=>{
 };
 const room=(x,y,w,h,c,fill,dim)=>{
   s.push(`<rect x="${X(x)}" y="${Y(y)}" width="${w*S}" height="${h*S}" fill="${fill||'#e8f0ff'}" stroke="#1e293b" stroke-width="1.3"/>`);
-  s.push(`<text x="${X(x+w/2)}" y="${Y(y+h/2)+1}" font-size="9" font-weight="700" fill="#0f1e3d" text-anchor="middle">${c}</text>`);
-  if(dim)s.push(`<text x="${X(x+w/2)}" y="${Y(y+h/2)+12}" font-size="6.5" fill="#64748b" text-anchor="middle">${dim}</text>`);
+  s.push(`<text x="${X(x+w/2)}" y="${Y(y+h/2)+1}" font-size="12" font-weight="700" fill="#0f1e3d" text-anchor="middle">${c}</text>`);
+  if(dim)s.push(`<text x="${X(x+w/2)}" y="${Y(y+h/2)+12}" font-size="8.5" fill="#64748b" text-anchor="middle">${dim}</text>`);
   if(typeof c==='number'){seat+=c;rm++;mix[c]++;}
 };
 
@@ -56,8 +56,8 @@ cor(0,14.42,SPINE,0.85,'복도 1,100 (공용 진입)');
 // 공용 (y=14.87, h=2.98 — 120평이라 깊이 여유)
 const cm=(x,w,n,fl,dim)=>{
   s.push(`<rect x="${X(x)}" y="${Y(15.27)}" width="${w*S}" height="${2.58*S}" fill="${fl}" stroke="#1e293b" stroke-width="1.3"/>`);
-  s.push(`<text x="${X(x+w/2)}" y="${Y(16.56)}" font-size="9" font-weight="700" fill="#0f1e3d" text-anchor="middle">${n}</text>`);
-  if(dim)s.push(`<text x="${X(x+w/2)}" y="${Y(16.56)+12}" font-size="6.5" fill="#64748b" text-anchor="middle">${dim}</text>`);
+  s.push(`<text x="${X(x+w/2)}" y="${Y(16.56)}" font-size="12" font-weight="700" fill="#0f1e3d" text-anchor="middle">${n}</text>`);
+  if(dim)s.push(`<text x="${X(x+w/2)}" y="${Y(16.56)+12}" font-size="8.5" fill="#64748b" text-anchor="middle">${dim}</text>`);
 };
 // 우편·소포·창고는 줄4에 별도 룸으로 이미 배치됨(공용부 중복 배치 안 함)
 // 0.05+3.4+0.1+2.9+0.1+1.8+0.1+2.3+0.1+10.0 = 20.85 ≈ SPINE 20.9
