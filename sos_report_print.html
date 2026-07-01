@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project SOS 지역별 경쟁력 분석</title>
+<style>
+  :root{
+    --ink:#172033; --muted:#647083; --line:#d9e0ea; --bg:#eef2f7; --panel:#ffffff;
+    --blue:#2156a5; --green:#14733d; --red:#b42318; --amber:#a15c07; --soft:#f6f8fb;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard","Malgun Gothic","맑은 고딕",Arial,sans-serif;line-height:1.55;padding:28px;}
+  .page{max-width:1180px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:34px 38px;box-shadow:0 2px 8px rgba(20,30,50,.06);}
+  header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;border-bottom:3px solid var(--ink);padding-bottom:18px;margin-bottom:20px;}
+  h1{font-size:26px;line-height:1.2;margin:0 0 8px;font-weight:900;letter-spacing:0;}
+  .sub{font-size:13px;color:var(--muted);}
+  .stamp{text-align:right;font-size:12px;color:var(--muted);white-space:nowrap;}
+  h2{font-size:18px;margin:28px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line);}
+  h3{font-size:15px;margin:0 0 8px;color:var(--blue);}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;}
+  th,td{border:1px solid var(--line);padding:8px 9px;text-align:right;vertical-align:top;}
+  th{background:#eef3f9;text-align:center;font-weight:800;color:#24324a;}
+  td.l,th.l{text-align:left;}
+  .lead{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin:16px 0 18px;}
+  .box{background:#f7fbff;border:1px solid #cfe0f5;border-left:5px solid var(--blue);border-radius:8px;padding:14px 16px;font-size:14px;}
+  .decision{background:#f7faf8;border:1px solid #cde8d7;border-left:5px solid var(--green);border-radius:8px;padding:14px 16px;}
+  .decision b{font-size:18px;color:var(--green);}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:12px 0;}
+  .region{border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden;}
+  .region .head{padding:12px 14px;background:#f8fafc;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center;}
+  .region .body{padding:14px;}
+  .rank{font-size:12px;font-weight:900;border-radius:999px;padding:4px 9px;background:#e8f5ed;color:var(--green);white-space:nowrap;}
+  .rank.warn{background:#fff3dc;color:var(--amber);}
+  .rank.bad{background:#fde8e5;color:var(--red);}
+  .metric{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;}
+  .metric div{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:8px;}
+  .metric b{display:block;font-size:15px;margin-bottom:2px;}
+  .metric span{font-size:11px;color:var(--muted);}
+  .shot{width:100%;height:180px;object-fit:cover;object-position:top;border:1px solid var(--line);border-radius:6px;background:#f7f7f7;}
+  .pos{color:var(--green);font-weight:900;}
+  .neg{color:var(--red);font-weight:900;}
+  .warntext{color:var(--amber);font-weight:900;}
+  .note{font-size:11.5px;color:var(--muted);margin-top:6px;}
+  .callout{background:#fff8eb;border:1px solid #f0d39d;border-left:5px solid var(--amber);border-radius:8px;padding:13px 16px;font-size:13px;margin:12px 0;}
+  .check{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:8px;}
+  .check div{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fff;}
+  ul{margin:7px 0 0 18px;padding:0;font-size:13px;}
+  li{margin:4px 0;}
+  @media(max-width:900px){.lead,.grid3,.check{grid-template-columns:1fr;} header{display:block}.stamp{text-align:left;margin-top:8px}.shot{height:auto;max-height:260px;}}
+  @page{size:A4 landscape;margin:8mm;}
+  @media print{
+    html,body{width:100%;background:var(--bg);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    body{padding:16px;}
+    .page{max-width:none;width:100%;border:1px solid var(--line);border-radius:10px;padding:26px 28px;box-shadow:none;background:var(--panel);}
+    header{break-after:avoid;}
+    h2{break-after:avoid;margin-top:22px;}
+    h3{break-after:avoid;margin-top:14px;}
+    table{break-inside:auto;font-size:11.5px;}
+    tr{break-inside:avoid;break-after:auto;}
+    th,td{padding:6px 7px;}
+    .region,.box,.decision,.callout{break-inside:avoid;}
+    .shot{height:150px;}
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div>
+      <h1>Project SOS 지역별 경쟁력 분석</h1>
+      <div class="sub">판교 · 분당 · 여의도 · 강남(선릉) 경쟁사 가격으로 검증한 Project SOS 전국 확장 가능성</div>
+    </div>
+    <div class="stamp">
+      작성일: 2026.07.01 (최종 갱신)<br>
+      기준자료: 실매물 캡처, 임대차계약서·관리비고지서·시공견적서, 패스트파이브·스파크플러스 실거래/제안 자료
+    </div>
+  </header>
+
+  <h2>1. 결론</h2>
+  <table>
+    <tr>
+      <th class="l">지역</th><th>월세</th><th>전용</th><th>전용평당</th><th class="l">경쟁사 기준</th><th>SOS 1인실</th><th>SOS 2인실</th><th>SOS 4인실</th><th class="l">판단</th>
+    </tr>
+    <tr>
+      <td class="l"><b>판교</b></td>
+      <td>650만</td>
+      <td>104평</td>
+      <td>6.25만</td>
+      <td class="l">패스트파이브 정가<br><b>4인 309만 / 7인 406만 / 10인 559만</b><br><span class="note">4인 실거래 222.5만</span></td>
+      <td>70만<br><span class="note">70.0만/석</span></td>
+      <td>120만<br><span class="note">60.0만/석</span></td>
+      <td><b>180만</b><br><span class="note">45.0만/석</span></td>
+      <td class="l pos">가장 강함. 실거래 대비 약 19% 저렴</td>
+    </tr>
+    <tr>
+      <td class="l"><b>분당(120평형)</b></td>
+      <td>432만</td>
+      <td>120평</td>
+      <td>3.6만</td>
+      <td class="l">스파크플러스 좌석당 33만<br><span class="note">5·6·8인실 동일 단가(파격가)</span><br>판교 패스트파이브 정가<br><span class="note">4인 309만 / 7인 406만 / 10인 559만</span></td>
+      <td>47만<br><span class="note">47.0만/석</span></td>
+      <td>78만<br><span class="note">39.0만/석</span></td>
+      <td><b>133만</b><br><span class="note">33.25만/석</span></td>
+      <td class="l pos">스파크플러스 파격가보다 약 3% 낮음. 10% 이익률 충족</td>
+    </tr>
+    <tr>
+      <td class="l"><b>여의도</b></td>
+      <td>620만</td>
+      <td>92평</td>
+      <td>6.74만</td>
+      <td class="l">패스트파이브 4인 175.5만<br>스파크플러스 2인 130만 / 5인 270만 / 8인 335만<br><span class="note">SOS 실이용(SP여의도424호 8인실) 할인가 335만=41.9만/석</span></td>
+      <td>68만<br><span class="note">68.0만/석</span></td>
+      <td>117만<br><span class="note">58.5만/석</span></td>
+      <td><b>176만</b><br><span class="note">44.0만/석</span></td>
+      <td class="l pos">패스트파이브 4인 대비 소폭 낮음. 10% 이익률 기준 검토가능</td>
+    </tr>
+  </table>
+  <div class="note">강남(선릉)은 오늘(2026-07-01) 재검증 대상에 포함되지 않아 8장 원자료 기준 옛 수치(2026-06-29)로 남아있음 — 별도 재검증 필요.</div>
+
+  <h3>지방 확장 차별점</h3>
+  <table>
+    <tr>
+      <th class="l">구분</th><th class="l">패스트파이브·스파크플러스</th><th class="l">SOS</th><th class="l">의미</th>
+    </tr>
+    <tr>
+      <td class="l">진입 가능 지역</td>
+      <td class="l">수도권·핵심 오피스권역 중심</td>
+      <td class="l"><b>부산·대구·대전 등 지방 핵심권역까지 가능</b></td>
+      <td class="l">고가 공용부와 대형 지점 구조가 아니어서 임대료 낮은 지역에서도 손익 설계 가능</td>
+    </tr>
+    <tr>
+      <td class="l">가격 포지션</td>
+      <td class="l">공유오피스 프리미엄 가격</td>
+      <td class="l"><b>소형 독립실 총액 경쟁력</b></td>
+      <td class="l">지방의 낮은 지불의사에도 맞출 수 있는 가격대 형성 가능</td>
+    </tr>
+  </table>
+
+  <h2>2. 수요 검증</h2>
+  <table>
+    <tr>
+      <th class="l">지역</th><th class="l">확인 경쟁사</th><th>소형호실 수요</th><th class="l">의미</th>
+    </tr>
+    <tr>
+      <td class="l">판교</td>
+      <td class="l">패스트파이브</td>
+      <td class="pos">1~4인실 만석</td>
+      <td class="l">1~4인 소형 프로젝트룸 수요 확인</td>
+    </tr>
+    <tr>
+      <td class="l">분당</td>
+      <td class="l">스파크플러스</td>
+      <td class="pos">1~4인실 만석</td>
+      <td class="l">소형호실 공급 부족</td>
+    </tr>
+    <tr>
+      <td class="l">여의도</td>
+      <td class="l">패스트파이브 · 스파크플러스</td>
+      <td class="pos">1~4인실 만석</td>
+      <td class="l">도심 소형 프로젝트룸 수요 확인</td>
+    </tr>
+    <tr>
+      <td class="l">강남(선릉)</td>
+      <td class="l">위워크 선릉 III</td>
+      <td>1인실 가격 기준 확인</td>
+      <td class="l">강남 소형 프라이빗 오피스 가격 기준 확인</td>
+    </tr>
+  </table>
+
+  <div class="callout"><b>전국 확장 논리:</b> 패스트파이브·스파크플러스가 지방에 본격 진입하지 못한 구간에서도, SOS는 낮은 공사비·소형호실 총액 경쟁력으로 부산·대구·대전 등 지방 핵심권역 진입 가능성이 있다.</div>
+
+  <h2>3. 핵심 가격경쟁력 - SOS 소형호실 vs 경쟁사</h2>
+  <table>
+    <tr>
+      <th class="l">지역</th><th class="l">비교 기준 경쟁사</th><th>경쟁사 월 단가</th><th>SOS 1인실</th><th>SOS 2인실</th><th>SOS 4인실</th><th class="l">가격경쟁력</th>
+    </tr>
+    <tr>
+      <td class="l">판교</td>
+      <td class="l">패스트파이브 4·7·10인실</td>
+      <td><b>4인 실거래 2,224,800</b><br><span class="note">55.6만/석</span><br><b>7인 정가 4,060,000</b><br><span class="note">58.0만/석</span><br><b>10인 정가 5,590,000</b><br><span class="note">55.9만/석</span></td>
+      <td>700,000<br><span class="note">70.0만/석</span></td>
+      <td>1,200,000<br><span class="note">60.0만/석</span></td>
+      <td><b>1,800,000</b><br><span class="note">45.0만/석</span></td>
+      <td class="l"><b class="pos">4인 실거래 대비 약 19% 저렴</b><br><span class="note">100평형은 호실수가 적어 고단가 적용</span></td>
+    </tr>
+    <tr>
+      <td class="l">분당(120평형)</td>
+      <td class="l">스파크플러스 파격가<br>+ 판교 패스트파이브 정가</td>
+      <td><b>스파크플러스 좌석당 330,000</b><br><span class="note">5·6·8인실 동일 단가(파격가)</span><br><b>판교 패스트파이브 정가</b><br><span class="note">4인 309만 / 7인 406만 / 10인 559만</span></td>
+      <td>470,000<br><span class="note">47.0만/석</span></td>
+      <td>780,000<br><span class="note">39.0만/석</span></td>
+      <td><b>1,330,000</b><br><span class="note">33.25만/석</span></td>
+      <td class="l"><b class="pos">스파크플러스 파격가보다 약 3% 낮음</b><br><span class="note">10% 이익률 기준 충족 가격</span></td>
+    </tr>
+    <tr>
+      <td class="l">여의도</td>
+      <td class="l">패스트파이브 4인실 / 스파크플러스 2인실</td>
+      <td><b>패스트파이브 4인 1,755,000</b><br><span class="note">43.9만/석</span><br><b>스파크플러스 2인 1,300,000</b><br><span class="note">65.0만/석 — SOS 실이용(424호 8인실 할인가) 335만÷8=41.9만/석과 정합</span></td>
+      <td>680,000<br><span class="note">68.0만/석</span></td>
+      <td>1,170,000<br><span class="note">58.5만/석</span></td>
+      <td><b>1,760,000</b><br><span class="note">44.0만/석</span></td>
+      <td class="l"><b class="pos">패스트파이브 4인 대비 약 0.3% 낮음</b><br><b class="pos">스파크플러스 2인 대비 약 32% 저렴</b><span class="note">10% 이익률 기준 검토가능</span></td>
+    </tr>
+  </table>
+  <div class="note">SOS 가격은 1개월 기준 예시 단가. 강남(선릉)은 오늘 재검증하지 않아 표에서 제외(8장 원자료는 06-29 기준으로 유지). 실제 지점별 월세·관리비·인테리어비 확정 후 1주·1개월·1년 가격표로 세분화.</div>
+
+  <h3>SOS 크레딧 정책</h3>
+  <table>
+    <tr>
+      <th>1인실</th><th>2인실</th><th>4인실</th><th class="l">기준</th>
+    </tr>
+    <tr>
+      <td>4개<br><span class="note">4.4만 원가치</span></td>
+      <td>8개<br><span class="note">8.8만 원가치</span></td>
+      <td><b>16개</b><br><span class="note">17.6만 원가치</span></td>
+      <td class="l">좌석당 월 4개. 크레딧 단가 11,000원 기준.</td>
+    </tr>
+  </table>
+
+  <h3>지역별 가격 결정구조</h3>
+  <table>
+    <tr>
+      <th class="l">공통 산정 기준</th><th class="l">내용</th>
+    </tr>
+    <tr><td class="l">변동비·마케팅</td><td class="l">매출 11.5% = 마케팅 7% + PG·플랫폼·환불 4.5%</td></tr>
+    <tr><td class="l">가동률</td><td class="l">초기 50% / 중기 60% / 활성화 70%</td></tr>
+    <tr><td class="l">목표이윤</td><td class="l">활성화 매출 15%</td></tr>
+    <tr><td class="l">공통 기타 고정비</td><td class="l">월 405만 = 운영 280만 + 보험·세무·렌탈·원복 125만</td></tr>
+    <tr><td class="l">CAPEX 상각</td><td class="l">초기 인테리어·가구·출입통제·장비 비용을 60개월로 나눠 월비용 처리</td></tr>
+  </table>
+  <table>
+    <tr>
+      <th class="l">지역</th><th>월세</th><th>월 관리비</th><th class="l">공통 기타 고정비</th><th>전기·냉난방</th><th>CAPEX 월상각</th><th>월 고정비 합계</th><th class="l">원가 기준 가격</th><th class="l">경쟁사 기준</th><th class="l">SOS 가격 결정</th><th class="l">판단</th>
+    </tr>
+    <tr>
+      <td class="l">판교</td>
+      <td>650만</td>
+      <td>281만<br><span class="note">104평 × 2.7만</span></td>
+      <td class="l" rowspan="4"><b>405만</b><br><span class="note">운영 280 + 보험·세무·렌탈·원복 125</span></td>
+      <td>83만</td>
+      <td>465만</td>
+      <td><b>1,884만</b><br><span class="note">650+281+405+83+465</span></td>
+      <td class="l">필요매출 2,563만<br><span class="note">70% 가동 기준 원가하한 약 31.6만/석</span></td>
+      <td class="l">패스트파이브 정가<br><span class="note">4인 77.3만/석 / 7인 58.0만/석 / 10인 55.9만/석</span><br>4인 할인 추정 62.5만/석</td>
+      <td class="l"><b>SOS 4인실 40.0만/석</b><br><span class="note">원가하한 31.6만/석보다 높고, 패스트파이브 할인 추정 62.5만/석보다 낮음</span></td>
+      <td class="l"><b class="pos">목표이윤 충족</b><br><span class="note">SOS 4인 40.0만/석 → 패스트파이브 할인 추정 62.5만/석보다 낮게 설정</span></td>
+    </tr>
+    <tr>
+      <td class="l">분당</td>
+      <td>433만</td>
+      <td>339만<br><span class="note">121평 × 2.8만</span></td>
+      <td>97만</td>
+      <td>527만</td>
+      <td><b>1,801만</b><br><span class="note">433+339+405+97+527</span></td>
+      <td class="l">필요매출 2,449만<br><span class="note">70% 가동 기준 원가하한 약 25.7만/석</span></td>
+      <td class="l">스파크플러스 파격가 33.0만/석<br><span class="note">5·6·8인실 동일 좌석단가</span><br>판교 패스트파이브 정가<br><span class="note">4인 77.3만/석 / 7인 58.0만/석 / 10인 55.9만/석</span></td>
+      <td class="l"><b>SOS 4인실 31.0만/석</b><br><span class="note">원가하한 25.7만/석보다 높고, 스파크플러스 파격가 33.0만/석보다 낮음</span></td>
+      <td class="l"><b class="pos">목표이윤 충족</b><br><span class="note">SOS 4인 31.0만/석 → 스파크플러스 파격가 33.0만/석보다만 낮게 설정</span></td>
+    </tr>
+    <tr>
+      <td class="l">여의도</td>
+      <td>725만</td>
+      <td>324만<br><span class="note">90평 × 3.6만</span></td>
+      <td>72만</td>
+      <td>460만</td>
+      <td><b>1,986만</b><br><span class="note">725+324+405+72+460</span></td>
+      <td class="l">필요매출 2,702만<br><span class="note">70% 가동 기준 원가하한 약 38.2만/석</span></td>
+      <td class="l">패스트파이브 4인 43.9만/석<br>스파크플러스 2인 65.0만/석</td>
+      <td class="l"><b>SOS 4인실 35.0만/석</b><br><span class="note">패스트파이브 43.9만/석보다 낮지만, 원가하한 38.2만/석보다 낮아 마진 부족</span></td>
+      <td class="l"><b class="warntext">월세 725만 + 관리비 324만 기준, 4인실 140만 = 35.0만/석</b><br><span class="note">관리비 324만 = 90평 × 3.6만. 목표이윤 15%는 미달, 패스트파이브 43.9만/석 대비 약 20% 저렴. 1주 단기운영으로 BEP 57% 이상 확보 필요</span></td>
+    </tr>
+    <tr>
+      <td class="l">강남(선릉)</td>
+      <td>750만</td>
+      <td>269만<br><span class="note">89.5평 × 3.0만 가정</span></td>
+      <td>72만</td>
+      <td>460만</td>
+      <td><b>1,956만</b><br><span class="note">750+269+405+72+460</span></td>
+      <td class="l">필요매출 2,661만<br><span class="note">70% 가동 기준 원가하한 약 38.0만/석</span></td>
+      <td class="l">위워크 1인 56.0만/석</td>
+      <td class="l"><b>SOS 4인실 39.0만/석</b><br><span class="note">원가하한 38.0만/석보다 겨우 높고, 위워크 1인 56.0만/석보다 낮음</span></td>
+      <td class="l"><b class="warntext">원가하한 38.0만 대비 SOS 4인 39.0만으로 마진 얇음</b><br><span class="note">위워크 1인 56만 대비 1인실 가격경쟁력은 있으나, 4인실은 단기 가동률 없으면 타이트</span></td>
+    </tr>
+  </table>
+  <h3>초기투자비(CAPEX) 상각 근거</h3>
+  <table>
+    <tr>
+      <th class="l">공통 기준</th><th class="l">내용</th>
+    </tr>
+    <tr>
+      <td class="l">상각기간</td><td class="l"><b>60개월(5년)</b>. 초기투자비 총액을 60개월로 나눠 월 비용 처리</td>
+    </tr>
+    <tr>
+      <td class="l">공사 수준</td><td class="l">고급 공유오피스식 오픈천장·과도한 라운지 마감 제외. 대신 방음, 독립실 칸막이, 가구, 출입통제는 포함</td>
+    </tr>
+    <tr>
+      <td class="l">포함 항목</td><td class="l">인테리어·칸막이, 방음, 전기·통신, 출입통제·CCTV, 가구, 사인·예비비</td>
+    </tr>
+  </table>
+  <table>
+    <tr>
+      <th class="l">CAPEX 항목</th><th class="l">산정 기준</th><th>판교<br><span class="note">104평</span></th><th>분당<br><span class="note">121평</span></th><th>여의도<br><span class="note">90평</span></th><th>강남(선릉)<br><span class="note">89.5평</span></th>
+    </tr>
+    <tr>
+      <td class="l"><b>인테리어·칸막이</b></td><td class="l">독립실 벽체, 도장, 바닥, 천장 보수</td><td>1.46억</td><td>1.69억</td><td>1.35억</td><td>1.34억</td>
+    </tr>
+    <tr>
+      <td class="l"><b>방음</b></td><td class="l">룸별 차음 보강, 문·틈새 방음</td><td>5,200만</td><td>6,050만</td><td>5,400만</td><td>5,370만</td>
+    </tr>
+    <tr>
+      <td class="l"><b>전기·통신</b></td><td class="l">콘센트, 랜, 와이파이, 분전 보강</td><td>2,600만</td><td>3,025만</td><td>2,700만</td><td>2,685만</td>
+    </tr>
+    <tr>
+      <td class="l"><b>출입통제·CCTV</b></td><td class="l">도어락, 출입관리, CCTV, 보안 장비</td><td>1,800만</td><td>1,900만</td><td>1,800만</td><td>1,800만</td>
+    </tr>
+    <tr>
+      <td class="l"><b>가구</b></td><td class="l">책상, 의자, 수납, 회의실 가구</td><td>2,600만</td><td>3,025만</td><td>2,700만</td><td>2,685만</td>
+    </tr>
+    <tr>
+      <td class="l"><b>사인·예비비</b></td><td class="l">간판, 내부 사인, 예비 공사비</td><td>1,140만</td><td>680만</td><td>1,500만</td><td>1,635만</td>
+    </tr>
+    <tr>
+      <td class="l"><b>초기투자비 총액</b></td><td class="l">위 항목 합계</td><td><b>2.79억</b></td><td><b>3.16억</b></td><td><b>2.76억</b></td><td><b>2.76억</b></td>
+    </tr>
+    <tr>
+      <td class="l"><b>평당 투자비</b></td><td class="l">초기투자비 ÷ 전용평수</td><td>268만/평</td><td>261만/평</td><td>307만/평</td><td>308만/평</td>
+    </tr>
+    <tr>
+      <td class="l"><b>월상각</b></td><td class="l">초기투자비 ÷ 60개월</td><td><b>465만</b></td><td><b>527만</b></td><td><b>460만</b></td><td><b>460만</b></td>
+    </tr>
+  </table>
+  <div class="note">월상각 산식: 초기투자비 총액 ÷ 60개월. 예: 여의도 2.76억 ÷ 60개월 = 월 460만.</div>
+
+  <h2>4. 예상 공간구성·매출 산정</h2>
+  <table>
+    <tr>
+      <th class="l">지역</th><th>전용</th><th>1인실</th><th>2인실</th><th>4인실</th><th>총 좌석</th><th>회의실</th><th>라운지</th><th>만실 매출</th><th>50% / 60% / 70% 매출</th>
+    </tr>
+    <tr>
+      <td class="l">판교</td><td>104평</td><td>8개</td><td>12개</td><td>21개</td><td><b>116석</b></td><td>4인 회의실 1개<br>6인 회의실 1개</td><td>10평</td><td><b>5,040만</b></td><td>2,520만 / 3,024만 / 3,528만</td>
+    </tr>
+    <tr>
+      <td class="l">분당</td><td>121평</td><td>10개</td><td>14개</td><td>25개</td><td><b>138석</b></td><td>4인 회의실 1개<br>6인 회의실 1개</td><td>12평</td><td><b>4,480만</b></td><td>2,240만 / 2,688만 / 3,136만</td>
+    </tr>
+    <tr>
+      <td class="l">여의도</td><td>90평</td><td>9개</td><td>10개</td><td>18개</td><td><b>101석</b></td><td>6인실 1개</td><td>9평</td><td><b>3,915만</b></td><td>1,958만 / 2,349만 / 2,741만</td>
+    </tr>
+    <tr>
+      <td class="l">강남(선릉)</td><td>89.5평</td><td>10개</td><td>9개</td><td>18개</td><td><b>100석</b></td><td>6인실 1개</td><td>9평</td><td><b>4,113만</b></td><td>2,057만 / 2,468만 / 2,879만</td>
+    </tr>
+  </table>
+  <div class="note">검증용 룸믹스. SOS는 1·2·4인실만 운영. 회의실·라운지는 매출 제외 공용부로 두고, 매출은 1·2·4인실 월 판매가 기준으로 계산.</div>
+
+  <h2>5. 위치별 손익 검증</h2>
+  <table>
+    <tr>
+      <th class="l">지역</th><th>50% 손익</th><th>60% 손익</th><th>70% 손익</th><th>BEP</th><th class="l">판단</th>
+    </tr>
+    <tr>
+      <td class="l">판교(104평, 27실/76석)</td><td class="no">-92만</td><td class="pos">+239만</td><td class="pos"><b>+570만</b></td><td><b>52.8%</b></td><td class="l">가장 안정적. 소방·냉난방 실제견적 반영 완료</td>
+    </tr>
+    <tr>
+      <td class="l">분당 120평형(33실/90석)</td><td class="neg">-230만</td><td class="pos">+53만</td><td class="pos"><b>+335만</b></td><td><b>58.1%</b></td><td class="l">주력 표준모델. 60%부터 흑자</td>
+    </tr>
+    <tr>
+      <td class="l">분당 150평형(53실/110석)</td><td class="neg">-265만</td><td class="pos">+101만</td><td class="pos"><b>+467만</b></td><td><b>57.2%</b></td><td class="l">120평보다 매출 흡수력 큼(파트타임 120만 반영)</td>
+    </tr>
+    <tr>
+      <td class="l">여의도(92평, 개략시산)</td><td class="neg">-32만</td><td class="pos">+291만</td><td class="pos"><b>+614만</b></td><td><b>51.0%</b></td><td class="l">판교 배치도 그대로 적용한 개략시산. 정식 모델(전용면적·CAPEX 실측) 검증 필요</td>
+    </tr>
+  </table>
+  <div class="note">2026-07-01 최종 갱신: 소방·냉난방 CAPEX 실제견적, 전기·통신 7만/평, 관리비 1.5만/평 등 오늘 실측 검증한 값 전부 반영. 산식: 순손익 = 만실매출×점유율×88.5% - 월고정비. 88.5%=100%-마케팅7%-PG·환불4.5%. 강남(선릉)은 오늘 미검증이라 표에서 제외.</div>
+
+  <h2>6. 임대료 민감도</h2>
+  <table>
+    <tr>
+      <th class="l">지역</th><th>월세</th><th>전용평당 월세</th><th>월 고정비 합계</th><th>BEP</th><th class="l">해석</th>
+    </tr>
+    <tr><td class="l">분당 120평형</td><td>432만</td><td>3.6만</td><td>1,642만</td><td><b>58.1%</b></td><td class="l">월세는 낮지만 표준가라 BEP는 판교보다 높음</td></tr>
+    <tr><td class="l">판교</td><td>650만</td><td>6.25만</td><td>1,747만</td><td><b>52.8%</b></td><td class="l pos">프리미엄가가 임대료 부담을 상쇄</td></tr>
+    <tr><td class="l">여의도</td><td>620만</td><td>6.74만</td><td>1,648만</td><td><b>51.0%</b></td><td class="l pos">임대료는 판교보다 +8%지만 판교급 프리미엄가가 그대로 통해 판교보다도 유리</td></tr>
+  </table>
+  <div class="note">여의도는 패스트파이브 4인실 실거래(175.5만=43.9만/석)와 SOS가 실제 이용중인 스파크플러스 여의도 424호(8인실 할인가 335만=41.9만/석)가 서로 정합해, 판교급 프리미엄 가격이 통하는 시장으로 재확인됨. 강남(선릉)은 06-29 원자료 기준 BEP 54%로 남아있으며 오늘 재검증 대상 아님.</div>
+
+  <h2>7. 비용 구조·누락 점검</h2>
+  <table>
+    <tr>
+      <th class="l">검증항목</th><th>상태</th><th class="l">체크 내용</th>
+    </tr>
+    <tr><td class="l">공간비</td><td class="pos">반영</td><td class="l">월세, 관리비, 보증금 기회비용</td></tr>
+    <tr><td class="l">공사비</td><td class="pos">반영</td><td class="l">인테리어, 방음, 가구, 출입통제, CCTV, 사인, 원복충당</td></tr>
+    <tr><td class="l">운영비</td><td class="pos">반영</td><td class="l">순회관리, 시스템, 전기·냉난방, 인터넷, 소모품, 렌탈, 보험, 세무</td></tr>
+    <tr><td class="l">영업·변동비</td><td class="pos">반영</td><td class="l">마케팅 7%, PG·플랫폼·환불 4.5%</td></tr>
+    <tr><td class="l">매출 상방</td><td>미반영</td><td class="l">부가 매출원은 보수적으로 제외</td></tr>
+  </table>
+
+  <h2>8. 경쟁사 가격 원자료</h2>
+  <h3>판교 - 패스트파이브</h3>
+  <table>
+    <tr>
+      <th>인실</th><th>정가</th><th>할인 추정가</th><th>추정 인당단가</th><th>크레딧</th><th>크레딧 원가치</th>
+    </tr>
+    <tr>
+      <td>4인</td><td><b>3,090,000</b></td><td><b>2,500,000</b> (추정)</td><td><b>625,000</b></td><td>~26</td><td>~286,000</td>
+    </tr>
+    <tr>
+      <td>7인</td><td><b>4,060,000</b></td><td><b>3,284,800</b> (추정)</td><td><b>469,257</b></td><td>~35</td><td>~385,000</td>
+    </tr>
+    <tr>
+      <td>10인</td><td><b>5,590,000</b></td><td><b>4,522,700</b> (추정)</td><td><b>452,270</b></td><td>~40</td><td>~440,000</td>
+    </tr>
+  </table>
+
+  <h3>여의도 - 패스트파이브 · 스파크플러스</h3>
+  <table>
+    <tr>
+      <th class="l">경쟁사</th><th>인실</th><th>실거래</th><th>인당단가</th><th>크레딧</th><th>크레딧 원가치</th>
+    </tr>
+    <tr>
+      <td class="l">패스트파이브</td><td>4인</td><td><b>1,755,000</b></td><td><b>438,750</b></td><td>~23</td><td>~253,000</td>
+    </tr>
+    <tr>
+      <td class="l">스파크플러스</td><td>2인</td><td><b>1,300,000</b></td><td><b>650,000</b></td><td>14</td><td>154,000</td>
+    </tr>
+    <tr>
+      <td class="l">스파크플러스</td><td>5인</td><td><b>2,700,000</b></td><td><b>540,000</b></td><td>27</td><td>297,000</td>
+    </tr>
+    <tr>
+      <td class="l">스파크플러스</td><td>8인</td><td><b>3,350,000</b></td><td><b>418,750</b></td><td>37</td><td>407,000</td>
+    </tr>
+  </table>
+
+  <h3>분당 - 스파크플러스</h3>
+  <table>
+    <tr>
+      <th>인실</th><th>실거래(12개월가)</th><th>인당단가</th><th>크레딧</th><th>크레딧 원가치</th>
+    </tr>
+    <tr>
+      <td>5인</td><td><b>1,650,000</b></td><td><b>330,000</b></td><td>32</td><td>352,000</td>
+    </tr>
+    <tr>
+      <td>6인</td><td><b>1,980,000</b></td><td><b>330,000</b></td><td>34</td><td>374,000</td>
+    </tr>
+    <tr>
+      <td>8인</td><td><b>2,640,000</b></td><td><b>330,000</b></td><td>37</td><td>407,000</td>
+    </tr>
+  </table>
+
+  <h3>강남(선릉) - 위워크 · 선릉 매물</h3>
+  <table>
+    <tr>
+      <th class="l">구분</th><th class="l">항목</th><th>금액/조건</th><th class="l">비고</th>
+    </tr>
+    <tr>
+      <td class="l">경쟁사</td><td class="l">위워크 선릉 III 1인 프라이빗 오피스</td><td><b>560,000/월부터</b></td><td class="l">이미지 기준</td>
+    </tr>
+    <tr>
+      <td class="l">매물</td><td class="l">선릉역 초역세권 일반상가</td><td><b>보증금 8,000만 / 월세 750만</b></td><td class="l">2/6층, 북동향</td>
+    </tr>
+    <tr>
+      <td class="l">면적</td><td class="l">전용 296㎡</td><td><b>약 89.5평</b></td><td class="l">전용평당 월세 약 8.4만</td>
+    </tr>
+  </table>
+  <div class="note">크레딧 단가 11,000원/개. 굵은 금액은 실거래·계약·제안 기준, ~는 추정.</div>
+
+  <h2>9. 최종 판단</h2>
+  <table>
+    <tr><th class="l">항목</th><th class="l">판단</th></tr>
+    <tr>
+      <td class="l">모델</td>
+      <td class="l"><b>1·2·4인 소형 프로젝트룸 중심. 최대 4인실.</b></td>
+    </tr>
+    <tr>
+      <td class="l">가격</td>
+      <td class="l"><b>가동률 기준 BEP: 판교 52.8%, 분당120평 58.1%, 분당150평 57.2%, 여의도 51.0%(개략). 판교·여의도는 프리미엄가가 통해 상대적으로 안정적이고, 분당은 표준가라 60% 점유율은 확보해야 함.</b></td>
+    </tr>
+    <tr>
+      <td class="l">손익</td>
+      <td class="l"><b>4개 모델 모두 60% 점유율부터 흑자권 진입(판교·여의도는 60% 이전에도 근접). 소방·냉난방 실제견적을 반영해 BEP가 이전 추정치보다 정직하게 상향됐음.</b></td>
+    </tr>
+    <tr>
+      <td class="l">확장성</td>
+      <td class="l"><b>여의도는 판교급 프리미엄가가 그대로 통하는 것으로 확인(FF 4인실 175.5만, SOS 실이용 SP 8인실 할인가 41.9만/석과 정합) — 서울 도심권 확장 후보로 격상. 지방 광역시 확장 가능성은 별도 검증 필요.</b></td>
+    </tr>
+    <tr>
+      <td class="l">투입지역</td>
+      <td class="l"><b>1순위: 판교(가장 안정). 2순위: 여의도(프리미엄가 통함, 단 정식 CAPEX 검증 필요). 3순위: 분당 120·150평(표준가, 규모 우위). 강남(선릉)은 오늘 미검증 상태로 재검토 필요.</b></td>
+    </tr>
+  </table>
+</main>
+</body>
+</html>
