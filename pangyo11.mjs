@@ -77,6 +77,7 @@ const dl=(x1,y1,x2,y2,t,v)=>{
 dl(X(0),OY-32,X(19),OY-32,'19,000');
 dl(OX-50,Y(0),OX-50,Y(17.4),'17,400',true);
 
+s.push(`<text x="160" y="80" font-size="12" font-weight="700" fill="#15803d">독립실 ${rm}호실 / ${seat}석 — 4인 ${mix[4]}실 · 2인 ${mix[2]}실 · 1인 ${mix[1]}실</text>`);
 fs.writeFileSync('C:/Users/User/Documents/프로젝트/코워킹_평면도_판교1_정밀.svg',s.join('\n')+'</svg>','utf8');
 
 const py=100;
