@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOS 코워킹 최종보고서</title>
+<style>
+  :root{--ink:#172033;--muted:#667085;--line:#d9e1ec;--head:#eef3fb;--green:#16834a;--amber:#9a6700;--red:#b42318;--blue:#1f4f99;--bg:#f5f7fb;}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic",Arial,sans-serif;font-size:13.5px;line-height:1.5}
+  .page{max-width:1200px;margin:24px auto;background:#fff;border:1px solid var(--line);box-shadow:0 8px 24px rgba(16,24,40,.08);padding:34px}
+  h1{font-size:25px;margin:0 0 6px} h2{font-size:18px;margin:32px 0 10px;padding-left:10px;border-left:5px solid var(--blue)} h3{font-size:15px;margin:18px 0 8px;color:#243b63}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+  .summary{background:#f8fbff;border:1px solid #c9d8ef;border-left:5px solid var(--blue);padding:14px 16px;margin:14px 0;font-weight:700}
+  table{width:100%;border-collapse:collapse;margin:8px 0 18px} th,td{border:1px solid var(--line);padding:8px 9px;vertical-align:top;text-align:center;word-break:keep-all} th{background:var(--head);font-weight:800}
+  .l{text-align:left}.ok{color:var(--green);font-weight:800}.mid{color:var(--amber);font-weight:800}.no{color:var(--red);font-weight:800}
+  .note{font-size:12px;color:var(--muted);margin:4px 0 16px}
+  .tight td,.tight th{padding:6px 7px;font-size:12.5px}
+  @media print{body{background:#fff}.page{box-shadow:none;border:0;margin:0;max-width:none;padding:12mm}h2{break-after:avoid}tr{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>SOS 코워킹 최종보고서</h1>
+  <div class="sub">작성일: 2026-07-01 (최종 통합본) · 이 파일 하나로 결론·가격정책·비용검증·지역경쟁력을 모두 포함함. 다른 보고서 파일들은 이 파일로 대체됨.</div>
+
+  <div class="summary">
+    가격정책: 원가(월고정비÷좌석)+25%마진(100%가동 기준)을 전국표준 산식으로 채택. 경쟁사가(FF·SP)는 상한체크로만 사용.<br>
+    BEP: 판교 66.5% · 분당100평 66.6% · 분당120평 66.3% · 분당150평 62.7%. 4개 모델 모두 70% 점유율부터 흑자권 진입.
+  </div>
+
+  <h2>1. 모델 손익 요약</h2>
+  <table class="tight">
+    <tr><th class="l">모델</th><th>호실/좌석</th><th>가격(4/2/1인)</th><th>만실매출</th><th>CAPEX</th><th>월상각</th><th>월 고정비</th><th>BEP</th><th>50%</th><th>60%</th><th>70%</th></tr>
+    <tr><td class="l"><b>판교 104평</b></td><td>27실/76석</td><td>145/94/52만</td><td>2,967만</td><td>22,764만</td><td>379만</td><td>1,747만</td><td><b>66.5%</b></td><td class="no">-434만</td><td class="no">-172만</td><td class="ok">+91만</td></tr>
+    <tr><td class="l"><b>분당 100평형</b></td><td>27실/76석</td><td>128/83/46만</td><td>2,620만</td><td>22,960만</td><td>383만</td><td>1,544만</td><td><b>66.6%</b></td><td class="no">-385만</td><td class="no">-153만</td><td class="ok">+79만</td></tr>
+    <tr><td class="l"><b>분당 120평</b></td><td>33실/90석</td><td>115/75/42만</td><td>2,799만</td><td>26,281만</td><td>438만</td><td>1,642만</td><td><b>66.3%</b></td><td class="no">-403만</td><td class="no">-156만</td><td class="ok">+92만</td></tr>
+    <tr><td class="l"><b>분당 150평</b></td><td>53실/110석</td><td>120/78/43만</td><td>3,770만</td><td>32,784만</td><td>546만</td><td>2,093만</td><td><b>62.7%</b></td><td class="no">-425만</td><td class="no">-91만</td><td class="ok">+243만</td></tr>
+  </table>
+  <div class="note">산식: 순손익 = 만실매출×점유율×88.5% - 월고정비. 88.5% = 100% - 마케팅7% - PG·환불4.5%. 총투자금(CAPEX+보증금+운전500만): 판교30,764만 / 100평형30,960만 / 120평34,281만 / 150평43,284만.</div>
+
+  <h2>2. 가격정책</h2>
+  <table class="tight">
+    <tr><th class="l">항목</th><th class="l">내용</th></tr>
+    <tr><td class="l">기본 산식</td><td class="l">좌석당원가(월고정비÷좌석) ÷ 0.635(=25%마진, 100%가동 기준) = 4인 좌석단가. 2인=1.3배, 1인=1.45배 적용(소형실 규모 프리미엄, 실제 경쟁사 패턴과 일치)</td></tr>
+    <tr><td class="l">왜 경쟁사 할인율(-12%) 방식을 안 쓰는가</td><td class="l">경쟁사 실가는 투어·상담을 거쳐야 나오는 자원이라 신규지역마다 조사하기 어려움. 지점 유무(공개 지점맵)는 항상 확인 가능하지만 정확한 가격까지는 아님. 원가 기반이면 데이터 없는 지역에도 항상 동일하게 적용 가능</td></tr>
+    <tr><td class="l">경쟁사가 역할</td><td class="l">상한 체크 전용. 계산된 가격이 해당 지역 경쟁사가보다 비싸면 그 지역 재검토 대상. 판교·분당·여의도 모두 통과 확인(아래 3장)</td></tr>
+    <tr><td class="l">적용 로드맵</td><td class="l">초기 진입 = 이 값 그대로. 출점이 임박해 시장조사(투어·견적)가 가능해지면 그때 상향 조정. 조사 불가능하면 이 값 유지</td></tr>
+  </table>
+
+  <h3>지역별 가격 vs 경쟁사 상한체크</h3>
+  <table class="tight">
+    <tr><th class="l">지역</th><th>SOS 4인가(좌석단가)</th><th class="l">경쟁사 벤치마크</th><th class="l">통과 여부</th></tr>
+    <tr><td class="l">판교</td><td>145만(36.2만/석)</td><td class="l">FF 4인 실거래 222.48만(55.6만/석)</td><td class="l ok">통과 (약 35% 저렴)</td></tr>
+    <tr><td class="l">분당(120평)</td><td>115만(28.7만/석)</td><td class="l">SP 파격가(5·6·8인 균일) 33만/석 — 대형실 전용가라 소형실 기준으로는 더 여유</td><td class="l ok">통과</td></tr>
+    <tr><td class="l">여의도</td><td>137만(34.1만/석, 92평 개략모델)</td><td class="l">FF 4인 실거래 175.5만(43.9만/석)</td><td class="l ok">통과 (약 22% 저렴)</td></tr>
+  </table>
+  <div class="note">패스트파이브는 분당에 지점이 없음(SP만 3곳 — 분당·분당2호점·분당3호점), 여의도는 FF·SP 둘 다 있음(경쟁 더 치열). 판교는 FF만 있고 규제로 진입장벽 있음.</div>
+
+  <h2>3. CAPEX 항목별 검증</h2>
+  <table class="tight">
+    <tr><th class="l">항목</th><th>현재값</th><th class="l">검증 근거</th><th class="l">상태</th></tr>
+    <tr><td class="l">인테리어·방음</td><td>150만/평</td><td class="l">실제 인테리어 견적서(PDF)는 파일 손상으로 미확보. 시장조사 기반(실속~150만) 가정</td><td class="l mid">부분검증</td></tr>
+    <tr><td class="l">전기·통신</td><td>7만/평</td><td class="l">평촌임대차계약서(37평)+전기및네트워크.png(247.5만원=6.69만/평), 판교임대차계약서(301.54평)+네트워크공사2.png(1,221만원=4.05만/평) 두 독립사례 정합</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">냉난방 설비</td><td>20만/평</td><td class="l">판교4층 인테리어 견적서 냉난방설비공사 소계 59,393,000원(장비3,326.3만+설치2,613만)÷301.54평=19.70만/평</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">소방 설비</td><td>9만/평</td><td class="l">동 견적서 소방설비공사 소계 27,289,670원÷301.54평=9.05만/평. 스프링클러 설치대상 건물 확인(다중이용업 여부와 별개로 건물규모 기준 의무)</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">도어락</td><td>7만/룸</td><td class="l">쿠팡 실판매가 솔리티 WTS-700 61,300원</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">보안·CCTV</td><td>200만 정액</td><td class="l">ADT캡스 실견적(설치비861,110원, 월정료 12만대) 기반 스케일업</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">가구</td><td>23.65만/석</td><td class="l">책상(13.6만)+의자(4.45만) 실거래가 확인, 서랍장 단가 미확보</td><td class="l mid">부분검증</td></tr>
+    <tr><td class="l">탕비·제빙기</td><td>50만 정액</td><td class="l">사무실용 제빙기 실거래 15~21만원 확인</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">라운지가구(아웃도어풍)</td><td>100만 정액</td><td class="l">사용자 지정값</td><td class="l ok">반영됨</td></tr>
+    <tr><td class="l">예비비</td><td>5%</td><td class="l">업계 관행. 계약 전 10% 민감도 별도 확인 권장</td><td class="l mid">부분검증</td></tr>
+  </table>
+
+  <h2>4. 월 고정비 항목별 검증</h2>
+  <table class="tight">
+    <tr><th class="l">항목</th><th>현재값</th><th class="l">검증 근거</th><th class="l">상태</th></tr>
+    <tr><td class="l">관리비</td><td>1.5만/평</td><td class="l">706호·1103호 실측 고지서 각각 0.75만/평(독립 2건 정합) → 2배 보수 반영</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">전기·냉난방</td><td>0.6만/평</td><td class="l">1103호 고지서 실측 0.49만/평 → 보수 반영</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">청소</td><td>평×0.4만+좌석×1만</td><td class="l">실제 청소용역비산출표(4,000원/평+10,000원/인) 공식과 정확히 일치</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">인터넷</td><td>4만/월</td><td class="l">KT오피스넷 실거래</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">복합기</td><td>10만/월</td><td class="l">실제 청구서(성남·안양·광주 평균 9.2만) 대비 보수 반영</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">정수기</td><td>3만/월</td><td class="l">코웨이 렌탈료 실거래 범위(1.69~6.29만) 내</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">CCTV·보안 월정료</td><td>12만/월</td><td class="l">ADT캡스 실청구액 124,400원</td><td class="l ok">확정검증</td></tr>
+    <tr><td class="l">화재보험</td><td>3만/월</td><td class="l">일반 시세 참고, 우리 케이스 견적 없음</td><td class="l mid">부분검증</td></tr>
+    <tr><td class="l">현장 인건비</td><td>350만/월</td><td class="l">유사직무(오피스텔 시설관리) 연봉3,600~3,800만 기본급 + 법정부담 20% 웹검증</td><td class="l mid">부분검증</td></tr>
+    <tr><td class="l">파트타임(150평)</td><td>120만/월</td><td class="l">내부 가정, 실채용계획 없음</td><td class="l no">미검증</td></tr>
+    <tr><td class="l">마케팅</td><td>매출 7% (변동비)</td><td class="l">업계 평균 가정. 초기 1~6개월은 정액 +200만 참고 시나리오 별도(정식 BEP엔 미반영)</td><td class="l mid">부분검증</td></tr>
+    <tr><td class="l">PG·환불</td><td>매출 4.5% (변동비)</td><td class="l">토스페이먼츠 일반 3.4%, 나이스페이 3.0~3.5% 확인. 환불비용 몫 1.1%p 추가 반영</td><td class="l mid">부분검증</td></tr>
+  </table>
+
+  <h2>5. 지역 확장 가능성 — 여의도</h2>
+  <table class="tight">
+    <tr><th class="l">항목</th><th class="l">내용</th></tr>
+    <tr><td class="l">매물</td><td class="l">전용92평 사무실, 보증금2,000만·월세620만(평당6.74만, 판교보다 +8%)</td></tr>
+    <tr><td class="l">경쟁사가 교차검증</td><td class="l">FF 4인실 실거래 175.5만(43.9만/석) ≈ SOS가 실제 이용중인 스파크플러스 여의도 424호(8인실 할인가 335만=41.9만/석) — 두 독립자료 정합, 신뢰도 높음</td></tr>
+    <tr><td class="l">개략 BEP(cost-plus 25%마진 적용)</td><td class="l">137만/89만/50만(4/2/1인), 만실매출2,811만, BEP 66.2% — 판교·분당120평과 비슷한 수준. 정식 CAPEX 실측(현재는 판교 공식 재사용) 필요</td></tr>
+    <tr><td class="l">결론</td><td class="l">서울 도심권 확장 후보로 유효. 정식 모델링(전용면적·임대조건 확정 계약서 확보) 전까지는 참고 수치</td></tr>
+  </table>
+
+  <h2>6. 남은 미검증 항목 (Action Items)</h2>
+  <table class="tight">
+    <tr><th class="l">항목</th><th class="l">필요한 것</th></tr>
+    <tr><td class="l">인테리어 150만/평</td><td class="l">실제 인테리어 계약서 PDF 재확보(현재 파일 손상) 또는 이미지로 재업로드</td></tr>
+    <tr><td class="l">가구 23.65만/석</td><td class="l">서랍장 등 수납 실거래가 확인</td></tr>
+    <tr><td class="l">현장 인건비 350만</td><td class="l">실제 채용 시 급여 확정되면 교체</td></tr>
+    <tr><td class="l">파트타임 120만(150평)</td><td class="l">실제 채용계획(시급·시간) 확정 필요</td></tr>
+    <tr><td class="l">마케팅 7%·PG 4.5%</td><td class="l">실제 집행 채널/PG사 계약 확정되면 교체</td></tr>
+    <tr><td class="l">여의도 CAPEX</td><td class="l">현재 판교 공식 재사용 중 — 여의도 실제 임대차계약서·시공견적 확보 시 정식 모델로 전환</td></tr>
+  </table>
+</main>
+</body>
+</html>
