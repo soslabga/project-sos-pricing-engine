@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOS 코워킹 모델 손익 요약</title>
+<style>
+  :root{--ink:#172033;--muted:#667085;--line:#d9e1ec;--head:#eef3fb;--green:#16834a;--amber:#9a6700;--red:#b42318;--blue:#1f4f99;--bg:#f5f7fb;}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic",Arial,sans-serif;font-size:14px;line-height:1.5}
+  .page{max-width:1100px;margin:32px auto;background:#fff;border:1px solid var(--line);box-shadow:0 8px 24px rgba(16,24,40,.08);padding:36px}
+  h1{font-size:26px;margin:0 0 6px} h2{font-size:17px;margin:28px 0 10px;padding-left:10px;border-left:5px solid var(--blue)}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+  .summary{background:#f8fbff;border:1px solid #c9d8ef;border-left:5px solid var(--blue);padding:16px 18px;margin:16px 0;font-weight:700;font-size:15px}
+  table{width:100%;border-collapse:collapse;margin:10px 0 20px} th,td{border:1px solid var(--line);padding:11px 12px;text-align:center}
+  th{background:var(--head);font-weight:800}.l{text-align:left}.ok{color:var(--green);font-weight:800}.no{color:var(--red);font-weight:800}
+  .bep{font-size:17px;font-weight:900}
+  .note{font-size:12.5px;color:var(--muted);margin:6px 0 20px}
+  @media print{body{background:#fff}.page{box-shadow:none;border:0;margin:0;max-width:none;padding:14mm}}
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>SOS 코워킹 4개 모델 손익 요약</h1>
+  <div class="sub">작성일: 2026-07-01 · 실측 자료(임대차계약서·관리비고지서·시공견적서·경쟁사가) 기반 검증 완료</div>
+
+  <div class="summary">
+    판교는 51~53% 점유율부터, 분당 120·150평은 57~58% 점유율부터 흑자 전환. 분당 100평형은 65% 점유율이 필요해 4개 모델 중 가장 불리함 — 소형 매물 특성상 정액성 고정비(인건비·보안 등) 비중이 높은데 판교 같은 프리미엄 가격을 못 받기 때문.
+  </div>
+
+  <h2>모델별 손익 요약</h2>
+  <table>
+    <tr><th class="l">모델</th><th>호실/좌석</th><th>만실매출</th><th>총 투자금</th><th>월 고정비</th><th>BEP</th><th class="l">비고</th></tr>
+    <tr><td class="l"><b>판교 104평</b></td><td>27실/76석</td><td>3,740만</td><td>30,575만</td><td>1,744만</td><td class="bep ok">52.7%</td><td class="l">프리미엄가. 가장 안정적</td></tr>
+    <tr><td class="l"><b>분당 120평</b></td><td>33실/90석</td><td>3,192만</td><td>33,739만</td><td>1,633만</td><td class="bep ok">57.8%</td><td class="l">표준가 주력 모델</td></tr>
+    <tr><td class="l"><b>분당 150평</b></td><td>53실/110석</td><td>4,132만</td><td>42,082만</td><td>2,073만</td><td class="bep ok">56.7%</td><td class="l">표준가. 규모의 경제로 120평보다 유리</td></tr>
+    <tr><td class="l"><b>분당 100평형</b></td><td>27실/76석</td><td>2,683만</td><td>30,748만</td><td>1,540만</td><td class="bep no">64.9%</td><td class="l">표준가+소형 조합이 가장 불리</td></tr>
+  </table>
+  <div class="note">BEP = 월고정비 ÷ (만실매출 × 88.5%). 88.5% = 100% − 마케팅 7% − PG·환불 4.5%(변동비). 총 투자금 = CAPEX(초기설비) + 보증금 + 운전자금500만.</div>
+
+  <h2>점유율 구간별 월손익</h2>
+  <table>
+    <tr><th class="l">모델</th><th>50%</th><th>60%</th><th>70%</th></tr>
+    <tr><td class="l">판교 104평</td><td class="no">-89만</td><td class="ok">+242만</td><td class="ok">+573만</td></tr>
+    <tr><td class="l">분당 120평</td><td class="no">-221만</td><td class="ok">+62만</td><td class="ok">+344만</td></tr>
+    <tr><td class="l">분당 150평</td><td class="no">-245만</td><td class="ok">+121만</td><td class="ok">+487만</td></tr>
+    <tr><td class="l">분당 100평형</td><td class="no">-353만</td><td class="no">-115만</td><td class="ok">+122만</td></tr>
+  </table>
+
+  <h2>검증 수준</h2>
+  <div class="note" style="font-size:13px">
+    월세·관리비·전기·청소·전기통신·냉난방·소방·도어락·보안·인터넷·복합기·정수기·탕비비품·4인실 가격 등 <b>주요 항목은 실제 임대차계약서·고지서·시공견적서·경쟁사 가격으로 검증 완료.</b>
+    인테리어 단가(150만/평)·가구 일부·인건비·예비비·마케팅/PG 변동비율은 시장조사 기반 추정치로 남아있음(상세 근거는 별도 검증표 참조).
+  </div>
+</main>
+</body>
+</html>
