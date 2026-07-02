@@ -19,9 +19,9 @@ const sessions = new Map();
 
 const seed = {
   users: [
-    { id: 'u_admin', name: '운영 관리자', email: 'admin@sos.co.kr', password: 'admin1234', role: 'admin', createdAt: now() },
-    { id: 'u_user', name: '일반 사용자', email: 'user@sos.co.kr', password: 'user1234', role: 'user', createdAt: now() },
-    { id: 'u_member', name: '공유오피스 이용자', email: 'member@sos.co.kr', password: 'member1234', role: 'member', createdAt: now() }
+    { id: 'u_admin', name: '운영 관리자', email: 'admin@soslab.co', password: 'admin1234', role: 'admin', createdAt: now() },
+    { id: 'u_user', name: '일반 사용자', email: 'user@soslab.co', password: 'user1234', role: 'user', createdAt: now() },
+    { id: 'u_member', name: '공유오피스 이용자', email: 'member@soslab.co', password: 'member1234', role: 'member', createdAt: now() }
   ],
   rooms: [
     { id: 'office-1', type: 'project-room', name: 'P-101 1인 프로젝트룸', capacity: 1, branch: '분당 표준점', price: 410000, status: 'active' },
@@ -62,11 +62,31 @@ function addDays(days) {
   return d.toISOString().slice(0, 10);
 }
 
+function migrateDemoEmails(store) {
+  const replacements = {
+    'admin@sos.co.kr': 'admin@soslab.co',
+    'user@sos.co.kr': 'user@soslab.co',
+    'member@sos.co.kr': 'member@soslab.co'
+  };
+  let changed = false;
+  for (const user of store.users || []) {
+    const next = replacements[String(user.email || '').toLowerCase()];
+    if (next) {
+      user.email = next;
+      changed = true;
+    }
+  }
+  return changed;
+}
+
 function ensureStore() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
   if (!fs.existsSync(STORE_FILE)) {
     fs.writeFileSync(STORE_FILE, JSON.stringify(seed, null, 2), 'utf8');
+    return;
   }
+  const store = JSON.parse(fs.readFileSync(STORE_FILE, 'utf8'));
+  if (migrateDemoEmails(store)) saveStore(store);
 }
 
 function loadStore() {
@@ -350,3 +370,5 @@ server.listen(PORT, () => {
   ensureStore();
   console.log(`Project SOS operations server running on http://localhost:${PORT}`);
 });
+
+

@@ -13,9 +13,9 @@ npm start
 
 ## 데모 계정
 
-- 운영 관리자: `admin@sos.co.kr` / `admin1234`
-- 일반 사용자: `user@sos.co.kr` / `user1234`
-- 공유오피스 이용자: `member@sos.co.kr` / `member1234`
+- 운영 관리자: `admin@soslab.co` / `admin1234`
+- 일반 사용자: `user@soslab.co` / `user1234`
+- 공유오피스 이용자: `member@soslab.co` / `member1234`
 
 ## 권한
 
@@ -24,3 +24,4 @@ npm start
 - 공유오피스 이용자: 일반 예약 + 회의실 예약
 
 PG 연동은 제외되어 있으며, 결제는 데모 상태값으로만 처리함.
+

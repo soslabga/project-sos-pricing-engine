@@ -146,7 +146,7 @@ function renderLogin() {
         <form class="form-grid" onsubmit="event.preventDefault(); login(email.value, password.value).catch(err => { state.error = err.message; renderLogin(); })">
           <div>
             <label for="email">이메일</label>
-            <input id="email" type="email" autocomplete="username" value="admin@sos.co.kr">
+            <input id="email" type="email" autocomplete="username" value="admin@soslab.co">
           </div>
           <div>
             <label for="password">비밀번호</label>
@@ -156,9 +156,9 @@ function renderLogin() {
           <div class="error">${escapeHtml(state.error)}</div>
         </form>
         <div class="demo-grid">
-          <button class="demo-account" onclick="setDemo('admin@sos.co.kr','admin1234')">운영 관리자 데모</button>
-          <button class="demo-account" onclick="setDemo('user@sos.co.kr','user1234')">일반 사용자 데모</button>
-          <button class="demo-account" onclick="setDemo('member@sos.co.kr','member1234')">공유오피스 이용자 데모</button>
+          <button class="demo-account" onclick="setDemo('admin@soslab.co','admin1234')">운영 관리자 데모</button>
+          <button class="demo-account" onclick="setDemo('user@soslab.co','user1234')">일반 사용자 데모</button>
+          <button class="demo-account" onclick="setDemo('member@soslab.co','member1234')">공유오피스 이용자 데모</button>
         </div>
         <div class="panel">
           <h3>신규 일반 사용자 등록</h3>
@@ -397,3 +397,4 @@ async function init() {
 }
 
 init();
+
