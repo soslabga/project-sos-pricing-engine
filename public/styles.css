@@ -103,3 +103,25 @@ th { background:#f8fafc; color:var(--head); font-weight:900; }
 .ok-text { color:var(--green); }
 @media (max-width:1200px) { .room-grid { grid-template-columns:repeat(2, minmax(0,1fr)); } }
 @media (max-width:700px) { .room-grid { grid-template-columns:1fr; } .office-head { flex-direction:column; } }
+
+.booking-card-list { display:grid; gap:10px; }
+.booking-card { border:1px solid var(--line); border-radius:8px; background:#fff; padding:14px; display:grid; gap:12px; }
+.booking-main { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.booking-title { color:var(--head); font-weight:900; font-size:14px; line-height:1.35; }
+.booking-sub { color:var(--muted); font-size:12px; margin-top:3px; line-height:1.35; }
+.booking-badges { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+.booking-detail-grid { display:grid; grid-template-columns:1.4fr .7fr .7fr .9fr; gap:10px; }
+.booking-detail-grid div { background:#f8fafc; border:1px solid var(--line); border-radius:6px; padding:9px; min-width:0; }
+.booking-detail-grid span { display:block; color:var(--muted); font-size:11px; font-weight:900; margin-bottom:4px; }
+.booking-detail-grid b { color:var(--head); font-size:13px; white-space:normal; }
+.action-row { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+.user-card-list { display:grid; gap:10px; }
+.user-card { border:1px solid var(--line); border-radius:8px; padding:12px; display:grid; grid-template-columns:1fr auto auto; gap:12px; align-items:center; background:#fff; }
+.user-actions { display:flex; justify-content:flex-end; }
+.office-summary-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.office-summary-card { border:1px solid var(--line); border-radius:8px; background:#f8fafc; padding:13px; display:grid; gap:10px; }
+.office-summary-card strong { color:var(--head); }
+.office-summary-numbers { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; }
+.office-summary-numbers span { background:#fff; border:1px solid var(--line); border-radius:6px; padding:7px; font-size:12px; color:var(--muted); }
+.office-summary-numbers b { color:var(--head); }
+@media (max-width:900px) { .booking-main, .user-card { grid-template-columns:1fr; display:grid; } .booking-badges, .action-row, .user-actions { justify-content:flex-start; } .booking-detail-grid, .office-summary-grid { grid-template-columns:1fr; } }
