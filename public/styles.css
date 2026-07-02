@@ -125,3 +125,15 @@ th { background:#f8fafc; color:var(--head); font-weight:900; }
 .office-summary-numbers span { background:#fff; border:1px solid var(--line); border-radius:6px; padding:7px; font-size:12px; color:var(--muted); }
 .office-summary-numbers b { color:var(--head); }
 @media (max-width:900px) { .booking-main, .user-card { grid-template-columns:1fr; display:grid; } .booking-badges, .action-row, .user-actions { justify-content:flex-start; } .booking-detail-grid, .office-summary-grid { grid-template-columns:1fr; } }
+
+/* Prevent status badges from breaking into separate syllables. */
+.status, .tag, .role-pill { white-space:nowrap; word-break:keep-all; flex-shrink:0; }
+.room-cell-top { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:start; }
+.room-cell-top strong { min-width:0; word-break:keep-all; overflow-wrap:break-word; }
+.room-cell .status { min-width:58px; }
+.booking-badges .status { min-width:64px; }
+button { white-space:nowrap; word-break:keep-all; }
+@media (max-width:520px) {
+  .room-cell-top { grid-template-columns:1fr; }
+  .room-cell .status { justify-self:start; }
+}

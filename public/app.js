@@ -19,11 +19,11 @@ function won(value) { return `${Number(value || 0).toLocaleString('ko-KR')}원`;
 function fmtDate(value) { return value || '-'; }
 function escapeHtml(value) { return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 function daysBetween(start, end) { return Math.max(0, Math.ceil((new Date(`${end}T00:00:00`) - new Date(`${start}T00:00:00`)) / 86400000)); }
-function remainingDays(end) { return Math.max(0, Math.ceil((new Date(`${end}T23:59:59`) - new Date()) / 86400000)); }
+function remainingDays(start, end) { const total = daysBetween(start, end); const today = new Date(); today.setHours(0,0,0,0); const endDate = new Date(`${end}T00:00:00`); const remain = Math.ceil((endDate - today) / 86400000); return Math.min(total, Math.max(0, remain)); }
 function contractText(booking) {
   if (!booking) return '예약 없음';
   const total = daysBetween(booking.startDate, booking.endDate);
-  const remain = remainingDays(booking.endDate);
+  const remain = remainingDays(booking.startDate, booking.endDate);
   return `${fmtDate(booking.startDate)} ~ ${fmtDate(booking.endDate)} · 계약 ${total}일 · 잔여 ${remain}일`;
 }
 
@@ -98,7 +98,7 @@ function bookingActions(item, admin=false) {
 }
 function renderBookingTable(items, admin=false, readonly=false) {
   if (!items.length) return '<div class="empty">예약 내역이 없음</div>';
-  return `<div class="booking-card-list">${items.map(item=>`<article class="booking-card"><div class="booking-main"><div><div class="booking-title">${escapeHtml(item.officeName)} · ${escapeHtml(item.roomName)}</div>${admin?`<div class="booking-sub">${escapeHtml(item.userName)} · ${escapeHtml(item.userEmail)}</div>`:''}</div><div class="booking-badges"><span class="status ${item.paymentStatus}">${paymentText[item.paymentStatus]||item.paymentStatus}</span><span class="status ${item.serviceStatus}">${serviceText[item.serviceStatus]||item.serviceStatus}</span></div></div><div class="booking-detail-grid"><div><span>계약기간</span><b>${fmtDate(item.startDate)} ~ ${fmtDate(item.endDate)}</b></div><div><span>계약일수</span><b>${daysBetween(item.startDate,item.endDate)}일</b></div><div><span>잔여기간</span><b>${remainingDays(item.endDate)}일</b></div><div><span>금액</span><b>${won(item.amount)}</b></div></div>${readonly ? '' : bookingActions(item, admin)}</article>`).join('')}</div>`;
+  return `<div class="booking-card-list">${items.map(item=>`<article class="booking-card"><div class="booking-main"><div><div class="booking-title">${escapeHtml(item.officeName)} · ${escapeHtml(item.roomName)}</div>${admin?`<div class="booking-sub">${escapeHtml(item.userName)} · ${escapeHtml(item.userEmail)}</div>`:''}</div><div class="booking-badges"><span class="status ${item.paymentStatus}">${paymentText[item.paymentStatus]||item.paymentStatus}</span><span class="status ${item.serviceStatus}">${serviceText[item.serviceStatus]||item.serviceStatus}</span></div></div><div class="booking-detail-grid"><div><span>계약기간</span><b>${fmtDate(item.startDate)} ~ ${fmtDate(item.endDate)}</b></div><div><span>계약일수</span><b>${daysBetween(item.startDate,item.endDate)}일</b></div><div><span>잔여기간</span><b>${remainingDays(item.startDate, item.endDate)}일</b></div><div><span>금액</span><b>${won(item.amount)}</b></div></div>${readonly ? '' : bookingActions(item, admin)}</article>`).join('')}</div>`;
 }
 function renderUserTable() {
   if (state.user.role!=='admin') return '';
@@ -116,5 +116,7 @@ function renderApp() { app.innerHTML = `<div class="app">${renderTopbar()}<main 
 function render() { if (!state.token || !state.user) renderLogin(); else renderApp(); }
 async function init() { if (!state.token) return renderLogin(); try { await loadBootstrap(); } catch(err) { localStorage.removeItem('sos_token'); state.token=''; state.error='세션이 만료되어 다시 로그인해야 함'; renderLogin(); } }
 init();
+
+
 
 
