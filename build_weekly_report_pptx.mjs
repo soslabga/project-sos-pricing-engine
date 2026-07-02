@@ -12,10 +12,25 @@ const FONT = 'Malgun Gothic';
 
 // 제목
 slide.addText('프로젝트 SOS 주간보고', {
-  x: 0.3, y: 0.15, w: 12.7, h: 0.5, fontSize: 20, bold: true, fontFace: FONT, color: '1F2937'
+  x: 0.3, y: 0.1, w: 12.7, h: 0.4, fontSize: 20, bold: true, fontFace: FONT, color: '1F2937'
 });
 
-const colW = 6.35, tableY = 0.75, tableH = 6.5;
+// 이번 주 산출물 하이라이트(작업량 요약)
+const stats = [
+  ['5종', '문서 산출물\n(HTML·Excel·Word·PPT×2)'],
+  ['20개', '보고서 표·계산식\n전면 재검증'],
+  ['4개', '모델 전체 재계산\n(100·120·150평·판교)'],
+  ['3건', '실측 견적서 확보\n(전기·냉난방·소방)'],
+];
+const statW = 3.1, statGap = 0.1;
+stats.forEach((st, i) => {
+  const x = 0.3 + i * (statW + statGap);
+  slide.addShape('roundRect', { x, y: 0.55, w: statW, h: 0.85, fill:{color:'1F4F99'}, line:{type:'none'}, rectRadius:0.06 });
+  slide.addText(st[0], { x, y:0.58, w: statW, h:0.4, fontSize:18, bold:true, color:'FFFFFF', align:'center', fontFace:FONT });
+  slide.addText(st[1], { x, y:0.95, w: statW, h:0.42, fontSize:8.5, color:'D9E2F3', align:'center', fontFace:FONT });
+});
+
+const colW = 6.35, tableY = 1.55, tableH = 5.7;
 
 // 헤더 행
 slide.addTable(
@@ -80,6 +95,66 @@ slide.addTable(
   ]],
   { x: 0.3, y: tableY + 0.5, w: 12.7, h: tableH - 0.5, colW: [colW, colW], border: { type: 'solid', color: 'BFBFBF', pt: 0.75 }, margin: [10,10,10,10] }
 );
+
+// ── 슬라이드 2: 연간 로드맵(러프, 참고용) ──────────────────────────────
+{
+  const s2 = pptx.addSlide();
+  const NAVY = '0F1E3D', BLUE = '1F4F99', LIGHT='EEF3FB';
+
+  s2.addText('연간 로드맵(2026년) — SOS 코워킹 신규 출점', { x:0.3, y:0.15, w:12.7, h:0.5, fontSize:20, bold:true, fontFace:FONT, color:NAVY });
+  s2.addText('러프 스케치 — 확정 일정 아님, 매물 실사 결과에 따라 변동 가능', { x:0.3, y:0.62, w:12.7, h:0.35, fontSize:11, italic:true, fontFace:FONT, color:'667085' });
+
+  // 분기 헤더
+  const qX = [1.9, 5.5, 9.1, 12.0], qW = [3.5, 3.5, 2.8, 1.33];
+  const qLabel = ['Q3 (7~9월)', 'Q4 (10~12월)', "'27 Q1", ''];
+  for (let i=0;i<3;i++) {
+    s2.addText(qLabel[i], { x:qX[i], y:1.05, w:qW[i], h:0.4, fontSize:14, bold:true, align:'center', fontFace:FONT, color:NAVY });
+  }
+  s2.addShape('line', { x:0.3, y:1.5, w:12.7, h:0, line:{color:BLUE, width:1.5} });
+
+  const rowLabelX = 0.3, rowLabelW = 1.5;
+  const bar = (x, w, y, h, text, color, done=false) => {
+    s2.addShape('roundRect', { x, y, w, h, fill:{color}, line:{type:'none'}, rectRadius:0.06 });
+    s2.addText(text, { x, y, w, h, fontSize:11, bold:true, color:'FFFFFF', align:'center', valign:'middle', fontFace:FONT });
+    if (done) {
+      s2.addText('완료', { x:x+w-0.55, y:y-0.28, w:0.7, h:0.35, fontSize:9, bold:true, color:'16834A', align:'center',
+        fill:{color:'D7F2E1'}, line:{color:'16834A',width:0.75}, rotate:-8, fontFace:FONT });
+    }
+  };
+
+  let y = 1.7;
+  const rowH = 0.6, rowGap = 0.95;
+
+  s2.addText('사업성 검증・투자승인', { x:rowLabelX, y, w:rowLabelW, h:rowH, fontSize:11.5, bold:true, valign:'middle', fontFace:FONT, color:NAVY });
+  bar(1.9, 1.6, y, rowH, '모델링·CAPEX검증(7월)', '1F4F99', true);
+  bar(3.6, 1.7, y, rowH, '부사장 투자승인(7월말)', '3B6FC4');
+  y += rowGap;
+
+  s2.addText('매물 확보・계약', { x:rowLabelX, y, w:rowLabelW, h:rowH, fontSize:11.5, bold:true, valign:'middle', fontFace:FONT, color:NAVY });
+  bar(3.4, 1.9, y, rowH, '실사·정식견적(8월)', '2E5FA8');
+  bar(5.4, 1.6, y, rowH, '임대차 계약(9월)', '3B6FC4');
+  y += rowGap;
+
+  s2.addText('인테리어・시스템 구축', { x:rowLabelX, y, w:rowLabelW, h:rowH, fontSize:11.5, bold:true, valign:'middle', fontFace:FONT, color:NAVY });
+  bar(5.5, 2.2, y, rowH, '인테리어 시공(10~11월)', '2E5FA8');
+  bar(7.8, 1.6, y, rowH, '가구·무인시스템(11월)', '3B6FC4');
+  y += rowGap;
+
+  s2.addText('오픈 준비・오픈', { x:rowLabelX, y, w:rowLabelW, h:rowH, fontSize:11.5, bold:true, valign:'middle', fontFace:FONT, color:NAVY });
+  bar(9.5, 1.6, y, rowH, '마케팅·회원모집(12월)', '2E5FA8');
+  bar(11.2, 1.2, y, rowH, '오픈(목표)', 'B45309');
+  y += rowGap;
+
+  s2.addText('가동률 안정화', { x:rowLabelX, y, w:rowLabelW, h:rowH, fontSize:11.5, bold:true, valign:'middle', fontFace:FONT, color:NAVY });
+  bar(11.2, 1.8, y, rowH, "50→65%+ 가동('27 Q1)", '667085');
+
+  // 분기 구분선
+  s2.addShape('line', { x:5.5, y:1.55, w:0, h:4.6, line:{color:'D9E1EC', width:1, dashType:'dash'} });
+  s2.addShape('line', { x:9.1, y:1.55, w:0, h:4.6, line:{color:'D9E1EC', width:1, dashType:'dash'} });
+
+  s2.addText('※ 12월 오픈은 상반기 매물 확정·계약이 예정대로 진행될 때의 목표치. 매물 실사 결과에 따라 1~2개월 지연 가능.',
+    { x:0.3, y:6.5, w:12.7, h:0.5, fontSize:11, italic:true, color:'B42318', fontFace:FONT });
+}
 
 await pptx.writeFile({ fileName: 'C:/Users/User/Documents/프로젝트/프로젝트_SOS_주간보고.pptx' });
 console.log('저장 완료: 프로젝트_SOS_주간보고.pptx');
