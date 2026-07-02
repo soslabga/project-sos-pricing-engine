@@ -17,17 +17,18 @@ slide.addText('프로젝트 SOS 주간보고', {
 
 // 이번 주 산출물 하이라이트(작업량 요약)
 const stats = [
+  ['3곳', '경쟁사 현장 방문·상담\n(분당SP·판교FF·여의도SP)'],
   ['5종', '문서 산출물\n(HTML·Excel·Word·PPT×2)'],
   ['20개', '보고서 표·계산식\n전면 재검증'],
   ['4개', '모델 전체 재계산\n(100·120·150평·판교)'],
   ['3건', '실측 견적서 확보\n(전기·냉난방·소방)'],
 ];
-const statW = 3.1, statGap = 0.1;
+const statW = 2.46, statGap = 0.1;
 stats.forEach((st, i) => {
   const x = 0.3 + i * (statW + statGap);
   slide.addShape('roundRect', { x, y: 0.55, w: statW, h: 0.85, fill:{color:'1F4F99'}, line:{type:'none'}, rectRadius:0.06 });
-  slide.addText(st[0], { x, y:0.58, w: statW, h:0.4, fontSize:18, bold:true, color:'FFFFFF', align:'center', fontFace:FONT });
-  slide.addText(st[1], { x, y:0.95, w: statW, h:0.42, fontSize:8.5, color:'D9E2F3', align:'center', fontFace:FONT });
+  slide.addText(st[0], { x, y:0.58, w: statW, h:0.4, fontSize:17, bold:true, color:'FFFFFF', align:'center', fontFace:FONT });
+  slide.addText(st[1], { x, y:0.95, w: statW, h:0.42, fontSize:8, color:'D9E2F3', align:'center', fontFace:FONT });
 });
 
 const colW = 6.35, tableY = 1.55, tableH = 5.7;
@@ -51,8 +52,10 @@ const progress = [
   bullet('배치도(룸 배치·문·복도) 기준으로 좌석·룸수·매출이 자동 산출되는 계산 엔진 구축(4개 모델)', true),
   bullet('가격정책을 "BEP 65% 역산가 + 경쟁사 상한 체크" 방식으로 확정', true),
 
-  bullet('경쟁사 실계약·제안서 자료 확보 및 대조'),
-  bullet('스파크플러스·패스트파이브 실계약서·입주제안서 확보(분당2호점·여의도 등) 및 실거래가·크레딧 조건 검증', true),
+  bullet('경쟁사 현장 상담·방문 및 실자료 확보'),
+  bullet('분당 스파크플러스, 판교 패스트파이브 상담 및 견적 확인', true),
+  bullet('여의도 스파크플러스 현장 방문 및 수치·견적 확인', true),
+  bullet('확보한 실계약서·입주제안서로 실거래가·크레딧 조건 대조 검증(분당2호점·여의도 등)', true),
   bullet('회원보증금 산정식도 SP 실계약 5건 대조로 검증 후 신규 반영', true),
 
   bullet('후보 매물 실측 확정'),
