@@ -128,6 +128,10 @@ slide.addTable(
   bar(2.8, 1.1, y, rowH, '내부 투자승인(7월 중순)', '3B6FC4');
   y += rowGap;
 
+  s2.addText('마케팅 계획・실무 논의', { x:rowLabelX, y, w:rowLabelW, h:rowH, fontSize:11.5, bold:true, valign:'middle', fontFace:FONT, color:NAVY });
+  bar(3.9, 2.4, y, rowH, '마케팅 계획 구체화·실무 협의(7월말~8월)', '5B7FBF');
+  y += rowGap;
+
   s2.addText('매물 확보・계약', { x:rowLabelX, y, w:rowLabelW, h:rowH, fontSize:11.5, bold:true, valign:'middle', fontFace:FONT, color:NAVY });
   bar(3.9, 1.3, y, rowH, '실사·정식견적(7월말~8월)', '2E5FA8');
   bar(5.2, 1.1, y, rowH, '임대차 계약(8월말)', '3B6FC4');
@@ -147,8 +151,8 @@ slide.addTable(
   bar(11.4, 1.6, y, rowH, "50→65%+ 가동('27 Q1)", '667085');
 
   // 분기 구분선
-  s2.addShape('line', { x:5.5, y:1.55, w:0, h:4.6, line:{color:'D9E1EC', width:1, dashType:'dash'} });
-  s2.addShape('line', { x:9.1, y:1.55, w:0, h:4.6, line:{color:'D9E1EC', width:1, dashType:'dash'} });
+  s2.addShape('line', { x:5.5, y:1.55, w:0, h:5.55, line:{color:'D9E1EC', width:1, dashType:'dash'} });
+  s2.addShape('line', { x:9.1, y:1.55, w:0, h:5.55, line:{color:'D9E1EC', width:1, dashType:'dash'} });
 }
 
 await pptx.writeFile({ fileName: 'C:/Users/User/Documents/프로젝트/프로젝트_SOS_주간보고.pptx' });
