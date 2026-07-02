@@ -1,5 +1,12 @@
-*
+﻿*
 !index.html
 !render.yaml
 !README.md
 !.gitignore
+!package.json
+!package-lock.json
+!server.js
+!public/
+!public/**
+!data/
+!data/.gitkeep
