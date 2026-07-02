@@ -47,29 +47,27 @@ const bullet = (text, sub=false) => ({
 });
 
 const progress = [
-  bullet('회원보증금 신규 도입 (SP 실계약 5건 검증)'),
-  bullet('부가세포함 표준요금×2개월 공식을 SP 실계약서 5건 대조로 검증', true),
-  bullet('SOS 단기계약 특성 반영: 1주=0 / 1~5개월=1개월치 / 6~11개월=1.5개월치 / 1년이상=2개월치', true),
-  bullet('초기투자금 조달과는 무관함을 명확화(반환의무 부채로 재정의, 보고서 표현 오류 수정)', true),
+  bullet('SOS 수익성 모델 전체 설계·구축'),
+  bullet('배치도(룸 배치·문·복도) 기준으로 좌석·룸수·매출이 자동 산출되는 계산 엔진 구축(4개 모델)', true),
+  bullet('가격정책을 "BEP 65% 역산가 + 경쟁사 상한 체크" 방식으로 확정', true),
 
-  bullet('CAPEX 단가 실측 재검증 및 전체 재계산'),
-  bullet('전기·통신 7만→4만/평 (네트워크공사·전기 견적서 근거 확인)', true),
-  bullet('보안·CCTV·출입통제 200만→86만 (ADT캡스 실견적서 확인)', true),
-  bullet('라운지가구 100만→150만 상향(면적 대비 현실화)', true),
-  bullet('4개 모델(100평형·120평·150평·판교) BEP·손익·투자금 전체 재계산', true),
+  bullet('경쟁사 실계약·제안서 자료 확보 및 대조'),
+  bullet('스파크플러스·패스트파이브 실계약서·입주제안서 확보(분당2호점·여의도 등) 및 실거래가·크레딧 조건 검증', true),
+  bullet('회원보증금 산정식도 SP 실계약 5건 대조로 검증 후 신규 반영', true),
 
-  bullet('보고서 투명성·가독성 개선'),
-  bullet('월별 손익 흐름(현금흐름 워터폴) 표 신설, 전 항목 계산식 노출', true),
-  bullet('가구배치도 책상 규격 1200×700mm 실측 반영', true),
-  bullet('저근거 섹션(전용평당 손익) 삭제 및 섹션 재정비', true),
+  bullet('후보 매물 실측 확정'),
+  bullet('판교(에이치스퀘어 S동 B1)·분당 100/120/150평 매물 임대조건(월세·보증금) 실측 확정', true),
 
-  bullet('1~4인실 수요 근거 리서치'),
-  bullet('통계청 사업체 규모 분포, 스타트업 팀 규모 등 정황 데이터 확보', true),
-  bullet('SP 분당2호점 실제 제안서 확인 — 경쟁사 1~4인실 공급 부재 확인(추가 검증 필요)', true),
+  bullet('CAPEX 항목 실제 견적서 기반 검증'),
+  bullet('소방·냉난방·인테리어·도어락·보안 등 실제 견적서/계약서로 단가 검증', true),
+  bullet('금주 후반: 전기통신 7→4만/평, 보안 200→86만 추가 실측 보정 및 4개 모델 전체 재계산', true),
 
-  bullet('산출물 다각화'),
-  bullet('전체 보고서 표 Excel 워크북 추출(20개 시트)', true),
-  bullet('워드 사업계획서 작성 — 실투자금 2억 현금흐름 기준 회수기간(3.7년) 중심 설득 논리', true),
+  bullet('배치도·가구배치 반복 설계'),
+  bullet('문 위치·책상 배치·비정형 손실 구간 등 실측 렌더링 검증 반복(책상 1200×700mm 최종 반영)', true),
+
+  bullet('보고서 통합 및 산출물 확장'),
+  bullet('개별 보고서를 SOS_최종보고서.html 하나로 통합, 현금흐름 워터폴 표 등 투명성 개선', true),
+  bullet('Excel(표 20개 시트)·워드 사업계획서·투자설득 PPT·주간보고 PPT까지 산출물 다각화(금주 후반)', true),
 ];
 
 const plan = [
@@ -78,10 +76,7 @@ const plan = [
 
   bullet('CAPEX 미검증 항목 정식 견적 전환'),
   bullet('도어락·가구·라운지가구 등 가견적 항목 실측 견적 확보', true),
-
-  bullet('후보 매물 실사'),
-  bullet('근생 용도·전대 허용·권리금 여부 확인', true),
-  bullet('소방·공조 가견적 확보(스프링클러 설치대상 여부 포함)', true),
+  bullet('※ 매물 실사(근생 용도·전대·소방)는 내부 투자승인 이후 착수 예정', true),
 
   bullet('문서 마감'),
   bullet('워드 사업계획서 최종 검토', true),
@@ -126,34 +121,31 @@ slide.addTable(
   const rowH = 0.6, rowGap = 0.95;
 
   s2.addText('사업성 검증・투자승인', { x:rowLabelX, y, w:rowLabelW, h:rowH, fontSize:11.5, bold:true, valign:'middle', fontFace:FONT, color:NAVY });
-  bar(1.9, 1.6, y, rowH, '모델링·CAPEX검증(7월)', '1F4F99', true);
-  bar(3.6, 1.7, y, rowH, '부사장 투자승인(7월말)', '3B6FC4');
+  bar(1.9, 0.9, y, rowH, '모델링·검증', '1F4F99', true);
+  bar(2.8, 1.1, y, rowH, '내부 투자승인(7월 중순)', '3B6FC4');
   y += rowGap;
 
   s2.addText('매물 확보・계약', { x:rowLabelX, y, w:rowLabelW, h:rowH, fontSize:11.5, bold:true, valign:'middle', fontFace:FONT, color:NAVY });
-  bar(3.4, 1.9, y, rowH, '실사·정식견적(8월)', '2E5FA8');
-  bar(5.4, 1.6, y, rowH, '임대차 계약(9월)', '3B6FC4');
+  bar(3.9, 1.3, y, rowH, '실사·정식견적(7월말~8월)', '2E5FA8');
+  bar(5.2, 1.1, y, rowH, '임대차 계약(8월말)', '3B6FC4');
   y += rowGap;
 
   s2.addText('인테리어・시스템 구축', { x:rowLabelX, y, w:rowLabelW, h:rowH, fontSize:11.5, bold:true, valign:'middle', fontFace:FONT, color:NAVY });
-  bar(5.5, 2.2, y, rowH, '인테리어 시공(10~11월)', '2E5FA8');
-  bar(7.8, 1.6, y, rowH, '가구·무인시스템(11월)', '3B6FC4');
+  bar(6.3, 1.6, y, rowH, '인테리어 시공(9~10월)', '2E5FA8');
+  bar(7.9, 1.1, y, rowH, '가구·무인시스템(10월)', '3B6FC4');
   y += rowGap;
 
   s2.addText('오픈 준비・오픈', { x:rowLabelX, y, w:rowLabelW, h:rowH, fontSize:11.5, bold:true, valign:'middle', fontFace:FONT, color:NAVY });
-  bar(9.5, 1.6, y, rowH, '마케팅·회원모집(12월)', '2E5FA8');
-  bar(11.2, 1.2, y, rowH, '오픈(목표)', 'B45309');
+  bar(9.0, 1.3, y, rowH, '마케팅·회원모집(11월)', '2E5FA8');
+  bar(10.3, 1.1, y, rowH, '오픈(목표, 11월말)', 'B45309');
   y += rowGap;
 
   s2.addText('가동률 안정화', { x:rowLabelX, y, w:rowLabelW, h:rowH, fontSize:11.5, bold:true, valign:'middle', fontFace:FONT, color:NAVY });
-  bar(11.2, 1.8, y, rowH, "50→65%+ 가동('27 Q1)", '667085');
+  bar(11.4, 1.6, y, rowH, "50→65%+ 가동('27 Q1)", '667085');
 
   // 분기 구분선
   s2.addShape('line', { x:5.5, y:1.55, w:0, h:4.6, line:{color:'D9E1EC', width:1, dashType:'dash'} });
   s2.addShape('line', { x:9.1, y:1.55, w:0, h:4.6, line:{color:'D9E1EC', width:1, dashType:'dash'} });
-
-  s2.addText('※ 12월 오픈은 상반기 매물 확정·계약이 예정대로 진행될 때의 목표치. 매물 실사 결과에 따라 1~2개월 지연 가능.',
-    { x:0.3, y:6.5, w:12.7, h:0.5, fontSize:11, italic:true, color:'B42318', fontFace:FONT });
 }
 
 await pptx.writeFile({ fileName: 'C:/Users/User/Documents/프로젝트/프로젝트_SOS_주간보고.pptx' });
