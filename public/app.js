@@ -49,7 +49,7 @@ function renderLogin() {
     <main class="login-shell">
       <section class="login-panel">
         <h1>Project SOS</h1>
-        <div class="sub">무인 예약 · 결제 상태 관리 · 권한 운영 시스템</div>
+        <div class="sub">무인 예약 · 이용 상태 관리 · 권한 운영 시스템</div>
         <form class="form-grid" onsubmit="event.preventDefault(); login(email.value, password.value).catch(err => { state.error = err.message; renderLogin(); })">
           <div><label for="email">이메일</label><input id="email" type="email" autocomplete="username" value="admin@soslab.co"></div>
           <div><label for="password">비밀번호</label><input id="password" type="password" autocomplete="current-password" value="admin1234"></div>
@@ -65,7 +65,7 @@ function renderLogin() {
       <section class="login-visual"><div class="copy"><h2>오피스별 룸 재고를 관리하는 예약 시스템</h2><p>100평·120평·150평 샘플 오피스별로 예약된 룸과 공실 룸을 확인하고, 룸별 계약기간과 잔여기간을 관리함.</p></div></section>
     </main>`;
 }
-function renderTopbar() { return `<header class="topbar"><div class="brand"><div class="logo">SOS</div><div><div class="brand-title">Project SOS 운영 시스템</div><div class="brand-sub">오피스별 예약재고 · 권한관리 · 결제완료 관리</div></div></div><div class="userbox"><span class="role-pill">${roleText[state.user.role]}</span><strong>${escapeHtml(state.user.name)}</strong><button class="secondary" onclick="logout()">로그아웃</button></div></header>`; }
+function renderTopbar() { return `<header class="topbar"><div class="brand"><div class="logo">SOS</div><div><div class="brand-title">Project SOS 운영 시스템</div><div class="brand-sub">오피스별 예약재고 · 권한관리 · 예약운영 관리</div></div></div><div class="userbox"><span class="role-pill">${roleText[state.user.role]}</span><strong>${escapeHtml(state.user.name)}</strong><button class="secondary" onclick="logout()">로그아웃</button></div></header>`; }
 function renderKpis() {
   const totalRooms = state.offices.reduce((s,o)=>s+o.totalRooms,0);
   const booked = state.offices.reduce((s,o)=>s+o.bookedRooms,0);
@@ -74,7 +74,7 @@ function renderKpis() {
   return `<section class="kpis"><div class="kpi"><div class="label">샘플 오피스</div><div class="value">${state.offices.length}</div></div><div class="kpi"><div class="label">전체 룸</div><div class="value">${totalRooms}</div></div><div class="kpi good"><div class="label">예약 룸</div><div class="value">${booked}</div></div><div class="kpi warn"><div class="label">공실 룸 / 결제금액</div><div class="value">${available} / ${won(totalPaid)}</div></div></section>`;
 }
 function renderHero() {
-  const adminCopy = state.user.role === 'admin' ? '운영 관리자는 100평·120평·150평 오피스별 예약 현황을 보고, 결제 완료 고객과 이용자 권한을 관리함.' : state.user.role === 'member' ? '공유오피스 이용자는 프로젝트룸 예약과 회의실 예약이 모두 가능함.' : '일반 사용자는 프로젝트룸 예약이 가능함. 관리자가 공유오피스 이용자로 전환하면 회의실 예약 권한이 추가됨.';
+  const adminCopy = state.user.role === 'admin' ? '운영 관리자는 100평·120평·150평 오피스별 예약 현황과 이용자 권한을 관리함.' : state.user.role === 'member' ? '공유오피스 이용자는 프로젝트룸 예약과 회의실 예약이 모두 가능함.' : '일반 사용자는 프로젝트룸 예약이 가능함. 관리자가 공유오피스 이용자로 전환하면 회의실 예약 권한이 추가됨.';
   return `<section class="hero"><div class="panel"><h2>운영 기준</h2><div class="notice">${adminCopy}</div></div><div class="panel"><h2>오피스 샘플</h2><div class="grid-3">${state.offices.map(o=>`<div><strong>${escapeHtml(o.name)}</strong><br><span class="tag">${o.size}평</span><span class="tag">예약 ${o.bookedRooms}/${o.totalRooms}</span><span class="tag green">공실 ${o.availableRooms}</span></div>`).join('')}</div></div></section>`;
 }
 function renderBookingForm() { const t=new Date().toISOString().slice(0,10); const n=new Date(Date.now()+30*86400000).toISOString().slice(0,10); return `<div class="panel"><h2>예약 조건</h2><div class="form-grid"><div><label>시작일</label><input id="startDate" type="date" value="${t}"></div><div><label>종료일</label><input id="endDate" type="date" value="${n}"></div><div><label>요청사항</label><textarea id="memo" placeholder="입실 안내, 주소지 등록 여부, 세금계산서 요청 등"></textarea></div></div></div>`; }
@@ -86,7 +86,7 @@ function renderOfficeInventory(office, showMeeting = true) {
 function renderRoomCard(room) {
   const booked = room.isBooked;
   const b = room.currentBooking;
-  return `<div class="room-cell ${booked ? 'booked' : 'open'}"><div class="room-cell-top"><strong>${escapeHtml(room.name)}</strong><span class="status ${booked ? 'active' : 'reserved'}">${booked ? '예약됨' : '예약가능'}</span></div><div class="room-meta"><span class="tag ${room.type==='meeting-room'?'green':''}">${room.type==='meeting-room'?'회의실':'프로젝트룸'}</span><span class="tag">${room.capacity}인</span><span class="tag">${won(room.price)}</span></div>${booked ? `<div class="contract-box"><b>${escapeHtml(b.userName)}</b><br>${contractText(b)}<br><span class="brand-sub">${paymentText[b.paymentStatus]} · ${serviceText[b.serviceStatus]}</span></div>` : `<div class="contract-box empty-mini">계약기간 없음 · 잔여기간 없음</div>`}<button ${booked ? 'disabled' : ''} onclick="createBooking('${room.id}')">${booked ? '예약 불가' : '이 룸 예약'}</button></div>`;
+  return `<div class="room-cell ${booked ? 'booked' : 'open'}"><div class="room-cell-top"><strong>${escapeHtml(room.name)}</strong><span class="status ${booked ? 'active' : 'reserved'}">${booked ? '예약됨' : '예약가능'}</span></div><div class="room-meta"><span class="tag ${room.type==='meeting-room'?'green':''}">${room.type==='meeting-room'?'회의실':'프로젝트룸'}</span><span class="tag">${room.capacity}인</span><span class="tag">${won(room.price)}</span></div>${booked ? `<div class="contract-box"><b>${escapeHtml(b.userName)}</b><br>${contractText(b)}<br><span class="brand-sub">${paymentText[b.paymentStatus]} · ${serviceText[b.serviceStatus]}</span></div>` : `<div class="contract-box empty-mini">계약기간 없음 · 잔여기간 없음</div>`}${booked ? '' : `<button class="green" onclick="createBooking('${room.id}')">결제하기</button>`}</div>`;
 }
 function renderRooms() {
   const canMeeting = ['admin','member'].includes(state.user.role);
@@ -94,7 +94,7 @@ function renderRooms() {
   return `<div class="office-list">${state.offices.map(o=>renderOfficeInventory(o, canMeeting)).join('')}</div>`;
 }
 function bookingActions(item, admin=false) {
-  return `<div class="action-row">${item.paymentStatus!=='paid'?`<button class="green" onclick="bookingAction('${item.id}','mark-paid')">결제 완료</button>`:''}${admin&&item.serviceStatus!=='completed'?`<button class="secondary" onclick="bookingAction('${item.id}','complete-service')">이용 완료</button>`:''}${item.serviceStatus!=='cancelled'?`<button class="secondary" onclick="bookingAction('${item.id}','cancel')">취소</button>`:''}</div>`;
+  return `<div class="action-row">${admin&&item.serviceStatus!=='completed'?`<button class="secondary" onclick="bookingAction('${item.id}','complete-service')">이용 종료 처리</button>`:''}${item.serviceStatus!=='cancelled'?`<button class="secondary" onclick="bookingAction('${item.id}','cancel')">예약 취소</button>`:''}</div>`;
 }
 function renderBookingTable(items, admin=false, readonly=false) {
   if (!items.length) return '<div class="empty">예약 내역이 없음</div>';
@@ -110,12 +110,14 @@ function renderAdminOfficeSummary() {
 }
 function renderAdmin() {
   if (state.user.role!=='admin') return '';
-  return `${renderAdminOfficeSummary()}<section class="admin-tools"><div class="panel"><h2>결제 완료 예약 관리</h2>${renderBookingTable(state.paidBookings,true)}</div>${renderUserTable()}</section><section class="panel" style="margin-top:16px;"><h2>전체 예약</h2>${renderBookingTable(state.bookings,true,true)}</section>`;
+  return `${renderAdminOfficeSummary()}<section class="admin-tools"><div class="panel"><h2>이용 중 예약 관리</h2>${renderBookingTable(state.paidBookings,true)}</div>${renderUserTable()}</section><section class="panel" style="margin-top:16px;"><h2>전체 예약</h2>${renderBookingTable(state.bookings,true,true)}</section>`;
 }function renderMemberOnly() { if (state.user.role!=='member') return ''; const list=state.myBookings.filter(i=>i.type==='meeting-room'); return `<section class="panel" style="margin-top:16px;"><h2>공유오피스 이용자 전용 회의실 예약</h2><div class="notice" style="margin-bottom:12px;">회의실은 공유오피스 이용자 권한부터 예약 가능함.</div>${renderBookingTable(list)}</section>`; }
 function renderApp() { app.innerHTML = `<div class="app">${renderTopbar()}<main class="main">${renderHero()}${renderKpis()}${renderAdmin()}<section class="booking-layout"><div>${renderBookingForm()}</div><div class="panel"><h2>오피스별 룸 예약</h2>${state.user.role==='user'?'<div class="notice" style="margin-bottom:12px;">일반 사용자는 프로젝트룸만 예약 가능함. 회의실 예약은 공유오피스 이용자 권한 전환 후 가능함.</div>':''}${renderRooms()}</div></section><section class="panel" style="margin-top:16px;"><h2>내 예약</h2>${renderBookingTable(state.myBookings)}</section>${renderMemberOnly()}</main></div>`; }
 function render() { if (!state.token || !state.user) renderLogin(); else renderApp(); }
 async function init() { if (!state.token) return renderLogin(); try { await loadBootstrap(); } catch(err) { localStorage.removeItem('sos_token'); state.token=''; state.error='세션이 만료되어 다시 로그인해야 함'; renderLogin(); } }
 init();
+
+
 
 
 

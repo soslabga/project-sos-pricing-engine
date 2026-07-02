@@ -50,10 +50,11 @@ seed.bookings = [
     startDate: today(),
     endDate: addDays(30),
     amount: 480000,
-    paymentStatus: 'pending',
-    serviceStatus: 'reserved',
+    paymentStatus: 'paid',
+    serviceStatus: 'active',
     createdAt: now(),
-    memo: '100평 샘플 오피스 1인실 결제대기 데모'
+    paidAt: now(),
+    memo: '100평 샘플 오피스 1인실 데모 예약'
   }
 ];
 
@@ -101,6 +102,19 @@ function migrateOfficeInventory(store) {
   return changed;
 }
 
+function migratePaymentFlow(store) {
+  let changed = false;
+  for (const booking of store.bookings || []) {
+    if (booking.paymentStatus === 'pending') {
+      booking.paymentStatus = 'paid';
+      booking.serviceStatus = booking.serviceStatus === 'reserved' ? 'active' : booking.serviceStatus;
+      booking.paidAt = booking.paidAt || booking.createdAt || now();
+      if (booking.memo) booking.memo = booking.memo.replace('결제대기 ', '');
+      changed = true;
+    }
+  }
+  return changed;
+}
 function ensureStore() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
   if (!fs.existsSync(STORE_FILE)) {
@@ -108,7 +122,10 @@ function ensureStore() {
     return;
   }
   const store = JSON.parse(fs.readFileSync(STORE_FILE, 'utf8'));
-  const changed = migrateDemoEmails(store) || migrateOfficeInventory(store);
+  let changed = false;
+  changed = migrateDemoEmails(store) || changed;
+  changed = migrateOfficeInventory(store) || changed;
+  changed = migratePaymentFlow(store) || changed;
   if (changed) saveStore(store);
 }
 function loadStore() { ensureStore(); return JSON.parse(fs.readFileSync(STORE_FILE, 'utf8')); }
@@ -260,7 +277,7 @@ async function handleApi(req, res) {
       if (!isBookingAllowed(user, room)) return sendJson(res, 403, { error: '해당 공간 예약 권한이 없음' });
       const startDate = String(body.startDate || today());
       const endDate = room.type === 'meeting-room' ? startDate : String(body.endDate || addDays(30));
-      const booking = { id: `b_${Date.now()}`, userId: user.id, roomId: room.id, type: room.type, startDate, endDate, amount: amountForRoom(room, startDate, endDate), paymentStatus: 'pending', serviceStatus: 'reserved', createdAt: now(), memo: String(body.memo || '').trim() };
+      const booking = { id: `b_${Date.now()}`, userId: user.id, roomId: room.id, type: room.type, startDate, endDate, amount: amountForRoom(room, startDate, endDate), paymentStatus: 'paid', serviceStatus: 'active', createdAt: now(), paidAt: now(), memo: String(body.memo || '').trim() };
       store.bookings.unshift(booking); saveStore(store); return sendJson(res, 201, { booking: enrichBooking(booking, store) });
     }
     if (method === 'PATCH' && url.pathname.startsWith('/api/bookings/')) {
@@ -269,8 +286,7 @@ async function handleApi(req, res) {
       const booking = store.bookings.find(item => item.id === id);
       if (!booking) return sendJson(res, 404, { error: '예약을 찾을 수 없음' });
       const body = await parseBody(req);
-      if (body.action === 'mark-paid') { if (booking.userId !== user.id && user.role !== 'admin') return sendJson(res, 403, { error: '본인 예약만 결제 처리 가능함' }); booking.paymentStatus = 'paid'; booking.serviceStatus = 'active'; booking.paidAt = now(); }
-      else if (body.action === 'cancel') { if (booking.userId !== user.id && user.role !== 'admin') return sendJson(res, 403, { error: '본인 예약만 취소 가능함' }); booking.serviceStatus = 'cancelled'; }
+      if (body.action === 'cancel') { if (booking.userId !== user.id && user.role !== 'admin') return sendJson(res, 403, { error: '본인 예약만 취소 가능함' }); booking.serviceStatus = 'cancelled'; }
       else if (body.action === 'complete-service') { if (user.role !== 'admin') return sendJson(res, 403, { error: '운영 관리자만 처리 가능함' }); booking.serviceStatus = 'completed'; }
       else return sendJson(res, 400, { error: '지원하지 않는 예약 작업임' });
       saveStore(store); return sendJson(res, 200, { booking: enrichBooking(booking, store) });
@@ -292,3 +308,5 @@ async function handleApi(req, res) {
 
 const server = http.createServer((req, res) => { if (req.url.startsWith('/api/')) return handleApi(req, res); return serveStatic(req, res); });
 server.listen(PORT, () => { ensureStore(); console.log(`Project SOS operations server running on http://localhost:${PORT}`); });
+
+
