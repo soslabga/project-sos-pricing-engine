@@ -113,10 +113,11 @@ console.log(`만실 ${fk(full_rev)}만원 | CAPEX ${fk(capex)}만 | 상각 ${fk(
 console.log(`고정비 ${fk(fixed)}만 = 월세${rent}+관리비${mgmt}+전기${elec}+청소${clean}+운영잡비${opexFlat}+인건비${labor}+상각${dep}`);
 console.log(`BEP ${bep.toFixed(1)}% | 50%${op(0.5)>=0?'+':''}${fk(op(0.5))} 60%${op(0.6)>=0?'+':''}${fk(op(0.6))} 70%${op(0.7)>=0?'+':''}${fk(op(0.7))}`);
 
-// 회원보증금(SOS가 입주 회원에게서 수취) = 만실매출×VAT10%×2개월. 스파크플러스 실계약 5건(여의도424호·432호·분당2호점 5/6/8인) 전부 "표준요금×1.1×2"와 정확히 일치 검증됨(계약서 원본 대조)
-const memberDepoFull=Math.round(full_rev*1.1*2);
-const memberDepoBEP=Math.round(memberDepoFull*bep/100);
-console.log(`회원보증금(2개월×VAT포함, SP 실계약 검증식): 만실 ${fk(memberDepoFull)}만 | BEP가동률(${bep.toFixed(1)}%) 기준 ${fk(memberDepoBEP)}만`);
+// 회원보증금(SOS가 입주 회원에게서 수취). SP 실계약 5건(여의도424호·432호·분당2호점 5/6/8인) 전부 "표준요금×1.1×2개월"(연간계약 기준)과 정확히 일치 검증됨(계약서 원본 대조).
+// SOS는 단기계약(1주·1개월)도 취급하므로 SP식 2개월 일괄적용은 과도 — "계약기간만큼만" 차등: 1주=0, 1개월=1개월치, 1년(SP 상당)=2개월치. 참고용(총 투자금 조달액에는 영향 없음, 정상화 후 부채로만 보유)
+const memberDepo1moFull=Math.round(full_rev*1.1*1), memberDepoFull=Math.round(full_rev*1.1*2);
+const memberDepo1moBEP=Math.round(memberDepo1moFull*bep/100), memberDepoBEP=Math.round(memberDepoFull*bep/100);
+console.log(`회원보증금(참고, 계약별 차등×VAT포함): BEP가동률(${bep.toFixed(1)}%) 기준 1개월계약 ${fk(memberDepo1moBEP)}만 ~ 1년계약 ${fk(memberDepoBEP)}만`);
 
 // 마케팅: 정상화 이후는 CONT 0.885(매출7%)에 이미 반영. 초기(1~6개월)는 인지도0이라 정액 추가 지출 필요 — 참고용 민감도만(정식 BEP에는 미반영)
 const launchMkt=200, fixedLaunch=fixed+launchMkt, bepLaunch=fixedLaunch/(full_rev*0.885)*100;
