@@ -1,39 +1,39 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1183.6" height="732" font-family="Malgun Gothic,Pretendard,sans-serif">
 <rect width="1183.6" height="732" fill="#fff"/>
-<text x="591.8" y="40" font-size="20" font-weight="800" fill="#0f1e3d" text-anchor="middle">1인실 vs 2인실 vs 4인실 — 책상 1200mm 고정모듈 기준 가구배치 비교</text>
+<text x="591.8" y="40" font-size="20" font-weight="800" fill="#0f1e3d" text-anchor="middle">1인실 vs 2인실 vs 4인실 — 책상 1200×700mm 고정모듈 기준 가구배치 비교</text>
 <text x="591.8" y="64" font-size="12" fill="#64748b" text-anchor="middle">문은 항상 복도쪽(위) · 책상은 문을 막지 않게 배치 · 안쪽 자리 진입 통로 확보</text>
 <rect x="60" y="140" width="226.79999999999998" height="210" fill="#f8fafc" stroke="#1e293b" stroke-width="3"/>
 <text x="173.39999999999998" y="108" font-size="16" font-weight="800" fill="#0f1e3d" text-anchor="middle">1인실 · 인당 1.00평</text><text x="173.39999999999998" y="376" font-size="12" fill="#64748b" text-anchor="middle">1890×1750mm</text>
 <line x1="125.39999999999999" y1="140" x2="221.4" y2="140" stroke="#fff" stroke-width="9"/><line x1="125.39999999999999" y1="140" x2="221.4" y2="140" stroke="#dc2626" stroke-width="6"/><text x="173.39999999999998" y="132" font-size="11" font-weight="800" fill="#dc2626" text-anchor="middle">문(복도)</text>
-<rect x="78" y="152" width="190.8" height="66" fill="#eef7f0" stroke="#9cc9a8" stroke-dasharray="4,3"/>
+<rect x="78" y="152" width="190.8" height="54" fill="#eef7f0" stroke="#9cc9a8" stroke-dasharray="4,3"/>
 <text x="173.39999999999998" y="170" font-size="9" fill="#16834a" text-anchor="middle">여유공간(통행)</text>
-<circle cx="173.39999999999998" cy="254" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
-<g><rect x="101.4" y="278" width="144" height="72" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="173.39999999999998" y="318" font-size="10" fill="#5c4a2a" text-anchor="middle">책상 1200</text></g>
+<circle cx="173.39999999999998" cy="242" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
+<g><rect x="101.4" y="266" width="144" height="84" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="173.39999999999998" y="312" font-size="9.5" fill="#5c4a2a" text-anchor="middle">1200×700</text></g>
 <text x="173.39999999999998" y="400" font-size="12" fill="#16834a" font-weight="700" text-anchor="middle">면적=3.31㎡(1.00평) → 1인이라 통로 간섭 없음</text>
 <rect x="366.79999999999995" y="140" width="264" height="432" fill="#f8fafc" stroke="#1e293b" stroke-width="3"/>
 <text x="498.79999999999995" y="108" font-size="16" font-weight="800" fill="#0f1e3d" text-anchor="middle">2인실 · 인당 1.20평</text><text x="498.79999999999995" y="598" font-size="12" fill="#64748b" text-anchor="middle">2200×3600mm</text>
 <line x1="450.79999999999995" y1="140" x2="546.8" y2="140" stroke="#fff" stroke-width="9"/><line x1="450.79999999999995" y1="140" x2="546.8" y2="140" stroke="#dc2626" stroke-width="6"/><text x="498.79999999999995" y="132" font-size="11" font-weight="800" fill="#dc2626" text-anchor="middle">문(복도)</text>
 <rect x="372.79999999999995" y="152" width="252" height="36" fill="#fff7ed" stroke="#f0d39d" stroke-dasharray="4,3"/>
 <text x="498.79999999999995" y="172" font-size="9" fill="#a15c07" text-anchor="middle">여유공간(통행, 문 앞)</text>
-<g><rect x="378.79999999999995" y="200" width="72" height="144" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="414.79999999999995" y="276" font-size="10" fill="#5c4a2a" text-anchor="middle">책상 1200</text></g>
-<circle cx="468.79999999999995" cy="272" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
-<g><rect x="378.79999999999995" y="344" width="72" height="144" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="414.79999999999995" y="420" font-size="10" fill="#5c4a2a" text-anchor="middle">책상 1200</text></g>
-<circle cx="468.79999999999995" cy="416" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
-<rect x="498.79999999999995" y="200" width="126" height="348" fill="#f0f9ff" stroke="#bcd9ef" stroke-dasharray="4,3"/>
-<text x="561.8" y="374" font-size="8.5" fill="#1c6ea4" text-anchor="middle" transform="rotate(-90 561.8 374)">오른쪽 통로(안쪽 책상도 앞 책상 안 지나고 바로 진입)</text>
+<g><rect x="378.79999999999995" y="200" width="84" height="144" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="420.79999999999995" y="276" font-size="9.5" fill="#5c4a2a" text-anchor="middle">1200×700</text></g>
+<circle cx="480.79999999999995" cy="272" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
+<g><rect x="378.79999999999995" y="344" width="84" height="144" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="420.79999999999995" y="420" font-size="9.5" fill="#5c4a2a" text-anchor="middle">1200×700</text></g>
+<circle cx="480.79999999999995" cy="416" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
+<rect x="510.79999999999995" y="200" width="114" height="348" fill="#f0f9ff" stroke="#bcd9ef" stroke-dasharray="4,3"/>
+<text x="567.8" y="374" font-size="8.5" fill="#1c6ea4" text-anchor="middle" transform="rotate(-90 567.8 374)">오른쪽 통로(안쪽 책상도 앞 책상 안 지나고 바로 진입)</text>
 <text x="498.79999999999995" y="622" font-size="12" fill="#b42318" font-weight="700" text-anchor="middle">면적=7.92㎡(2.40평) → 책상 좌측벽 세로배치 + 우측 전용통로, 그래도 1인실의 2배 이상</text>
 <rect x="710.8" y="140" width="412.8" height="348" fill="#f8fafc" stroke="#1e293b" stroke-width="3"/>
 <text x="917.1999999999999" y="108" font-size="16" font-weight="800" fill="#0f1e3d" text-anchor="middle">4인실 · 인당 0.75평</text><text x="917.1999999999999" y="514" font-size="12" fill="#64748b" text-anchor="middle">3440×2900mm</text>
 <line x1="863.1999999999999" y1="140" x2="971.1999999999999" y2="140" stroke="#fff" stroke-width="9"/><line x1="863.1999999999999" y1="140" x2="971.1999999999999" y2="140" stroke="#dc2626" stroke-width="6"/><text x="917.1999999999999" y="132" font-size="11" font-weight="800" fill="#dc2626" text-anchor="middle">문(복도)</text>
-<g><rect x="722.8" y="194" width="72" height="144" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="758.8" y="270" font-size="10" fill="#5c4a2a" text-anchor="middle">책상 1200</text></g>
-<circle cx="812.8" cy="266" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
-<g><rect x="722.8" y="344" width="72" height="144" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="758.8" y="420" font-size="10" fill="#5c4a2a" text-anchor="middle">책상 1200</text></g>
-<circle cx="812.8" cy="416" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
-<g><rect x="1039.6" y="194" width="72" height="144" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="1075.6" y="270" font-size="10" fill="#5c4a2a" text-anchor="middle">책상 1200</text></g>
-<circle cx="1021.5999999999999" cy="266" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
-<g><rect x="1039.6" y="344" width="72" height="144" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="1075.6" y="420" font-size="10" fill="#5c4a2a" text-anchor="middle">책상 1200</text></g>
-<circle cx="1021.5999999999999" cy="416" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
-<rect x="860.8" y="152" width="112.8" height="324" fill="#fff7ed" stroke="#f0d39d" stroke-dasharray="4,3"/>
+<g><rect x="722.8" y="194" width="84" height="144" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="764.8" y="270" font-size="9.5" fill="#5c4a2a" text-anchor="middle">1200×700</text></g>
+<circle cx="824.8" cy="266" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
+<g><rect x="722.8" y="344" width="84" height="144" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="764.8" y="420" font-size="9.5" fill="#5c4a2a" text-anchor="middle">1200×700</text></g>
+<circle cx="824.8" cy="416" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
+<g><rect x="1027.6" y="194" width="84" height="144" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="1069.6" y="270" font-size="9.5" fill="#5c4a2a" text-anchor="middle">1200×700</text></g>
+<circle cx="1009.5999999999999" cy="266" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
+<g><rect x="1027.6" y="344" width="84" height="144" fill="#d9c9a3" stroke="#8a6d3b" stroke-width="2" rx="3"/><text x="1069.6" y="420" font-size="9.5" fill="#5c4a2a" text-anchor="middle">1200×700</text></g>
+<circle cx="1009.5999999999999" cy="416" r="26.4" fill="#8fb8de" stroke="#2c5c8a" stroke-width="2"/>
+<rect x="872.8" y="152" width="88.8" height="324" fill="#fff7ed" stroke="#f0d39d" stroke-dasharray="4,3"/>
 <text x="917.1999999999999" y="314" font-size="9" fill="#a15c07" text-anchor="middle">가운데 공유통로(4명이 나눠씀, 문과 바로 연결)</text>
 <text x="917.1999999999999" y="538" font-size="12" fill="#16834a" font-weight="700" text-anchor="middle">면적=9.98㎡(3.02평) → 좌우 벽에 책상, 가운데 통로를 4명이 나눠써서 인당면적 가장 작음</text>
 </svg>
