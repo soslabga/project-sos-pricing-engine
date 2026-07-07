@@ -35,8 +35,8 @@ let cc=-CAPEX; let mm=0; const stream=[...occ.map(g=>FULL*g*CONT-(FIX)+DEP)];
 // Year1은 위 계산 그대로(런칭비 포함) 재구성
 cc=-CAPEX; mm=0; let done=null;
 occ.forEach((g,i)=>{const m=i+1;const fix=FIX+(m<=6?LAUNCH:0);cc+=FULL*g*CONT-fix+DEP;mm=m;if(cc>=0&&!done)done=`Y1 M${m}`;});
-// 이후 72% 고정
+// 이후 8.2 궤적과 일치: 2차년도(M13~24) 72%, 3차년도 이후(M25~) 75% 안정화
 let month=12;
-while(cc<0 && month<120){month++;cc+=FULL*0.72*CONT-FIX+DEP;if(cc>=0&&!done)done=`M${month} (약 ${(month/12).toFixed(1)}년)`;}
+while(cc<0 && month<120){month++;const g=month<=24?0.72:0.75;cc+=FULL*g*CONT-FIX+DEP;if(cc>=0&&!done)done=`M${month} (약 ${(month/12).toFixed(1)}년)`;}
 console.log(`\nCAPEX(${fk(CAPEX)}만) 누적 현금흐름 회수 시점 = ${done}`);
 console.log(`3년 누적 현금흐름(회수 반영 전) = ${fk(y1cf+y2cf+y3cf)}만`);
