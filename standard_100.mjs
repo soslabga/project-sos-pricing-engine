@@ -9,7 +9,7 @@ let s=[],seat=0,rm=0;const mix={4:0,2:0,1:0};
 s.push(`<svg xmlns="http://www.w3.org/2000/svg" width="1140" height="920" font-family="Malgun Gothic,Pretendard,sans-serif">`);
 s.push(`<rect width="1140" height="920" fill="#fff"/>`);
 s.push(`<text x="160" y="40" font-size="22" font-weight="800" fill="#0f1e3d">분당 100평형 — 120·150평과 동일가(133/78/47만) · 판교와 동일 배치도</text>`);
-s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,670×2,400(풀폭·가로형) · 줄2~3: 4인 3,440×2,900 · 줄4: 2인 2,200×3,600 · 1인 1,890×1,750 · 복도1,100</text>`);
+s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,670×2,400(풀폭·가로형) · 줄2~3: 4인 3,440×2,900 · 줄4: 2인 2,200×3,600 · 1인 1,890×1,750 · 복도1,200</text>`);
 s.push(`<rect x="${X(0)}" y="${Y(0)}" width="${FW*S}" height="${FH*S}" fill="#3a4a63"/>`);
 s.push(`<rect x="${X(0.05)}" y="${Y(0.05)}" width="${(FW-0.1)*S}" height="${(FH-0.1)*S}" fill="#f8fafc" stroke="#0f1e3d" stroke-width="3"/>`);
 const cor=(x,y,w,h,t)=>{
@@ -33,8 +33,8 @@ const room=(x,y,w,h,c,fill,dim,doorSide)=>{
 };
 
 // 우측 복도
-cor(SPINE,2.62,1.1,14.73,'');
-s.push(`<text x="${X(SPINE+0.55)}" y="${Y(9.5)}" font-size="8" fill="#475569" text-anchor="middle" transform="rotate(-90 ${X(SPINE+0.55)} ${Y(9.5)})">복도 1,100 (입구연결)</text>`);
+cor(SPINE-0.1,2.62,1.2,14.73,'');
+s.push(`<text x="${X(SPINE+0.55)}" y="${Y(9.5)}" font-size="8" fill="#475569" text-anchor="middle" transform="rotate(-90 ${X(SPINE+0.55)} ${Y(9.5)})">복도 1,200 (입구연결)</text>`);
 s.push(`<rect x="${X(19)-10}" y="${Y(15.2)}" width="20" height="${2.1*S}" fill="#1d4ed8" stroke="#fff" stroke-width="2"/>`);
 s.push(`<polygon points="${X(19)+22},${Y(16.25)} ${X(19)+2},${Y(16.05)} ${X(19)+2},${Y(16.45)}" fill="#1d4ed8"/>`);
 s.push(`<rect x="${X(19)+24}" y="${Y(16.25)-14}" width="46" height="28" rx="4" fill="#1d4ed8"/>`);
@@ -46,12 +46,12 @@ for(let i=0;i<4;i++){room(x,0.12,3.67,2.4,4,'#e8f0ff','3670×2400','bottom');x+=
 s.push(`<rect x="${X(x)}" y="${Y(0.12)}" width="${3.67*S}" height="${2.4*S}" fill="#f1f1f1" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="6,4"/>`);
 s.push(`<text x="${X(x+1.835)}" y="${Y(1.32)}" font-size="10" fill="#64748b" text-anchor="middle">비정형 손실 구간</text>`);
 s.push(`<text x="${X(x+1.835)}" y="${Y(1.32)+13}" font-size="8.5" fill="#94a3b8" text-anchor="middle">(기둥·경사벽 등 비직사각형 실측 반영, 4인실 1개분 의도적 차감)</text>`);
-cor(0,2.62,SPINE,1.1,'복도 1,100  (양면 — 줄1·줄2)');
+cor(0,2.52,SPINE,1.2,'복도 1,200  (양면 — 줄1·줄2)');
 
 // 줄2,3: 4인 5실씩 (등맞댐) — 문은 각각 인접 복도 방향
 x=0.12;for(let i=0;i<5;i++){room(x,3.82,3.44,2.9,4,'#e8f0ff','3440×2900','top');x+=3.54;}
 x=0.12;for(let i=0;i<5;i++){room(x,6.82,3.44,2.9,4,'#e8f0ff','3440×2900','bottom');x+=3.54;}
-cor(0,9.82,SPINE,1.1,'복도 1,100  (양면 — 줄3·줄4)');
+cor(0,9.72,SPINE,1.2,'복도 1,200  (양면 — 줄3·줄4)');
 
 // 줄4: 2인 4실(깊이3.6) + 1인 8실(4열×2행, 깊이1.75m=1.00평/인) — 판교11.mjs와 동일 배치도
 x=0.12;
@@ -62,7 +62,7 @@ for(let i=0;i<4;i++){
   x+=1.99;
 }
 
-cor(0,14.72,SPINE,0.85,'복도 1,100 (공용 진입)');
+cor(0,14.62,SPINE,0.95,'복도 1,200 (공용 진입)');
 
 // 공용 (1인실 확장분 0.7m 빌려옴)
 const cm=(x,w,n,fl,dim)=>{
