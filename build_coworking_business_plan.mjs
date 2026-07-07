@@ -75,6 +75,34 @@ push(new Paragraph({ alignment:AlignmentType.CENTER, spacing:{after:40}, childre
 push(new Paragraph({ alignment:AlignmentType.CENTER, children:[ new TextRun({ text:"경영기획 / 신사업 검토", size:20, color:GRAY }) ] }));
 push(new Paragraph({ children:[ new PageBreak() ] }));
 
+// ══ 목차 ═════════════════════════════════════════════
+const TOCH=(num,title)=> new Paragraph({ spacing:{before:110,after:16},
+  children:[ new TextRun({ text:`${num}. `, bold:true, size:22, color:NAVY }), new TextRun({ text:title, bold:true, size:22, color:"1a1a1a" }) ] });
+const TOCS=(text)=> new Paragraph({ indent:{left:360}, spacing:{after:8},
+  children:[ new TextRun({ text, size:17, color:GRAY }) ] });
+push(new Paragraph({ spacing:{before:200,after:120}, children:[ new TextRun({ text:"목      차", bold:true, size:34, color:NAVY }) ] }));
+push(new Paragraph({ border:{ bottom:{style:BorderStyle.SINGLE,size:6,color:NAVY,space:6} }, spacing:{after:200} }));
+push(TOCH(1,"추진 배경 및 목적"));
+push(TOCS("1.1 추진 배경 · 1.2 추진 목적 · 1.3 Why Now · 1.4 Why SOSLAB"));
+push(TOCH(2,"시장 분석"));
+push(TOCS("2.1 시장 규모·성장 · 2.2 판교 입지·수급 · 2.3 수요 세그먼트·정량화 · 2.4 경쟁 구도 · 2.5 검색어 수요추정"));
+push(TOCH(3,"사업 추진 방향"));
+push(TOCS("3.1 사업 컨셉 · 3.2 3계층 포지셔닝 · 3.3 경쟁 상대별 차별화 · 3.4 프리미엄 정당화"));
+push(TOCH(4,"공간 구성 계획"));
+push(TOCS("4.1 공간 배치 · 4.2 수용 규모 · 4.3 제공 서비스"));
+push(TOCH(5,"운영 계획"));
+push(TOCS("5.1 1인 운영 방식 · 5.2 조직 구성 · 5.3 입주 프로세스"));
+push(TOCH(6,"마케팅 전략"));
+push(TOCS("6.1 목표 고객 · 6.2 모집 전략 · 6.3 가격 정책"));
+push(TOCH(7,"투자 계획"));
+push(TOCS("7.1 초기 투자비(CAPEX) · 7.2 총 소요자금 · 7.3 투자 일정"));
+push(TOCH(8,"손익 분석"));
+push(TOCS("8.1 손익 구조 · 8.2 다년 손익추정 · 8.3 투자회수 · 8.4 모델별 손익 비교"));
+push(TOCH(9,"리스크 및 대응방안"));
+push(TOCH(10,"추진 일정"));
+push(TOCH(11,"경영진 의사결정 요청 사항"));
+push(new Paragraph({ children:[ new PageBreak() ] }));
+
 // ══ 1. 추진 배경 및 목적 ═════════════════════════════
 push(H(1,"추진 배경 및 목적"));
 push(SH("1.1 추진 배경"));
@@ -155,6 +183,18 @@ push(b1("현장 실사 시사점"));
 push(b2("① 수요 — 방문처 모두 만실이거나 공실 1~2실 수준으로, 소형(1~4인) 독립실 수요가 강함을 1차(현장)로 확인함(검색어 추정 2.5보다 강한 근거)"));
 push(b2("② 공급자 특성(공통점) — 방문처 전부 '1인이 운영'(계약부터 입·퇴실까지 전 과정)하며 운영자가 고령임. 표준화·자본 기반의 다지점 확장 사례는 없음"));
 push(b2("③ 기회 — 수요는 강한데 공급자는 1인·고령·수동 운영에 머물러 있어 세대·시스템의 공백이 존재함. 세련된 시설과 젊고 전문적인 1인 운영으로 진입할 여지가 큼"));
+push(b1("수요 정량화 — 경쟁사 소형 독립실 만실률 약 93% (실측 집계)"));
+push(b2("방문·확인한 경쟁사의 1~4인 독립실 공실 현황을 권역별로 집계한 결과, 확인 가능한 호실 기준 만실률은 약 93%로 빈 방이 거의 없는 초과수요 상태임"));
+push(TBL([
+  ["권역","업체","독립실","공실","만실률"],
+  ["여의도","스파크플러스","28실","1","96.4%"],
+  ["서현/분당","더분당","36실","2","94.4%"],
+  ["야탑","슈가맨워크 2호점","10실","2","80.0%"],
+  ["소계 (확인분)","","74실","5","약 93%"],
+], [18,26,15,12,20]));
+push(b2("이 외 슈가맨워크 1호점(만실)·이든비즈(야탑)·리더스(서현)도 공실이 각 1~5실로 소수에 그쳐 전 권역에서 소형 독립실 공급이 부족함(총 호실 미공개로 만실률 집계에서는 제외)"));
+push(b2("특히 여의도 스파크플러스는 약 2,069평(6,840㎡)의 대형 지점임에도 1~4인 독립실은 28실뿐으로, 프리미엄 대형 브랜드조차 소형 독립실을 소량만 공급하며 그마저 96% 만실임 → 소형 독립실은 구조적 초과수요 세그먼트임"));
+push(NOTE("만실률의 공실·호실 수는 현장 실측 및 배치도 계수 기준(2026년 7월). 슈가맨워크 2호점은 배치도 계수(10실). 이든비즈·리더스·슈가맨워크 1호점은 총 호실 미공개로 만실률 집계에서 제외."));
 push(NOTE("당사 70% 목표 가동률은 현장의 만실·저공실에 비추어 무리한 수준이 아님. 방문 표본은 야탑권 소수 업체 기준으로, 판교역·서현 등 상위 입지는 별도 확인 예정."));
 push(NOTE("출처: CBRE Korea(서울 공유오피스 278센터·63만㎡), 각 사 감사보고서·업계 보도(FF 2024 매출 1,300억·SP 2023 매출 722억), 경기도 판교테크노밸리 실태조사(2022: 입주 1,803개·임직원 7만9천·중기 84.3%·매출 167조), 부동산 리서치(오피스 공실·임대), 중소벤처기업부(소상공인 613만·창업 118만). 글로벌 시장은 Mordor Intelligence."));
 
