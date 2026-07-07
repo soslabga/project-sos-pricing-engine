@@ -1,6 +1,6 @@
 // 100평형 다년 손익추정 — 입주율 램프업 가정(신규 지점 안정화 곡선)
 // 근거 상수는 standard_100.mjs와 동일: 만실 2,608 / 고정비 1,495 / 상각 338 / 공헌율 0.885 / CAPEX 20,250
-const FULL=2608, FIX=1495, DEP=338, CONT=0.885, CAPEX=20250, LAUNCH=200;
+const FULL=2464, FIX=1495, DEP=338, CONT=0.885, CAPEX=20250, LAUNCH=200;
 // Year1 월별 입주율(보수적 램프업): M1 20% → M10 70% 도달 → 안정화
 const occ=[0.20,0.30,0.40,0.48,0.55,0.60,0.64,0.67,0.69,0.70,0.71,0.72];
 const fk=n=>Math.round(n).toLocaleString();
