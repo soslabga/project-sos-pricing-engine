@@ -3,7 +3,9 @@
 // 서식: 번호 배너 헤더 + 양쪽정렬 개조식(내어쓰기) + 이미지·캡션 (레퍼런스 3.사업계획서 매칭)
 import fs from 'fs';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell,
-  WidthType, AlignmentType, BorderStyle, ShadingType, ImageRun, PageBreak, VerticalAlign } from 'docx';
+  WidthType, AlignmentType, BorderStyle, ShadingType, ImageRun, PageBreak, VerticalAlign,
+  Bookmark, InternalHyperlink } from 'docx';
+const secAnchor = num => 's'+num.replace('.','_');
 
 const NAVY="1F3A5F", BAND="E8EEF7", GRAY="667085", LINE="C7CDD6";
 const noBorder = { top:{style:BorderStyle.NONE}, bottom:{style:BorderStyle.NONE}, left:{style:BorderStyle.NONE}, right:{style:BorderStyle.NONE} };
@@ -19,13 +21,18 @@ function BANNER(num, title){
         children:[ new Paragraph({ alignment:AlignmentType.CENTER, children:[ new TextRun({ text:String(num), bold:true, color:"FFFFFF", size:26 }) ] }) ] }),
       new TableCell({ width:{size:91,type:WidthType.PERCENTAGE}, borders:noBorder, shading:{fill:BAND,type:ShadingType.CLEAR,color:"auto"},
         verticalAlign:VerticalAlign.CENTER, margins:{left:200},
-        children:[ new Paragraph({ children:[ new TextRun({ text:title, bold:true, color:NAVY, size:25 }) ] }) ] }),
+        children:[ new Paragraph({ children:[ new Bookmark({ id:`ch${num}`, children:[ new TextRun({ text:title, bold:true, color:NAVY, size:25 }) ] }) ] }) ] }),
     ]})]
   });
 }
 const H = (num,title) => [ new Paragraph({ text:"", spacing:{before:300,after:0} }), BANNER(num,title), new Paragraph({ text:"", spacing:{after:120} }) ];
-// 소제목 (1.1 …)
-const SH = t => new Paragraph({ spacing:{before:220,after:110}, children:[ new TextRun({ text:t, bold:true, size:22, color:NAVY }) ] });
+// 소제목 (1.1 …) — 앞머리 "N.M" 패턴을 북마크 앵커로 자동 부여(목차 클릭이동용)
+const SH = t => {
+  const m = t.match(/^(\d+\.\d+)/);
+  const run = new TextRun({ text:t, bold:true, size:22, color:NAVY });
+  return new Paragraph({ spacing:{before:220,after:110},
+    children:[ m ? new Bookmark({ id:secAnchor(m[1]), children:[run] }) : run ] });
+};
 // 개조식 3계층 (양쪽정렬·내어쓰기)
 const b1 = t => new Paragraph({ spacing:{before:70,after:40}, indent:{left:260,hanging:240}, alignment:AlignmentType.JUSTIFIED,
   children:[ new TextRun({ text:"◦ "+t, bold:true, size:20 }) ] });
@@ -77,9 +84,22 @@ push(new Paragraph({ children:[ new PageBreak() ] }));
 
 // ══ 목차 ═════════════════════════════════════════════
 const TOCH=(num,title)=> new Paragraph({ spacing:{before:110,after:16},
-  children:[ new TextRun({ text:`${num}. `, bold:true, size:22, color:NAVY }), new TextRun({ text:title, bold:true, size:22, color:"1a1a1a" }) ] });
-const TOCS=(text)=> new Paragraph({ indent:{left:360}, spacing:{after:8},
-  children:[ new TextRun({ text, size:17, color:GRAY }) ] });
+  children:[ new InternalHyperlink({ anchor:`ch${num}`, children:[
+    new TextRun({ text:`${num}. `, bold:true, size:22, color:NAVY }),
+    new TextRun({ text:title, bold:true, size:22, color:"1a1a1a" }),
+  ] }) ] });
+// "1.1 제목 · 1.2 제목 …" 문자열을 절별 클릭이동 링크로 분해
+const TOCS=(text)=> {
+  const children=[];
+  text.split(' · ').forEach((seg,i)=>{
+    if(i>0) children.push(new TextRun({ text:' · ', size:17, color:GRAY }));
+    const m = seg.match(/^(\d+\.\d+)\s+(.*)$/);
+    children.push(m
+      ? new InternalHyperlink({ anchor:secAnchor(m[1]), children:[ new TextRun({ text:seg, size:17, color:GRAY }) ] })
+      : new TextRun({ text:seg, size:17, color:GRAY }));
+  });
+  return new Paragraph({ indent:{left:360}, spacing:{after:8}, children });
+};
 push(new Paragraph({ spacing:{before:200,after:120}, children:[ new TextRun({ text:"목      차", bold:true, size:34, color:NAVY }) ] }));
 push(new Paragraph({ border:{ bottom:{style:BorderStyle.SINGLE,size:6,color:NAVY,space:6} }, spacing:{after:200} }));
 push(TOCH(1,"추진 배경 및 목적"));
@@ -535,11 +555,13 @@ const doc = new Document({
 });
 const buf = await Packer.toBuffer(doc);
 const outName = process.env.OUT || '판교권_공유오피스_사업계획서.docx';
+const isAbs = /^[A-Za-z]:[\\/]/.test(outName) || outName.startsWith('/');
+const outPath = isAbs ? outName : 'C:/Users/User/Documents/프로젝트/'+outName;
 try {
-  fs.writeFileSync('C:/Users/User/Documents/프로젝트/'+outName, buf);
-  console.log('저장 완료: '+outName+'  (요소 '+c.length+'개)');
+  fs.writeFileSync(outPath, buf);
+  console.log('저장 완료: '+outPath+'  (요소 '+c.length+'개)');
 } catch(e){
-  const alt = '판교권_공유오피스_사업계획서_v2.docx';
-  fs.writeFileSync('C:/Users/User/Documents/프로젝트/'+alt, buf);
+  const alt = 'C:/Users/User/Documents/프로젝트/판교권_공유오피스_사업계획서_v2.docx';
+  fs.writeFileSync(alt, buf);
   console.log('원본이 열려있어 대체 저장: '+alt+'  (요소 '+c.length+'개)');
 }
