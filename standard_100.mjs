@@ -45,7 +45,7 @@ let x=0.12;
 for(let i=0;i<4;i++){room(x,0.12,3.67,2.4,4,'#e8f0ff','3670×2400','bottom');x+=3.77;}
 s.push(`<rect x="${X(x)}" y="${Y(0.12)}" width="${3.67*S}" height="${2.4*S}" fill="#f1f1f1" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="6,4"/>`);
 s.push(`<text x="${X(x+1.835)}" y="${Y(1.32)}" font-size="10" fill="#64748b" text-anchor="middle">비정형 손실 구간</text>`);
-s.push(`<text x="${X(x+1.835)}" y="${Y(1.32)+13}" font-size="8.5" fill="#94a3b8" text-anchor="middle">(기둥·경사벽 등 비직사각형 실측 반영, 4인실 1개분 의도적 차감)</text>`);
+s.push(`<text x="${X(x+1.835)}" y="${Y(1.32)+13}" font-size="7.5" fill="#94a3b8" text-anchor="middle">(기둥·경사벽 반영, 1실 차감)</text>`);
 cor(0,2.52,SPINE,1.2,'복도 1,200  (양면 — 줄1·줄2)');
 
 // 줄2,3: 4인 5실씩 (등맞댐) — 문은 각각 인접 복도 방향

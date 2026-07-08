@@ -6,7 +6,7 @@ let s=[],seat=0,rm=0;const mix={4:0,2:0,1:0};
 s.push(`<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1160" font-family="Malgun Gothic,Pretendard,sans-serif">`);
 s.push(`<rect width="1240" height="1160" fill="#fff"/>`);
 s.push(`<text x="160" y="40" font-size="22" font-weight="800" fill="#0f1e3d">150평 — 전용 22.0×22.5m=495㎡</text>`);
-s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,540×2,400(풀폭 6열) · 줄2~3: 4인 3,380×2,900(6열) · 줄4: 2인 2,200×3,600 · 1인 1,890×1,750 · 우편·창고 / 줄5: 1인 1,890×1,750×20실 · 복도1,100</text>`);
+s.push(`<text x="160" y="60" font-size="11" fill="#64748b">줄1: 4인 3,540×2,400(풀폭 6열) · 줄2~3: 4인 3,380×2,900(6열) · 줄4: 2인 2,200×3,600 · 1인 1,890×1,750 · 우편·창고 / 줄5: 1인 1,890×1,750×20실 · 복도1,200</text>`);
 s.push(`<rect x="${X(0)}" y="${Y(0)}" width="${FW*S}" height="${FH*S}" fill="#3a4a63"/>`);
 s.push(`<rect x="${X(0.05)}" y="${Y(0.05)}" width="${(FW-0.1)*S}" height="${(FH-0.1)*S}" fill="#f8fafc" stroke="#0f1e3d" stroke-width="3"/>`);
 const cor=(x,y,w,h,t)=>{
@@ -30,8 +30,8 @@ const room=(x,y,w,h,c,fill,dim,doorSide)=>{
 };
 
 // 우측 복도 (y=2.62~19.07)
-cor(SPINE,2.62,1.1,16.45,'');
-s.push(`<text x="${X(SPINE+0.55)}" y="${Y(10)}" font-size="8" fill="#475569" text-anchor="middle" transform="rotate(-90 ${X(SPINE+0.55)} ${Y(10)})">복도 1,100 (입구연결)</text>`);
+cor(SPINE-0.1,2.62,1.2,16.45,'');
+s.push(`<text x="${X(SPINE+0.55)}" y="${Y(10)}" font-size="8" fill="#475569" text-anchor="middle" transform="rotate(-90 ${X(SPINE+0.55)} ${Y(10)})">복도 1,200 (입구연결)</text>`);
 s.push(`<rect x="${X(FW)-10}" y="${Y(20.0)}" width="20" height="${2.0*S}" fill="#1d4ed8" stroke="#fff" stroke-width="2"/>`);
 s.push(`<polygon points="${X(FW)+22},${Y(21.0)} ${X(FW)+2},${Y(20.8)} ${X(FW)+2},${Y(21.2)}" fill="#1d4ed8"/>`);
 s.push(`<rect x="${X(FW)+24}" y="${Y(21.0)-14}" width="46" height="28" rx="4" fill="#1d4ed8"/>`);
@@ -42,15 +42,15 @@ let x=0.12;
 for(let i=0;i<5;i++){room(x,0.12,3.543,2.4,4,'#e8f0ff','3540×2400','bottom');x+=3.643;}
 s.push(`<rect x="${X(x)}" y="${Y(0.12)}" width="${3.543*S}" height="${2.4*S}" fill="#f1f1f1" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="6,4"/>`);
 s.push(`<text x="${X(x+1.77)}" y="${Y(1.32)}" font-size="10" fill="#64748b" text-anchor="middle">비정형 손실 구간</text>`);
-s.push(`<text x="${X(x+1.77)}" y="${Y(1.32)+13}" font-size="8.5" fill="#94a3b8" text-anchor="middle">(기둥·경사벽 등 비직사각형 실측 반영, 4인실 1개분 의도적 차감)</text>`);
-cor(0,2.62,SPINE,1.1,'복도 1,100  (양면 — 줄1·줄2)');
+s.push(`<text x="${X(x+1.77)}" y="${Y(1.32)+13}" font-size="7.5" fill="#94a3b8" text-anchor="middle">(기둥·경사벽 반영, 1실 차감)</text>`);
+cor(0,2.52,SPINE,1.2,'복도 1,200  (양면 — 줄1·줄2)');
 
 // 줄2: 6열 4인 — 문은 복도1(위) 방향
 x=0.12;for(let i=0;i<6;i++){room(x,3.82,3.38,2.9,4,'#e8f0ff','3380×2900','top');x+=3.48;}
 
 // 줄3: 등맞댐 — 문은 복도2(아래) 방향
 x=0.12;for(let i=0;i<6;i++){room(x,6.82,3.38,2.9,4,'#e8f0ff','3380×2900','bottom');x+=3.48;}
-cor(0,9.82,SPINE,1.1,'복도 1,100  (양면 — 줄3·줄4)');
+cor(0,9.72,SPINE,1.2,'복도 1,200  (양면 — 줄3·줄4)');
 
 // 줄4: 2인 3실(깊이3.6) + 1인 12실(6열×2행, 깊이1.75m=1.00평/인) + 우편함·창고(1열)
 x=0.12;
@@ -62,7 +62,7 @@ for(let i=0;i<6;i++){
 }
 room(x,11.02,1.89,1.75,'우편','#fef9c3','1890×1750','top');
 room(x,12.87,1.89,1.75,'창고','#f1f5f4','1890×1750','bottom');
-cor(0,14.72,SPINE,1.1,'복도 1,100  (양면 — 줄4·줄5)');
+cor(0,14.62,SPINE,1.2,'복도 1,200  (양면 — 줄4·줄5)');
 
 // 줄5: 1인실 10열×2행=20실(깊이1.75m=1.00평/인) + 사물함(우측 잔여)
 x=0.12;
@@ -72,7 +72,7 @@ for(let i=0;i<10;i++){
   x+=1.99;
 }
 {const wx=SPINE-x;s.push(`<rect x="${X(x)}" y="${Y(15.82)}" width="${wx*S}" height="${3.6*S}" fill="#e8e8e8" stroke="#1e293b" stroke-width="1.3"/>`);s.push(`<text x="${X(x+wx/2)}" y="${Y(17.62)}" font-size="7" fill="#475569" text-anchor="middle" transform="rotate(-90 ${X(x+wx/2)} ${Y(17.62)})">사물함</text>`);}
-cor(0,19.52,SPINE,0.85,'복도 1,100 (공용 진입)');
+cor(0,19.42,SPINE,0.95,'복도 1,200 (공용 진입)');
 
 // 공용 (줄4·줄5 1인실 확장분 0.6m 추가로 빌려옴)
 const cm=(x,w,n,fl,dim)=>{
