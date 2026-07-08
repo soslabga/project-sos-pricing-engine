@@ -572,14 +572,14 @@ const doc = new Document({
   sections:[{ properties:{ page:{ margin:{ top:1000, bottom:1000, left:1000, right:1000 } } }, children:c }]
 });
 const buf = await Packer.toBuffer(doc);
-const outName = process.env.OUT || '판교권_공유오피스_사업계획서.docx';
+const outName = process.env.OUT || '소형특화_공유오피스_전국확장_사업계획서.docx';
 const isAbs = /^[A-Za-z]:[\\/]/.test(outName) || outName.startsWith('/');
 const outPath = isAbs ? outName : 'C:/Users/User/Documents/프로젝트/'+outName;
 try {
   fs.writeFileSync(outPath, buf);
   console.log('저장 완료: '+outPath+'  (요소 '+c.length+'개)');
 } catch(e){
-  const alt = 'C:/Users/User/Documents/프로젝트/판교권_공유오피스_사업계획서_v2.docx';
+  const alt = 'C:/Users/User/Documents/프로젝트/소형특화_공유오피스_전국확장_사업계획서_v2.docx';
   fs.writeFileSync(alt, buf);
   console.log('원본이 열려있어 대체 저장: '+alt+'  (요소 '+c.length+'개)');
 }
