@@ -102,6 +102,8 @@ const TOCS=(text)=> {
 };
 push(new Paragraph({ spacing:{before:200,after:120}, children:[ new TextRun({ text:"목      차", bold:true, size:34, color:NAVY }) ] }));
 push(new Paragraph({ border:{ bottom:{style:BorderStyle.SINGLE,size:6,color:NAVY,space:6} }, spacing:{after:200} }));
+push(new Paragraph({ spacing:{after:16},
+  children:[ new InternalHyperlink({ anchor:"exec_summary", children:[ new TextRun({ text:"핵심 요약 (Executive Summary)", bold:true, size:22, color:NAVY }) ] }) ] }));
 push(TOCH(1,"추진 배경 및 목적"));
 push(TOCS("1.1 추진 배경 · 1.2 추진 목적 · 1.3 추진 적기 · 1.4 당사 강점"));
 push(TOCH(2,"시장 분석"));
@@ -121,6 +123,25 @@ push(TOCS("8.1 손익 구조 · 8.2 다년 손익추정 · 8.3 투자회수 · 8
 push(TOCH(9,"리스크 및 대응방안"));
 push(TOCH(10,"추진 일정"));
 push(TOCH(11,"경영진 의사결정 요청 사항"));
+push(new Paragraph({ children:[ new PageBreak() ] }));
+
+// ══ 핵심 요약 (Executive Summary, 1페이지) ═══════════════
+push(new Paragraph({ spacing:{before:0,after:120},
+  children:[ new Bookmark({ id:"exec_summary", children:[ new TextRun({ text:"핵심 요약 (Executive Summary)", bold:true, size:34, color:NAVY }) ] }) ] }));
+push(new Paragraph({ border:{ bottom:{style:BorderStyle.SINGLE,size:6,color:NAVY,space:6} }, spacing:{after:180} }));
+push(b1("사업 개요"));
+push(b2("소형 특화(1~4인 독립실) 공유오피스 전국 확장 신사업 — 1호점은 판교권, 이후 표준모델을 전국 주요 업무권역에 순차 복제함"));
+push(b1("핵심 컨셉 — 대형 브랜드와 지역 중소형의 장점만 취합"));
+push(b2("대형 브랜드(FF·SP)의 표준화·시스템·신뢰는 취하되 대형면적·고비용은 배제, 지역 중소형의 소형·저비용은 취하되 비표준·확장불가는 배제함"));
+push(b2("대형 브랜드 대비 이중 차별점 — ① 더 작은 규모(FF·SP의 4분의 1 이하 면적) ② 더 저렴한 단가(4인실 기준 약 -40%). 넓은 라운지·부대시설은 재현하지 않되, 세련된 인테리어로 그 프리미엄 감성만 압축 제공함(대형 브랜드 '맛보기')"));
+push(b1("핵심 재무 지표 (100평형 표준모델, 1호점 기준)"));
+push(TBL([
+  ["초기투자(CAPEX)","총 소요자금","손익분기(BEP)","투자회수","안정화 후 연 현금흐름"],
+  ["약 2.03억원","약 2.83억원","68.6%","약 4.8년","5,000~5,700만원"],
+], [20,20,20,20,20]));
+push(b1("경영진 의사결정 요청 사항 (11장 상세)"));
+push(b2("① 사업 추진 승인 ② 투자예산(CAPEX 약 2.03억) 승인 ③ 매물 확보 권한 위임 ④ 추진 일정(착수 후 4개월 오픈) 승인 ⑤ 1호점 검증 후 전국 확장 방향 사전 공감대"));
+push(NOTE("상세 근거·수치 산출 과정은 본 문서 각 장(2장 시장분석·3장 사업방향·8장 손익분석·11장 의사결정) 참조. 표의 재무 지표는 8.1~8.4의 산출 결과와 동일함."));
 push(new Paragraph({ children:[ new PageBreak() ] }));
 
 // ══ 1. 추진 배경 및 목적 ═════════════════════════════
