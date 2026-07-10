@@ -1,9 +1,10 @@
 ﻿from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.datavalidation import DataValidation
 
-OUT = "C:/tmp/coworking_general_model_v5.zip"
-FINAL = "coworking_general_model_v5.xlsx"
+OUT = "C:/tmp/coworking_general_model_v6.zip"
+FINAL = "coworking_general_model_v6.xlsx"
 COMP = "경쟁사/경쟁사 및 부동산 매물 분석__.xlsx"
 
 ROOMS = [("1인실", 8), ("2인실", 4), ("4인실", 14)]
@@ -134,10 +135,81 @@ def add_size_model(wb):
     add_row('="= 가동률 "&TEXT($B$12,"0%")&" 월손익(만원)"', [f"={c}47-{c}48-{c}49" for c in cols])  # row50
     ws.append([])  # row51
     ws.append(["출처"] + [m[13] for m in SIZE_MODELS])          # row52
+
+    # 빠른 조회 — 지역 티어 x 평형 드롭다운 선택 (F/G열, A:D 표와 완전히 별개 — 기존 행번호 영향 없음)
+    ws["F1"] = "⚡ 빠른 조회 — 지역 티어 × 평형 선택"
+    ws["F2"] = "지역 티어"
+    ws["G2"] = "B. 표준 권역"
+    ws["F3"] = "평형"
+    ws["G3"] = "100평형"
+    ws["F5"] = "4인실 수"
+    ws["G5"] = "=INDEX(B16:D16,MATCH($G$3,$B$15:$D$15,0))"
+    ws["F6"] = "2인실 수"
+    ws["G6"] = "=INDEX(B17:D17,MATCH($G$3,$B$15:$D$15,0))"
+    ws["F7"] = "1인실 수"
+    ws["G7"] = "=INDEX(B18:D18,MATCH($G$3,$B$15:$D$15,0))"
+    ws["F8"] = "실수(호실)"
+    ws["G8"] = "=G5+G6+G7"
+    ws["F9"] = "좌석수"
+    ws["G9"] = "=G5*4+G6*2+G7*1"
+    ws["F10"] = "전용평수"
+    ws["G10"] = "=INDEX(B24:D24,MATCH($G$3,$B$15:$D$15,0))"
+    ws["F11"] = "전용평당월세(만원/평, 티어기준)"
+    ws["G11"] = "=INDEX('02_RentModel'!B31:B35,MATCH($G$2,'02_RentModel'!A31:A35,0))/10000"
+    ws["F12"] = "1인실가(만원, 티어기준)"
+    ws["G12"] = "=INDEX('02_RentModel'!C31:C35,MATCH($G$2,'02_RentModel'!A31:A35,0))/10000"
+    ws["F13"] = "2인실가(만원, 티어기준)"
+    ws["G13"] = "=INDEX('02_RentModel'!D31:D35,MATCH($G$2,'02_RentModel'!A31:A35,0))/10000"
+    ws["F14"] = "4인실가(만원, 티어기준)"
+    ws["G14"] = "=INDEX('02_RentModel'!E31:E35,MATCH($G$2,'02_RentModel'!A31:A35,0))/10000"
+    ws["F15"] = "월세(만원)"
+    ws["G15"] = "=G10*G11"
+    ws["F16"] = "만실매출(만원)"
+    ws["G16"] = "=G5*G14+G6*G13+G7*G12"
+    ws["F17"] = "관리비(만원)"
+    ws["G17"] = "=INDEX(B28:D28,MATCH($G$3,$B$15:$D$15,0))"
+    ws["F18"] = "전기(만원)"
+    ws["G18"] = "=INDEX(B29:D29,MATCH($G$3,$B$15:$D$15,0))"
+    ws["F19"] = "청소(만원)"
+    ws["G19"] = "=INDEX(B30:D30,MATCH($G$3,$B$15:$D$15,0))"
+    ws["F20"] = "운영잡비(만원)"
+    ws["G20"] = "=INDEX(B31:D31,MATCH($G$3,$B$15:$D$15,0))"
+    ws["F21"] = "인건비(만원)"
+    ws["G21"] = "=INDEX(B32:D32,MATCH($G$3,$B$15:$D$15,0))"
+    ws["F22"] = "파트타임 인건비(만원)"
+    ws["G22"] = "=INDEX(B33:D33,MATCH($G$3,$B$15:$D$15,0))"
+    ws["F23"] = "CAPEX 월상각(만원)"
+    ws["G23"] = "=INDEX(B35:D35,MATCH($G$3,$B$15:$D$15,0))"
+    ws["F24"] = "월 고정비 합계(만원)"
+    ws["G24"] = "=G15+G17+G18+G19+G20+G21+G22+G23"
+    ws["F25"] = "변동비율"
+    ws["G25"] = "=$B$9"
+    ws["F26"] = "BEP(손익분기 가동률)"
+    ws["G26"] = "=G24/(G16*(1-G25))"
+    ws["F28"] = '="가동률 "&TEXT($B$11,"0%")&" 월손익(만원)"'
+    ws["G28"] = "=G16*$B$11*(1-G25)-G24"
+    ws["F29"] = '="가동률 "&TEXT($B$12,"0%")&" 월손익(만원)"'
+    ws["G29"] = "=G16*$B$12*(1-G25)-G24"
+    ws["F31"] = "※ 지역 티어(A~E)는 미확보 매물 지역 참고용 가정(전용평당 임대료·권장가만 다름, 면적/room mix는 선택한 평형의 실제 배치도 그대로 적용). 실매물 확정 수치는 왼쪽 B~D열 참조."
+
     style(ws)
     mark(ws, [f"B{r}" for r in range(3, 13)])
     mark(ws, [f"{c}{r}" for c in cols for r in (16, 17, 18, 24, 25, 33)])
     mark(ws, [f"{c}21" for c in ("B", "C")] + [f"{c}22" for c in ("B", "C")] + [f"{c}23" for c in ("B", "C")])
+    mark(ws, ["G2", "G3"])
+    ws.column_dimensions["F"].width = 30
+    ws["G25"].number_format = "0.0%"
+    ws["G26"].number_format = "0.0%"
+
+    dv_tier = DataValidation(type="list", formula1="='02_RentModel'!$A$31:$A$35", allow_blank=False)
+    dv_tier.prompt = "지역 티어를 선택하세요"
+    ws.add_data_validation(dv_tier)
+    dv_tier.add(ws["G2"])
+
+    dv_size = DataValidation(type="list", formula1="=$B$15:$D$15", allow_blank=False)
+    dv_size.prompt = "평형을 선택하세요"
+    ws.add_data_validation(dv_size)
+    dv_size.add(ws["G3"])
 
 
 def add_summary(wb):
@@ -347,6 +419,8 @@ for ws in wb.worksheets:
                 if "BEP" in str(ws.cell(2, c.column).value) or c.coordinate in ("J31", "J32", "J33", "J34", "J35"):
                     c.number_format = "0.0%"
             if ws.title == "00_규모모델" and c.row in (9, 11, 12, 37, 38) and c.column_letter in ("B", "C", "D"):
+                c.number_format = "0.0%"
+            if ws.title == "00_규모모델" and c.coordinate in ("G25", "G26"):
                 c.number_format = "0.0%"
             if ws.title == "01_Summary":
                 if c.row == 17 and c.column_letter in ("B", "C", "D"):
