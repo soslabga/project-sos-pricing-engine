@@ -2,9 +2,16 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.drawing.image import Image as XLImage
+from PIL import Image as PILImage
 
-OUT = "C:/tmp/coworking_general_model_v13.zip"
-FINAL = "coworking_general_model_v13.xlsx"
+OUT = "C:/tmp/coworking_general_model_v14.zip"
+FINAL = "coworking_general_model_v14.xlsx"
+LAYOUT_IMAGES = [
+    ("100평형", "배치도_100평.png"),
+    ("120평형", "배치도_120평.png"),
+    ("150평형", "배치도_150평.png"),
+]
 COMP = "경쟁사/경쟁사 및 부동산 매물 분석__.xlsx"
 
 ROOMS = [("1인실", 8), ("2인실", 4), ("4인실", 14)]
@@ -77,9 +84,32 @@ def mark(ws, cells):
         ws[addr].fill = fill
 
 
+def add_layout(wb):
+    # 100/120/150평형 실제 배치도(SVG→PNG 렌더, 지역명·가격 텍스트 제거된 중립본). 방구성은 00_규모모델 SIZE_MODELS와 정확히 일치(2026-07-10 재검증).
+    ws = wb.create_sheet("00_배치도", 1)
+    ws["A1"] = "규모별(100·120·150평) 배치도 — 실제 배치도 기준(방구성은 00_규모모델과 동일)"
+    ws["A1"].font = Font(bold=True, color="FFFFFF", size=12)
+    ws["A1"].fill = PatternFill("solid", fgColor="1F4E78")
+    ws.column_dimensions["A"].width = 22
+    target_width_px = 1000
+    row_px = 20
+    cur_row = 3
+    for label, filename in LAYOUT_IMAGES:
+        with PILImage.open(filename) as im:
+            w, h = im.size
+        scale = target_width_px / w
+        disp_w, disp_h = target_width_px, round(h * scale)
+        cell = ws.cell(cur_row, 1, f"{label} 배치도")
+        cell.font = Font(bold=True, size=13, color="1F4E78")
+        img = XLImage(filename)
+        img.width, img.height = disp_w, disp_h
+        ws.add_image(img, f"A{cur_row + 1}")
+        cur_row += 1 + (disp_h // row_px) + 3
+
+
 def add_common_assumptions(wb):
     # 공통 가정(정책 상수)은 별도 탭으로 분리 — 00_규모모델 맨 앞은 큰 그림(구성→매출→비용→손익)만 보이게
-    ws = wb.create_sheet("00_공통가정", 1)
+    ws = wb.create_sheet("00_공통가정", 2)
     ws.append(["공통 가정 — 3개 규모 모델(100·120·150평)에 동일 적용되는 정책 상수. 00_규모모델 시트 수식이 이 값들을 참조함"])  # row1
     ws.append(["항목", "값", "근거"])  # row2
     ws.append(["관리비 단가(만원/평)", 1.5, "실측 판교관리비고지서 보수적 중간값"])  # row3
@@ -331,9 +361,9 @@ def add_competitor(wb):
     rows = [
         ("판교", "패스트파이브", "1인실", None, "", None, 0, P1, "공실 없음(정확한 총실수는 원자료 미확인 — 확인 필요)"),
         ("판교", "패스트파이브", "2인실", None, "", None, 0, P2, "공실 없음(정확한 총실수는 원자료 미확인 — 확인 필요)"),
-        ("판교", "패스트파이브", "4인실", 3090000, "[정가]", None, 0, P4, "공실 없음. 1.3 가격비교 기준(-57%). 실거래는 −28% 할인 적용 시 약 2,224,800원(정가 아님)"),
-        ("판교", "패스트파이브", "7인실", 4060000, "[정가]", None, None, None, "5평(0.89평/인), 공실현황 미기재. 실거래가·할인율 미확인"),
-        ("판교", "패스트파이브", "10인실", 5590000, "[정가]", None, None, None, "7평, 공실현황 미기재. 실거래가·할인율 미확인"),
+        ("판교", "패스트파이브", "4인실", 3090000, "[정가]", None, 0, P4, "공실 없음. 1.3 가격비교 기준(-57%). 실거래 할인가 없음 — 정가로 취급"),
+        ("판교", "패스트파이브", "7인실", 4060000, "[정가]", None, None, None, "5평(0.89평/인), 공실현황 미기재. 실거래 할인가 없음 — 정가로 취급"),
+        ("판교", "패스트파이브", "10인실", 5590000, "[정가]", None, None, None, "7평, 공실현황 미기재. 실거래 할인가 없음 — 정가로 취급"),
         ("분당", "스파크플러스", "1인실", None, "", 2, 0, P1, "인당 33만원(파격가) 별도 표기됨"),
         ("분당", "스파크플러스", "2인실", None, "", 4, 0, P2, ""),
         ("분당", "스파크플러스", "4인실", None, "", 5, 0, P4, ""),
@@ -400,6 +430,7 @@ wb.calculation.fullCalcOnLoad = True
 wb.calculation.forceFullCalc = True
 wb.calculation.calcMode = "auto"
 add_size_model(wb)
+add_layout(wb)
 add_common_assumptions(wb)
 add_summary(wb)
 add_rent_model(wb)
