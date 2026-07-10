@@ -321,7 +321,7 @@
       operatingDays:22, hoursPerDay:9, targetUtilization:60,
       targetMargin:35, variableCostRatio:8,
       coworkingMonthlyPerSeat:550000, officeMonthlyPerSeat:550000, seatDensity:0.89, bepUtilization:70, targetOperatingMargin:20,
-      monthlyCoworkingFloor:60,
+      monthlyCoworkingFloor:60, meetingRoomHourlyBase:10000,
       sparkplusYeouidoSeat:650000, sparkplusYeouidoMeetingHalf:180000, sparkplusYeouidoMeetingDay:320000,
       sparkplusR2month:1300000, sparkplusR5month:2700000, sparkplusR8month:3350000,
       fastfivePangyoSeat:550000, fastfivePangyoMeetingHalf:160000, fastfivePangyoMeetingDay:300000,
@@ -349,6 +349,7 @@
       ["targetMargin","목표 영업이익률(%)"], ["variableCostRatio","변동비율(%)"],
       ["coworkingMonthlyPerSeat","공유오피스 월/석 기준가(원)"],
       ["monthlyCoworkingFloor","1개월 상품 공유오피스 대비 하한(%)"],
+      ["meetingRoomHourlyBase","회의실 시간당 기준가(원, 좌석당 — 타 지점 공통)"],
       ["sparkplusYeouidoSeat","여의도 스파크플러스 월/석(원)"],
       ["sparkplusYeouidoMeetingHalf","여의도 스파크플러스 반일 회의실(원)"],
       ["sparkplusYeouidoMeetingDay","여의도 스파크플러스 1일 회의실(원)"],
@@ -531,11 +532,18 @@
       const contributionRate = 1 - variableRate - targetProfitRate;
       const availableHours = totalSeats * n("operatingDays") * n("hoursPerDay");
       const pricingHours = availableHours * targetUtil;
-      const baseHourly = 0; const rawWeightedHourly = 0; const pricingScale = 1;
-      const pricing = rooms;
-      const weightedHourly = 0; const openOfficeHourly = 0;
-      const openOfficeAvailableHours = 0; const openOfficeSellableHours = 0;
-      const breakEvenHourly = 0; const meetingRequiredRevenue = 0;
+      // 시간제(반일/1일/1주/1개월) 룸 가격의 좌석시간당 기준단가 — 실제 운영 기준 시간당 1만원(좌석당), 타 지점 공통
+      const baseHourly = n("meetingRoomHourlyBase");
+      const pricing = rooms.map(function(r){
+        return Object.assign({}, r, { hourly: Math.round(baseHourly * r.capacity * r.premium) });
+      });
+      const pricingRoomSeats = pricing.reduce(function(s,r){ return s + r.seats; }, 0);
+      // 룸 타입별(프리미엄 반영) 좌석시간당 단가를 실제 좌석 구성비로 가중평균
+      const weightedHourly = pricingRoomSeats > 0
+        ? pricing.reduce(function(s,r){ return s + baseHourly * r.premium * r.seats; }, 0) / pricingRoomSeats
+        : baseHourly;
+      const pricingScale = 1; // 프로모션 등 추가 스케일 계수 자리(현재 미적용, 1=조정 없음)
+      const rawWeightedHourly = weightedHourly / pricingScale;
       const maxOccupancyCost = revenueAtTarget * 0.40;
       const rentSaving = n("rent") - effectiveOccupancyCost;
       const purchaseStatus = effectiveOccupancyCost <= maxOccupancyCost ? "Green" : "Yellow";
@@ -550,8 +558,7 @@
         roomSeats, totalCapacity: totalSeats, totalSeats, managerCount, oneManagerPossible, managerCost, cleaningRate, cleaningAreaCost, cleaningDeskCost, cleaningCost,
         isLeaseMode, spaceCost, loanAmount, equityAmount, monthlyInterest, monthlyEquityOpportunityCost, monthlyDepositOpportunityCost, monthlyCapitalCost, acquisitionCost, monthlyAcquisitionCost, monthlyHoldingCost, monthlyAssetUpside, purchaseOccupancyCost, effectiveOccupancyCost, maxOccupancyCost, rentSaving, purchaseStatus,
         operatingCost, fixedCostBeforeInvestment, initialInteriorCost, fitoutPeriodCost, restorationReserve, totalInitialInvestment, monthlyInvestment, investmentMonths, totalUseMonths, contractStatus, financialStatus, fixedCost, requiredProfit, requiredRevenue, requiredVariableCost, contributionRate, baseHourly, rawWeightedHourly, pricingScale,
-        availableHours, pricingHours, meetingRequiredRevenue, breakEvenHourly, pricing, weightedHourly, openOfficeHourly,
-        openOfficeAvailableHours, openOfficeSellableHours,
+        availableHours, pricingHours, pricing, weightedHourly,
         seatDensity, totalSeats, bepUtilRate, bepSeatPrice, recommendedSeatPrice,
         comp4seats, competitorSeatPrice, priceOk, priceDiff, bepUtil, bepOk, marginOk, spaceOk, isGo,
         revenueAtTarget, profitAtTarget, marginAtTarget, status
