@@ -5,8 +5,8 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.drawing.image import Image as XLImage
 from PIL import Image as PILImage
 
-OUT = "C:/tmp/coworking_general_model_v18.zip"
-FINAL = "coworking_general_model_v18.xlsx"
+OUT = "C:/tmp/coworking_general_model_v19.zip"
+FINAL = "coworking_general_model_v19.xlsx"
 LAYOUT_IMAGES = [
     ("100평형", "배치도_100평.png"),
     ("120평형", "배치도_120평.png"),
@@ -348,11 +348,11 @@ def add_sales(wb):
     SM = "'00_규모모델(분당3종)'!"
     CA = "'00_공통가정'!"
     ws.append(["권역 세일즈 인건비 배부"])
-    ws.append(["기준 지점", "시나리오", "권역 세일즈 월 총비용", "담당 지점 수", "지점당 배부비", "BEP", "90% 월영업이익", "비고"])
+    ws.append(["기준 지점", "시나리오", "권역 세일즈 월 총비용(원)", "담당 지점 수", "지점당 배부비(만원)", "BEP", "90% 월영업이익(만원)", "비고"])
     scenarios = [("초기 본사 겸임", 0, 0, "초기 1~2개 지점"), ("3개 지점당 1명", 4500000, 3, "영업 강화"), ("4개 지점당 1명", 4500000, 4, "기준"), ("5개 지점당 1명", 4500000, 5, "비용 효율")]
     for name, cost, branches, note in scenarios:
         row = ws.max_row + 1
-        alloc = "0" if branches == 0 else f"=C{row}/D{row}"
+        alloc = "0" if branches == 0 else f"=C{row}/D{row}/10000"  # C열(원) ÷ 10000 → 00_규모모델!B24(만원)와 단위 통일 후 더함
         ws.append([f"=\"100평형(분당) — \"&{SM}$B$2&\" 기준\"", name, cost, branches, alloc, f"=({SM}B24+E{row})/({SM}B15*(1-{CA}$B$9))", f"={SM}B15*0.9*(1-{CA}$B$9)-({SM}B24+E{row})", note])
     mark(ws, ["C4", "C5", "C6", "D4", "D5", "D6"])
     style(ws)
