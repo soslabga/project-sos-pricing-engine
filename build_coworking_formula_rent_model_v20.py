@@ -5,8 +5,8 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.drawing.image import Image as XLImage
 from PIL import Image as PILImage
 
-OUT = "C:/tmp/coworking_general_model_v19.zip"
-FINAL = "coworking_general_model_v19.xlsx"
+OUT = "C:/tmp/coworking_general_model_v20.zip"
+FINAL = "coworking_general_model_v20.xlsx"
 LAYOUT_IMAGES = [
     ("100평형", "배치도_100평.png"),
     ("120평형", "배치도_120평.png"),
@@ -386,10 +386,10 @@ def add_competitor(wb):
         ("야탑", "이든비즈 야탑센터", "2인실", 500000, "[현장확인]", None, 1, P2, "총실수 미기재"),
         ("야탑", "이든비즈 야탑센터", "3인실", 600000, "[현장확인]", None, 1, None, "총실수 미기재"),
         ("야탑", "이든비즈 야탑센터", "4인실", None, "", None, 0, P4, "공실 없음"),
-        ("분당", "리더스 분당(Regus)", "1인실", None, "", None, 3, P1, "인당 38만원. 1인실만 30% 할인 프로모션 중"),
-        ("분당", "리더스 분당(Regus)", "2인실", None, "", None, 0, P2, "공실 없음"),
-        ("분당", "리더스 분당(Regus)", "3인실", None, "", None, 1, None, ""),
-        ("분당", "리더스 분당(Regus)", "4인실", None, "", None, 0, P4, "공실 없음"),
+        ("분당", "리더스 분당", "1인실", None, "", None, 3, P1, "인당 38만원. 1인실만 30% 할인 프로모션 중"),
+        ("분당", "리더스 분당", "2인실", None, "", None, 0, P2, "공실 없음"),
+        ("분당", "리더스 분당", "3인실", None, "", None, 1, None, ""),
+        ("분당", "리더스 분당", "4인실", None, "", None, 0, P4, "공실 없음"),
         ("분당", "더분당 공유오피스", "1인실", None, "", 23, 0, P1, "가격대 30~40만원, 공실 없음"),
         ("분당", "더분당 공유오피스", "2인실", 600000, "[현장확인]", 8, 1, P2, ""),
         ("분당", "더분당 공유오피스", "4인실", 800000, "[현장확인]", 4, 1, P4, ""),
