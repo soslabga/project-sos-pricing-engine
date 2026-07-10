@@ -5,8 +5,8 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.drawing.image import Image as XLImage
 from PIL import Image as PILImage
 
-OUT = "C:/tmp/coworking_general_model_v15.zip"
-FINAL = "coworking_general_model_v15.xlsx"
+OUT = "C:/tmp/coworking_general_model_v16.zip"
+FINAL = "coworking_general_model_v16.xlsx"
 LAYOUT_IMAGES = [
     ("100평형", "배치도_100평.png"),
     ("120평형", "배치도_120평.png"),
@@ -122,7 +122,7 @@ def add_common_assumptions(wb):
     ws.append(["초기투자비 상각기간(개월)", 60, ""])  # row10
     ws.append(["가동률 시나리오 A", 0.7, "표준 손익 확인용"])  # row11
     ws.append(["가동률 시나리오 B", 0.9, "안정화 이후 손익 확인용"])  # row12
-    ws.append(["가동률 시나리오 C", 0.85, "10_투자회수 탭 회수기간 분석용"])  # row13
+    ws.append(["가동률 시나리오 C", 0.85, "회수기간 계산 전용 가동률. 90%(시나리오B, 안정화 이후 이론적 상한)를 쓰면 회수기간이 낙관적으로 짧게 나오고, 70%(시나리오A, 오픈초기 저가동 구간까지 포함한 평시 손익용)를 쓰면 이미 보수적으로 잡힌 가동률에 회수기간까지 또 보수화되어 과도하게 길게 나옴. '오픈 후 정상궤도 진입 이후 지속가능한 가동률'을 별도 분리"])  # row13
     ws.append(["운전자금(만원)", 500, "pangyo_120.mjs/pangyo_150.mjs 총소요자금(=CAPEX+보증금+운전자금) 계산 근거"])  # row14
     style(ws)
     mark(ws, [f"B{r}" for r in range(3, 15)])
@@ -468,7 +468,7 @@ def add_investment_recovery(wb):
     notes = {
         3: "00_규모모델(분당표준_판교파일럿) 시트 42행 그대로 — 100평형(분당)이 전국 확장 대표값, 120·150평형(판교)은 파일럿 참고",
         4: "00_규모모델(분당표준_판교파일럿)의 만실 기준 월매출 그대로 가져옴(지역 티어 드롭다운 반영값)",
-        5: "00_공통가정의 가동률 시나리오 C(85%) — 기존 70%/90% 시나리오와 별개로 투자회수 분석 전용",
+        5: "00_공통가정의 가동률 시나리오 C(85%) — 90%(이론적 상한)면 회수기간이 낙관적으로, 70%(평시용, 오픈초기 저가동 이미 반영)면 이중 보수화되어 과도하게 길게 나와 회수기간 계산 전용으로 별도 분리(00_공통가정 13행 근거 참조)",
         6: "만실매출 × 85% 가동률",
         7: "00_규모모델(분당표준_판교파일럿)의 변동비율(마케팅+PG 등) 그대로 가져옴",
         8: "월매출 × 변동비율",
