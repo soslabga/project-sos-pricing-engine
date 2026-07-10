@@ -3,8 +3,8 @@ from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 
-OUT = "C:/tmp/coworking_general_model_v11.zip"
-FINAL = "coworking_general_model_v11.xlsx"
+OUT = "C:/tmp/coworking_general_model_v12.zip"
+FINAL = "coworking_general_model_v12.xlsx"
 COMP = "경쟁사/경쟁사 및 부동산 매물 분석__.xlsx"
 
 ROOMS = [("1인실", 8), ("2인실", 4), ("4인실", 14)]
@@ -89,7 +89,7 @@ def add_common_assumptions(wb):
     ws.append(["운영잡비(만원, 정액)", 32, "인터넷4+복합기10+정수기3+CCTV보안12+화재보험3"])  # row7
     ws.append(["기본 인건비(만원, 현장담당 1인)", 350, "유사직무 연봉3600~3800만 기본급+법정부담 약20%"])  # row8
     ws.append(["변동비율(마케팅+PG 등)", 0.115, "마케팅 7% + PG·플랫폼·환불 4.5%"])  # row9
-    ws.append(["CAPEX 상각기간(개월)", 60, ""])  # row10
+    ws.append(["초기투자비 상각기간(개월)", 60, ""])  # row10
     ws.append(["가동률 시나리오 A", 0.7, "표준 손익 확인용"])  # row11
     ws.append(["가동률 시나리오 B", 0.9, "안정화 이후 손익 확인용"])  # row12
     style(ws)
@@ -104,7 +104,7 @@ def add_size_model(wb):
     def add_row(label, values):
         ws.append([label] + values)
 
-    ws.append(["규모별(100·120·150평) 손익 모델 — 지역 티어 하나만 고르면 전체 재계산 (방구성·CAPEX는 각 실매물 배치도 고정, 가격만 티어 반영)"])  # row1
+    ws.append(["규모별(100·120·150평) 손익 모델 — 지역 티어 하나만 고르면 전체 재계산 (방구성·초기투자비는 각 실매물 배치도 고정, 가격만 티어 반영)"])  # row1
     ws.append(["지역 티어 선택", "B. 표준 권역", "", ""])  # row2 — 유일한 드롭다운, 아래 3개 평형 전체에 동시 적용
     ws.append(["항목"] + [m[0] for m in SIZE_MODELS])  # row3
     add_row("4인실 수", [m[4] for m in SIZE_MODELS])            # row4
@@ -113,11 +113,11 @@ def add_size_model(wb):
     add_row("실수(호실)", [f"={c}4+{c}5+{c}6" for c in cols])           # row7
     add_row("좌석수", [f"={c}4*4+{c}5*2+{c}6*1" for c in cols])         # row8
     add_row("전용평수", [m[1] for m in SIZE_MODELS])            # row9
-    add_row("전용평당월세(만원/평, 티어반영)", [f"=INDEX('02_RentModel'!B31:B35,MATCH($B$2,'02_RentModel'!A31:A35,0))/10000" for c in cols])  # row10
+    add_row("전용평당월세(만원/평, 티어반영)", [f"=INDEX('02_임대료모델'!B31:B35,MATCH($B$2,'02_임대료모델'!A31:A35,0))/10000" for c in cols])  # row10
     add_row("월세(만원, 티어반영)", [f"={c}9*{c}10" for c in cols])  # row11
-    add_row("4인실가(만원, 티어반영)", [f"=INDEX('02_RentModel'!E31:E35,MATCH($B$2,'02_RentModel'!A31:A35,0))/10000" for c in cols])  # row12
-    add_row("2인실가(만원, 티어반영)", [f"=INDEX('02_RentModel'!D31:D35,MATCH($B$2,'02_RentModel'!A31:A35,0))/10000" for c in cols])  # row13
-    add_row("1인실가(만원, 티어반영)", [f"=INDEX('02_RentModel'!C31:C35,MATCH($B$2,'02_RentModel'!A31:A35,0))/10000" for c in cols])  # row14
+    add_row("4인실가(만원, 티어반영)", [f"=INDEX('02_임대료모델'!E31:E35,MATCH($B$2,'02_임대료모델'!A31:A35,0))/10000" for c in cols])  # row12
+    add_row("2인실가(만원, 티어반영)", [f"=INDEX('02_임대료모델'!D31:D35,MATCH($B$2,'02_임대료모델'!A31:A35,0))/10000" for c in cols])  # row13
+    add_row("1인실가(만원, 티어반영)", [f"=INDEX('02_임대료모델'!C31:C35,MATCH($B$2,'02_임대료모델'!A31:A35,0))/10000" for c in cols])  # row14
     add_row("만실매출(만원/월)", [f"={c}4*{c}12+{c}5*{c}13+{c}6*{c}14" for c in cols])  # row15
     add_row("관리비(만원)", [f"=ROUND({c}9*{CA}$B$3,0)" for c in cols])  # row16
     add_row("전기(만원)", [f"=ROUND({c}9*{CA}$B$4,0)" for c in cols])  # row17
@@ -125,8 +125,8 @@ def add_size_model(wb):
     add_row("운영잡비(만원)", [f"={CA}$B$7" for c in cols])          # row19
     add_row("인건비(만원)", [f"={CA}$B$8" for c in cols])            # row20
     add_row("파트타임 인건비(만원)", [m[12] for m in SIZE_MODELS])  # row21 — 150평만 파트타임 추가(모델 고유 인력계획, 공통가정 아님)
-    add_row("CAPEX(만원)", [f"=ROUND(({c}9*163+{c}7*7+{c}8*23.65+286)*1.05,0)" for c in cols])  # row22 — 세부 항목별 내역은 standard_100/pangyo_120/pangyo_150.mjs 주석 참조
-    add_row("CAPEX 월상각(만원)", [f"=ROUND({c}22/{CA}$B$10,0)" for c in cols])  # row23
+    add_row("초기투자비(만원)", [f"=ROUND(({c}9*163+{c}7*7+{c}8*23.65+286)*1.05,0)" for c in cols])  # row22 — 세부 항목별 내역은 standard_100/pangyo_120/pangyo_150.mjs 주석 참조
+    add_row("초기투자비 월상각(만원)", [f"=ROUND({c}22/{CA}$B$10,0)" for c in cols])  # row23
     add_row("월 고정비 합계(만원)", [f"={c}11+{c}16+{c}17+{c}18+{c}19+{c}20+{c}21+{c}23" for c in cols])  # row24
     add_row("변동비율(마케팅+PG 등)", [f"={CA}$B$9" for c in cols])  # row25
     add_row("BEP(손익분기 가동률)", [f"={c}24/({c}15*(1-{c}25))" for c in cols])  # row26
@@ -145,7 +145,7 @@ def add_size_model(wb):
     ws.append([])  # row39
     add_row("참고: 실제 계약 월세(만원, 고정)", [m[10] for m in SIZE_MODELS])  # row40 — 지역이 이미 정해진 실계약 임대료. 위 티어반영 월세(row11)와는 별개 참고치
     ws.append(["출처"] + [m[13] for m in SIZE_MODELS])          # row41
-    ws.append(["※ 방구성(4/2/1인실 수)·전용평수·CAPEX는 각 평형의 실제 배치도 기준 고정값이며, 지역 티어(B2)를 바꾸면 전용평당월세·객실가·월세(row10~14)만 재계산됩니다. 지역 티어(A~E) 자체는 미확보 매물 지역 참고용 가정."])  # row42
+    ws.append(["※ 방구성(4/2/1인실 수)·전용평수·초기투자비는 각 평형의 실제 배치도 기준 고정값이며, 지역 티어(B2)를 바꾸면 전용평당월세·객실가·월세(row10~14)만 재계산됩니다. 지역 티어(A~E) 자체는 미확보 매물 지역 참고용 가정."])  # row42
 
     ws["E3"] = "비고"
     notes = {
@@ -167,9 +167,9 @@ def add_size_model(wb):
         19: "운영잡비(인터넷·복합기·정수기·보안·화재보험 등) 고정액 — 3개 평형 동일",
         20: "현장 담당 인건비 1인분 — 3개 평형 동일",
         21: "파트타임 인건비 — 150평형만 인력 추가 운영, 100·120평형은 없음",
-        22: "인테리어·가구·네트워크·설계 등 초기 투자비(CAPEX) — 평수·호실·좌석 규모에 비례해 산정, 실제 시공 실행 결과와 일치 검증됨(2026-07-09)",
-        23: "CAPEX를 60개월(5년)로 나눈 월 상각비",
-        24: "월세+관리비+전기+청소+운영잡비+인건비+파트타임+CAPEX상각을 더한 월 총 고정비",
+        22: "인테리어·가구·네트워크·설계 등 초기투자비 — 평수·호실·좌석 규모에 비례해 산정, 실제 시공 실행 결과와 일치 검증됨(2026-07-09)",
+        23: "초기투자비를 60개월(5년)로 나눈 월 상각비",
+        24: "월세+관리비+전기+청소+운영잡비+인건비+파트타임+초기투자비상각을 더한 월 총 고정비",
         25: "매출 대비 변동비율(마케팅+결제수수료 등, 공통 가정)",
         26: "손익분기 가동률 — 실제 가동률이 이 수치를 넘으면 흑자",
         28: "가동률 시나리오 A(기본 70%) 제목",
@@ -183,7 +183,7 @@ def add_size_model(wb):
         37: "월 총 고정비(위와 동일)",
         38: "가동률 B 시나리오의 월 손익",
         40: "실제로 계약된 월세(고정값) — 위 '티어반영 월세'는 지역 선택에 따른 추정치라 실제 계약월세와 비교해보는 참고용",
-        41: "각 평형의 방 구성·면적·CAPEX 산출 근거 자료",
+        41: "각 평형의 방 구성·면적·초기투자비 산출 근거 자료",
     }
     for r, note in notes.items():
         ws[f"E{r}"] = note
@@ -197,14 +197,14 @@ def add_size_model(wb):
     mark(ws, [f"{c}{r}" for c in cols for r in (4, 5, 6, 9, 21, 40)])
     mark(ws, ["B2"])
 
-    dv_tier = DataValidation(type="list", formula1="='02_RentModel'!$A$31:$A$35", allow_blank=False)
+    dv_tier = DataValidation(type="list", formula1="='02_임대료모델'!$A$31:$A$35", allow_blank=False)
     dv_tier.prompt = "지역 티어를 선택하세요"
     ws.add_data_validation(dv_tier)
     dv_tier.add(ws["B2"])
 
 
 def add_summary(wb):
-    ws = wb.create_sheet("01_Summary")
+    ws = wb.create_sheet("01_요약")
     ws.append(["요약"])
     ws.append(["항목", "내용", "비고"])
     ws.append(["모델", "100·120·150평 임차형 소형특화 공유오피스 (1·2·4인실 중심, 지정석 제외)", "실매물 확정 3개 모델 — 00_규모모델 시트 참조"])
@@ -226,13 +226,13 @@ def add_summary(wb):
     ws.append(["참고 — 미확보 매물 지역 스크리닝용 임대료 티어 시나리오 (면적 100평 가정, 위 3개 실매물 확정모델과는 별개 도구)"])
     ws.append(["티어", "전용평당 월세", "권장 1인실", "권장 2인실", "권장 4인실", "적용 권역", "만실매출", "월 고정비", "BEP", "70% 월손익", "90% 월손익", "판단"])
     for src in range(31, 36):
-        ws.append([f"='02_RentModel'!A{src}", f"='02_RentModel'!B{src}", f"='02_RentModel'!C{src}", f"='02_RentModel'!D{src}", f"='02_RentModel'!E{src}", f"='02_RentModel'!F{src}", f"='02_RentModel'!H{src}", f"='02_RentModel'!I{src}", f"='02_RentModel'!J{src}", f"='02_RentModel'!K{src}", f"='02_RentModel'!L{src}", f"='02_RentModel'!M{src}"])
+        ws.append([f"='02_임대료모델'!A{src}", f"='02_임대료모델'!B{src}", f"='02_임대료모델'!C{src}", f"='02_임대료모델'!D{src}", f"='02_임대료모델'!E{src}", f"='02_임대료모델'!F{src}", f"='02_임대료모델'!H{src}", f"='02_임대료모델'!I{src}", f"='02_임대료모델'!J{src}", f"='02_임대료모델'!K{src}", f"='02_임대료모델'!L{src}", f"='02_임대료모델'!M{src}"])
     # 위 티어 데이터는 row21~25, BEP는 열I
     style(ws)
 
 
 def add_rent_model(wb):
-    ws = wb.create_sheet("02_RentModel")
+    ws = wb.create_sheet("02_임대료모델")
     ws.append(["임대료 표준모델"])
     ws.append(["지역", "파일", "유형", "전용㎡", "월세_만원", "전용평", "전용평당월세_만원", "비고"])
     for item in LISTINGS:
@@ -250,38 +250,38 @@ def add_rent_model(wb):
     ws.append(["티어", "전용평당 월세", "권장 1인실", "권장 2인실", "권장 4인실", "적용 권역", "전용평수", "만실매출", "월 고정비", "BEP", "70% 월손익", "90% 월손익", "판단"])
     for tier, rent, p1, p2, p4, desc, decision in TIERS:
         row = ws.max_row + 1
-        ws.append([tier, rent, p1, p2, p4, desc, "='04_CAPEX'!B3", f"='03_Revenue'!B3*C{row}+'03_Revenue'!B4*D{row}+'03_Revenue'!B5*E{row}", f"=G{row}*B{row}+'04_CAPEX'!B17", f"=I{row}/(H{row}*(1-'04_CAPEX'!B18))", f"=H{row}*0.7*(1-'04_CAPEX'!B18)-I{row}", f"=H{row}*0.9*(1-'04_CAPEX'!B18)-I{row}", decision])
+        ws.append([tier, rent, p1, p2, p4, desc, "='04_초기투자비'!B3", f"='03_매출'!B3*C{row}+'03_매출'!B4*D{row}+'03_매출'!B5*E{row}", f"=G{row}*B{row}+'04_초기투자비'!B17", f"=I{row}/(H{row}*(1-'04_초기투자비'!B18))", f"=H{row}*0.7*(1-'04_초기투자비'!B18)-I{row}", f"=H{row}*0.9*(1-'04_초기투자비'!B18)-I{row}", decision])
     mark(ws, [f"B{i}" for i in range(31, 36)] + [f"C{i}" for i in range(31, 36)] + [f"D{i}" for i in range(31, 36)] + [f"E{i}" for i in range(31, 36)])
     style(ws)
 
 
 def add_revenue(wb):
-    ws = wb.create_sheet("03_Revenue")
+    ws = wb.create_sheet("03_매출")
     ws.append(["객실 수량 및 티어별 매출"])
     ws.append(["객실", "실수", "비고"])
     for name, count in ROOMS:
         ws.append([name, count, "수량 입력값"])
     mark(ws, ["B3", "B4", "B5"])
     ws.append([])
-    ws.append(["가격/매출 기준", "02_RentModel의 임대료 티어별 권장 가격을 사용", "지역/임대료 티어에 따라 만실매출 변동"])
+    ws.append(["가격/매출 기준", "02_임대료모델의 임대료 티어별 권장 가격을 사용", "지역/임대료 티어에 따라 만실매출 변동"])
     ws.append([])
     ws.append(["티어", "1인실가", "2인실가", "4인실가", "만실매출", "계산식"])
     for src in range(31, 36):
-        ws.append([f"='02_RentModel'!A{src}", f"='02_RentModel'!C{src}", f"='02_RentModel'!D{src}", f"='02_RentModel'!E{src}", f"=B3*B{ws.max_row+1}+B4*C{ws.max_row+1}+B5*D{ws.max_row+1}", "1인실수*1인실가 + 2인실수*2인실가 + 4인실수*4인실가"])
+        ws.append([f"='02_임대료모델'!A{src}", f"='02_임대료모델'!C{src}", f"='02_임대료모델'!D{src}", f"='02_임대료모델'!E{src}", f"=B3*B{ws.max_row+1}+B4*C{ws.max_row+1}+B5*D{ws.max_row+1}", "1인실수*1인실가 + 2인실수*2인실가 + 4인실수*4인실가"])
     style(ws)
 
 
 def add_capex(wb):
-    ws = wb.create_sheet("04_CAPEX")
-    ws.append(["CAPEX 및 고정비 상세"])
+    ws = wb.create_sheet("04_초기투자비")
+    ws.append(["초기투자비 및 고정비 상세"])
     ws.append(["항목", "금액/값", "단위", "산정 근거"])
     ws.append(["전용평수", 100, "평", "표준모델 면적"])
-    ws.append(["상각기간", 60, "개월", "CAPEX 월상각 기준"])
+    ws.append(["상각기간", 60, "개월", "초기투자비 월상각 기준"])
     start = ws.max_row + 1
     for item in CAPEX_ITEMS:
         ws.append([item[0], item[1], "원", item[2]])
-    ws.append(["CAPEX 합계", f"=SUM(B{start}:B{start+len(CAPEX_ITEMS)-1})", "원", "세부항목 합계"])
-    ws.append(["CAPEX 월상각", f"=B{start+len(CAPEX_ITEMS)}/B4", "원", "CAPEX 합계 / 상각기간"])
+    ws.append(["초기투자비 합계", f"=SUM(B{start}:B{start+len(CAPEX_ITEMS)-1})", "원", "세부항목 합계"])
+    ws.append(["초기투자비 월상각", f"=B{start+len(CAPEX_ITEMS)}/B4", "원", "초기투자비 합계 / 상각기간"])
     ws.append(["관리비 단가", 30000, "원/평", "월 관리비 가정"])
     ws.append(["전기·냉난방 단가", 8000, "원/평", "월 유틸리티 가정"])
     ws.append(["관리비 월액", "=B3*B12", "원", "전용평수 x 관리비 단가"])
@@ -296,32 +296,32 @@ def add_capex(wb):
 
 
 def add_pl(wb):
-    ws = wb.create_sheet("05_PL")
+    ws = wb.create_sheet("05_손익")
     ws.append(["입주율/공실률별 손익"])
     ws.append(["티어", "입주율", "공실률", "만실매출", "월매출", "월 고정비", "변동비", "월영업이익", "연영업이익"])
     out = 3
     for src in range(31, 36):
         for occ in [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
-            ws.append([f"='02_RentModel'!A{src}", occ, f"=1-B{out}", f"='02_RentModel'!H{src}", f"=D{out}*B{out}", f"='02_RentModel'!I{src}", f"=E{out}*'04_CAPEX'!B18", f"=E{out}-F{out}-G{out}", f"=H{out}*12"])
+            ws.append([f"='02_임대료모델'!A{src}", occ, f"=1-B{out}", f"='02_임대료모델'!H{src}", f"=D{out}*B{out}", f"='02_임대료모델'!I{src}", f"=E{out}*'04_초기투자비'!B18", f"=E{out}-F{out}-G{out}", f"=H{out}*12"])
             out += 1
     style(ws)
 
 
 def add_sales(wb):
-    ws = wb.create_sheet("06_Sales")
+    ws = wb.create_sheet("06_영업인력")
     ws.append(["권역 세일즈 인건비 배부"])
     ws.append(["기준 지점", "시나리오", "권역 세일즈 월 총비용", "담당 지점 수", "지점당 배부비", "BEP", "90% 월영업이익", "비고"])
     scenarios = [("초기 본사 겸임", 0, 0, "초기 1~2개 지점"), ("3개 지점당 1명", 4500000, 3, "영업 강화"), ("4개 지점당 1명", 4500000, 4, "기준"), ("5개 지점당 1명", 4500000, 5, "비용 효율")]
     for name, cost, branches, note in scenarios:
         row = ws.max_row + 1
         alloc = "0" if branches == 0 else f"=C{row}/D{row}"
-        ws.append(["B. 표준 권역 100평 지점", name, cost, branches, alloc, f"=('02_RentModel'!I32+E{row})/('02_RentModel'!H32*(1-'04_CAPEX'!B18))", f"='02_RentModel'!H32*0.9*(1-'04_CAPEX'!B18)-('02_RentModel'!I32+E{row})", note])
+        ws.append(["B. 표준 권역 100평 지점", name, cost, branches, alloc, f"=('02_임대료모델'!I32+E{row})/('02_임대료모델'!H32*(1-'04_초기투자비'!B18))", f"='02_임대료모델'!H32*0.9*(1-'04_초기투자비'!B18)-('02_임대료모델'!I32+E{row})", note])
     mark(ws, ["C4", "C5", "C6", "D4", "D5", "D6"])
     style(ws)
 
 
 def add_competitor(wb):
-    ws = wb.create_sheet("07_Competitor")
+    ws = wb.create_sheet("07_경쟁사분석")
     ws.append(["경쟁사 분석 정리 — 호실별 공실 현황 (경쟁사 및 부동산 매물 분석__.xlsx 원자료 기준, 2026-07-09 정리)"])
     ws.append(["지역", "경쟁사", "호실유형", "경쟁사 월가(원)", "총호실수", "공실수", "공실률", "SOS 비교가(원)", "비고"])
     P1, P2, P4 = "='00_규모모델'!B14*10000", "='00_규모모델'!B13*10000", "='00_규모모델'!B12*10000"
@@ -368,14 +368,14 @@ def add_competitor(wb):
 
 
 def add_source_and_check(wb):
-    ws = wb.create_sheet("08_RE_Source")
+    ws = wb.create_sheet("08_부동산원자료")
     ws.append(["부동산 매물 원자료"])
     ws.append(["지역", "파일", "유형", "전용㎡", "월세_만원", "전용평", "전용평당월세_만원", "비고"])
     for item in LISTINGS:
         row = ws.max_row + 1
         ws.append([item[0], item[1], item[2], item[3], item[4], f"=D{row}/3.3058", f"=E{row}/F{row}", item[5]])
     style(ws)
-    ws = wb.create_sheet("09_Check")
+    ws = wb.create_sheet("09_검산")
     ws.append(["수동 검산표"])
     ws.append(["티어", "1인실가", "2인실가", "4인실가", "만실매출", "월고정비", "BEP", "70% 월손익", "90% 월손익"])
     area, mgmt, util, capex_month, common, var = 100, 30000, 8000, 202500000 / 60, 3700000, 0.115
@@ -407,14 +407,14 @@ for ws in wb.worksheets:
         for c in row:
             if isinstance(c.value, (int, float)) or (isinstance(c.value, str) and c.value.startswith("=")):
                 c.number_format = "#,##0"
-            if ws.title in ("02_RentModel", "05_PL", "06_Sales", "09_Check") and c.column_letter in ("B", "C", "G", "J"):
+            if ws.title in ("02_임대료모델", "05_손익", "06_영업인력", "09_검산") and c.column_letter in ("B", "C", "G", "J"):
                 if "BEP" in str(ws.cell(2, c.column).value) or c.coordinate in ("J31", "J32", "J33", "J34", "J35"):
                     c.number_format = "0.0%"
             if ws.title == "00_공통가정" and c.row in (9, 11, 12) and c.column_letter == "B":
                 c.number_format = "0.0%"
             if ws.title == "00_규모모델" and c.row in (25, 26) and c.column_letter in ("B", "C", "D"):
                 c.number_format = "0.0%"
-            if ws.title == "01_Summary":
+            if ws.title == "01_요약":
                 if c.row == 17 and c.column_letter in ("B", "C", "D"):
                     c.number_format = "0.0%"
                 if 21 <= c.row <= 25 and c.column_letter == "I":
