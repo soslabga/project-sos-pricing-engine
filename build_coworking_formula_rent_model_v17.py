@@ -5,8 +5,8 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.drawing.image import Image as XLImage
 from PIL import Image as PILImage
 
-OUT = "C:/tmp/coworking_general_model_v16.zip"
-FINAL = "coworking_general_model_v16.xlsx"
+OUT = "C:/tmp/coworking_general_model_v17.zip"
+FINAL = "coworking_general_model_v17.xlsx"
 LAYOUT_IMAGES = [
     ("100평형", "배치도_100평.png"),
     ("120평형", "배치도_120평.png"),
@@ -286,7 +286,7 @@ def add_rent_model(wb):
     ws.append(["티어", "전용평당 월세", "권장 1인실", "권장 2인실", "권장 4인실", "적용 권역", "전용평수", "만실매출", "월 고정비", "BEP", "70% 월손익", "90% 월손익", "판단"])
     for tier, rent, p1, p2, p4, desc, decision in TIERS:
         row = ws.max_row + 1
-        ws.append([tier, rent, p1, p2, p4, desc, "='04_초기투자비'!B3", f"='03_매출'!B3*C{row}+'03_매출'!B4*D{row}+'03_매출'!B5*E{row}", f"=G{row}*B{row}+'04_초기투자비'!B17", f"=I{row}/(H{row}*(1-'04_초기투자비'!B18))", f"=H{row}*0.7*(1-'04_초기투자비'!B18)-I{row}", f"=H{row}*0.9*(1-'04_초기투자비'!B18)-I{row}", decision])
+        ws.append([tier, rent, p1, p2, p4, desc, "='04_초기투자비(구버전_참고용)'!B3", f"='03_매출'!B3*C{row}+'03_매출'!B4*D{row}+'03_매출'!B5*E{row}", f"=G{row}*B{row}+'04_초기투자비(구버전_참고용)'!B17", f"=I{row}/(H{row}*(1-'04_초기투자비(구버전_참고용)'!B18))", f"=H{row}*0.7*(1-'04_초기투자비(구버전_참고용)'!B18)-I{row}", f"=H{row}*0.9*(1-'04_초기투자비(구버전_참고용)'!B18)-I{row}", decision])
     mark(ws, [f"B{i}" for i in range(31, 36)] + [f"C{i}" for i in range(31, 36)] + [f"D{i}" for i in range(31, 36)] + [f"E{i}" for i in range(31, 36)])
     style(ws)
 
@@ -308,8 +308,8 @@ def add_revenue(wb):
 
 
 def add_capex(wb):
-    ws = wb.create_sheet("04_초기투자비")
-    ws.append(["초기투자비 및 고정비 상세"])
+    ws = wb.create_sheet("04_초기투자비(구버전_참고용)")
+    ws.append(["초기투자비 및 고정비 상세 — ⚠️ 본 시트는 00_규모모델(분당표준_판교파일럿) 도입 전 구버전 참고자료이며, 관리비 단가(30,000원/평)는 00_공통가정(15,000원/평)과 다름. 최신 수치는 00_규모모델·10_투자회수 시트를 참조할 것"])
     ws.append(["항목", "금액/값", "단위", "산정 근거"])
     ws.append(["전용평수", 100, "평", "표준모델 면적"])
     ws.append(["상각기간", 60, "개월", "초기투자비 월상각 기준"])
@@ -338,20 +338,22 @@ def add_pl(wb):
     out = 3
     for src in range(31, 36):
         for occ in [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
-            ws.append([f"='02_임대료모델'!A{src}", occ, f"=1-B{out}", f"='02_임대료모델'!H{src}", f"=D{out}*B{out}", f"='02_임대료모델'!I{src}", f"=E{out}*'04_초기투자비'!B18", f"=E{out}-F{out}-G{out}", f"=H{out}*12"])
+            ws.append([f"='02_임대료모델'!A{src}", occ, f"=1-B{out}", f"='02_임대료모델'!H{src}", f"=D{out}*B{out}", f"='02_임대료모델'!I{src}", f"=E{out}*'04_초기투자비(구버전_참고용)'!B18", f"=E{out}-F{out}-G{out}", f"=H{out}*12"])
             out += 1
     style(ws)
 
 
 def add_sales(wb):
     ws = wb.create_sheet("06_영업인력")
+    SM = "'00_규모모델(분당표준_판교파일럿)'!"
+    CA = "'00_공통가정'!"
     ws.append(["권역 세일즈 인건비 배부"])
     ws.append(["기준 지점", "시나리오", "권역 세일즈 월 총비용", "담당 지점 수", "지점당 배부비", "BEP", "90% 월영업이익", "비고"])
     scenarios = [("초기 본사 겸임", 0, 0, "초기 1~2개 지점"), ("3개 지점당 1명", 4500000, 3, "영업 강화"), ("4개 지점당 1명", 4500000, 4, "기준"), ("5개 지점당 1명", 4500000, 5, "비용 효율")]
     for name, cost, branches, note in scenarios:
         row = ws.max_row + 1
         alloc = "0" if branches == 0 else f"=C{row}/D{row}"
-        ws.append(["B. 표준 권역 100평 지점", name, cost, branches, alloc, f"=('02_임대료모델'!I32+E{row})/('02_임대료모델'!H32*(1-'04_초기투자비'!B18))", f"='02_임대료모델'!H32*0.9*(1-'04_초기투자비'!B18)-('02_임대료모델'!I32+E{row})", note])
+        ws.append([f"=\"100평형(분당) — \"&{SM}$B$2&\" 기준\"", name, cost, branches, alloc, f"=({SM}B24+E{row})/({SM}B15*(1-{CA}$B$9))", f"={SM}B15*0.9*(1-{CA}$B$9)-({SM}B24+E{row})", note])
     mark(ws, ["C4", "C5", "C6", "D4", "D5", "D6"])
     style(ws)
 
@@ -522,6 +524,8 @@ for ws in wb.worksheets:
             if ws.title in ("02_임대료모델", "05_손익", "06_영업인력", "09_검산") and c.column_letter in ("B", "C", "G", "J"):
                 if "BEP" in str(ws.cell(2, c.column).value) or c.coordinate in ("J31", "J32", "J33", "J34", "J35"):
                     c.number_format = "0.0%"
+            if ws.title == "06_영업인력" and c.column_letter == "F" and c.row >= 3:
+                c.number_format = "0.0%"
             if ws.title == "00_공통가정" and c.row in (9, 11, 12, 13) and c.column_letter == "B":
                 c.number_format = "0.0%"
             if ws.title == "00_규모모델(분당표준_판교파일럿)" and c.row in (25, 26) and c.column_letter in ("B", "C", "D"):
