@@ -22,3 +22,7 @@ test("예약 안내 문자에 고객·금액·코드·주차 안내가 포함됨
   assert.match(message, /라운지에 있는 태블릿/);
 });
 
+test("인증번호 문자는 SMS 길이 이내", () => {
+  const text = `[SOS] 인증번호 123456 (5분 유효)`;
+  assert.ok(Buffer.byteLength(text, "utf8") <= 90);
+});
