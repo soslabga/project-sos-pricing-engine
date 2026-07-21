@@ -1,4 +1,4 @@
-﻿import { test, expect } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
 const runId = Date.now();
 
@@ -7,6 +7,12 @@ test("전체 예약 플로우와 mock SMS 토스트", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /일할 공간이 필요할 때/ })).toBeVisible();
   await page.locator("#booking").scrollIntoViewIfNeeded();
   await page.getByTestId("room-next").click();
+  await expect(page.getByTestId("calculated-price")).toHaveText("25,000원");
+  const dayEnd = await page.getByTestId("estimated-end").innerText();
+  await page.getByTestId("unit-week").click();
+  await expect(page.getByTestId("calculated-price")).toHaveText("125,000원");
+  await expect(page.getByTestId("estimated-end")).not.toHaveText(dayEnd);
+  await page.getByTestId("unit-day").click();
   await expect(page.getByTestId("calculated-price")).toHaveText("25,000원");
   await page.getByTestId("schedule-next").click();
   await page.getByTestId("name-input").fill("김소스");
@@ -35,8 +41,27 @@ test("동일 룸·시간 중복 예약을 화면에서 차단", async ({ page, r
   await expect(page.getByTestId("calculated-price")).toHaveText("13,400원");
   await page.screenshot({ path: `evidence/booking-ui-${runId}.png`, fullPage: true });
 });
-
-
-
-
-
+test("SMS 인증 후 내 예약 조회·생활안내·취소", async ({ page, request }) => {
+  const name = `조회테스트${runId}`;
+  const phone = "01077778888";
+  const startAt = "2041-06-10T00:00:00.000Z";
+  const created = await request.post("/api/bookings", { data: { roomId: 4, category: "private", unit: "day", quantity: 1, startAt, customerName: name, phone } });
+  expect(created.status()).toBe(201);
+  await page.goto("/#my-bookings");
+  await page.getByTestId("lookup-name").fill(name);
+  await page.getByTestId("lookup-phone").fill(phone);
+  await page.getByTestId("request-code-button").click();
+  const notice = await page.getByTestId("lookup-notice").innerText();
+  const code = notice.match(/\d{6}/)?.[0];
+  expect(code).toBeTruthy();
+  await page.getByTestId("verification-code").fill(code);
+  await page.getByTestId("verify-code-button").click();
+  await expect(page.getByTestId("booking-history-card")).toContainText("매일 저녁 6시에 청소가 진행됩니다.");
+  await expect(page.getByTestId("booking-history-card")).toContainText("환불 예정");
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByTestId("cancel-booking").click();
+  await expect(page.getByTestId("booking-history-card")).toContainText("취소 완료");
+  const replacement = await request.post("/api/bookings", { data: { roomId: 4, category: "private", unit: "day", quantity: 1, startAt, customerName: "재판매 확인", phone: "01099990000" } });
+  expect(replacement.status()).toBe(201);
+  await page.screenshot({ path: `evidence/my-booking-${runId}.png`, fullPage: true });
+});

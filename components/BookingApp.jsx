@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { PRICE_TABLE } from "../lib/pricing";
+import { calculateEnd, PRICE_TABLE } from "../lib/pricing";
+import MyBookings from "./MyBookings";
 
 const roomTypes = [
   {
@@ -59,6 +60,20 @@ function formatMoney(value) {
   return `${Number(value).toLocaleString("ko-KR")}원`;
 }
 
+function formatDateTime(iso) {
+  const parts = new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date(iso));
+  const value = (type) => parts.find((part) => part.type === type)?.value;
+  return `${value("year")}.${value("month")}.${value("day")} ${value("hour")}:${value("minute")}`;
+}
+
 export default function BookingApp() {
   const [rooms, setRooms] = useState([]);
   const [step, setStep] = useState(1);
@@ -96,6 +111,20 @@ export default function BookingApp() {
     const price = PRICE_TABLE[category]?.[unit];
     return Number.isInteger(price) ? price * quantity : 0;
   }, [category, unit, quantity]);
+  const reservationStartAt = useMemo(() => {
+    if (!date) return null;
+    const localTime = category === "multi_a" ? time : "09:00";
+    const start = new Date(`${date}T${localTime}:00+09:00`);
+    return Number.isNaN(start.getTime()) ? null : start.toISOString();
+  }, [category, date, time]);
+  const estimatedEndAt = useMemo(() => {
+    if (!reservationStartAt) return null;
+    try {
+      return calculateEnd(reservationStartAt, unit, quantity);
+    } catch {
+      return null;
+    }
+  }, [reservationStartAt, unit, quantity]);
 
   function selectCategory(nextCategory) {
     setCategory(nextCategory);
@@ -119,8 +148,8 @@ export default function BookingApp() {
     if (phone.replace(/\D/g, "").length < 10) return setError("휴대폰 번호를 정확히 입력해 주세요.");
     if (!consent) return setError("개인정보 수집·이용과 이용약관에 동의해 주세요.");
     setLoading(true);
-    const localTime = category === "multi_a" ? time : "09:00";
-    const startAt = new Date(`${date}T${localTime}:00+09:00`).toISOString();
+    const startAt = reservationStartAt;
+    if (!startAt) { setLoading(false); return setError("이용 시작일을 입력해 주세요."); }
     try {
       const response = await fetch("/api/bookings", {
         method: "POST",
@@ -155,6 +184,7 @@ export default function BookingApp() {
         <nav aria-label="주요 메뉴">
           <a href="#space">공간 소개</a>
           <a href="#booking">예약하기</a>
+          <a href="#my-bookings">내 예약</a>
         </nav>
         <a className="header-cta" href="#booking">지금 예약</a>
       </header>
@@ -269,6 +299,7 @@ export default function BookingApp() {
                     </select>
                   </label>
                 </div>
+                <div className="end-summary"><span>예상 종료일시</span><strong data-testid="estimated-end">{estimatedEndAt ? formatDateTime(estimatedEndAt) : "-"}</strong></div>
                 <div className="price-summary"><span>예상 결제금액<small>부가세 포함</small></span><strong data-testid="calculated-price">{formatMoney(amount)}</strong></div>
                 <div className="panel-actions"><button className="button ghost" onClick={() => goTo(1)}>이전</button><button className="button primary" data-testid="schedule-next" onClick={() => goTo(3)}>결제 정보 입력 <span>→</span></button></div>
               </div>
@@ -305,6 +336,7 @@ export default function BookingApp() {
         </div>
       </section>
 
+      <MyBookings />
       <footer><div className="brand light"><span className="brand-mark">S</span><span>PROJECT <b>SOS</b></span></div><div className="footer-links"><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">취소·환불</a></div><span>© 2026 PROJECT SOS · 판교점</span></footer>
       {toast && <div className="toast" role="status" data-testid="sms-toast"><span>✓</span>{toast}</div>}
     </main>

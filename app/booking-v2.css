@@ -34,6 +34,9 @@
 .choice.selected { border-color:#0967ff; box-shadow:0 0 0 2px rgba(9,103,255,.1); }
 .choice-icon { background:#071d3f; }
 .segment button.selected { color:#0967ff; }
+.end-summary { display:flex; align-items:center; justify-content:space-between; margin:10px 0 12px; padding:16px 20px; border:1px solid var(--line); border-radius:9px; background:#fff; }
+.end-summary span { color:var(--muted); font-size:12px; font-weight:800; }
+.end-summary strong { color:#071d3f; font-size:18px; letter-spacing:-.02em; }
 .price-summary { border-radius:9px; background:#effcff; border:1px solid rgba(0,205,230,.22); }
 .price-summary strong { color:#071d3f; }
 .consent-box { display:grid; grid-template-columns:20px 1fr; gap:10px; align-items:start; margin:0 0 16px; padding:14px; border:1px solid var(--line); border-radius:8px; background:#f8fafc; cursor:pointer; }

@@ -1,8 +1,9 @@
-﻿import "./globals.css";
+import "./globals.css";
 import "./policy.css";
 import "./booking-v2.css";
 import "./guide.css";
 import "./codes.css";
+import "./my-bookings.css";
 
 export const metadata = {
   title: "Project SOS | 판교 무인 업무공간",
