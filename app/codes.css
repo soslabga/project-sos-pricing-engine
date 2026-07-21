@@ -1,0 +1,5 @@
+.access-code-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:28px 0 20px; }
+.access-code-grid .access-code { margin:0; padding:22px 12px; }
+.access-code-grid .access-code strong { font-size:30px; letter-spacing:.12em; padding-left:.12em; }
+.access-code-grid > small { grid-column:1/-1; color:var(--muted); font-size:9px; }
+@media(max-width:520px){.access-code-grid{grid-template-columns:1fr}.access-code-grid>small{grid-column:auto}}

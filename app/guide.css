@@ -1,0 +1,10 @@
+.guide-section { padding:100px max(24px,calc((100vw - var(--max-width))/2)); background:#f4f7fb; }
+.guide-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.guide-grid article { min-height:220px; padding:25px; border:1px solid #d8e1eb; border-radius:14px; background:white; box-shadow:0 4px 14px rgba(6,27,58,.035); }
+.guide-grid article > span { width:34px; height:34px; display:grid; place-items:center; margin-bottom:42px; border-radius:50%; background:#eaf8fc; color:#0967ff; font-size:10px; font-weight:900; }
+.guide-grid h3 { margin:0 0 11px; color:#071d3f; font-size:17px; }
+.guide-grid p { margin:0; color:#647080; font-size:12px; line-height:1.7; }
+.guide-links { display:flex; justify-content:flex-end; gap:24px; margin-top:24px; }
+.guide-links a { color:#1f4e79; font-size:12px; font-weight:800; border-bottom:1px solid #1f4e79; padding-bottom:3px; }
+@media(max-width:860px){.guide-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.guide-section{padding-block:72px}.guide-grid{grid-template-columns:1fr}.guide-grid article{min-height:auto}.guide-grid article>span{margin-bottom:22px}.guide-links{justify-content:flex-start;flex-wrap:wrap}}

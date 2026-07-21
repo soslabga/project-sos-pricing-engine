@@ -1,0 +1,19 @@
+.policy-page { min-height:100vh; background:#f7f9fc; }
+.policy-header { height:78px; max-width:980px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(7,29,63,.14); }
+.policy-header > a:last-child { font-size:12px; font-weight:800; color:#1f4e79; }
+.policy-document { max-width:860px; margin:0 auto; padding:76px 24px 100px; }
+.policy-document h1 { margin:0 0 8px; color:#071d3f; font-size:48px; letter-spacing:-.05em; }
+.policy-effective { margin:0 0 54px; color:#647080; font-size:12px; }
+.policy-document section { margin-top:36px; padding-top:30px; border-top:1px solid rgba(7,29,63,.14); }
+.policy-document h2 { margin:0 0 15px; color:#071d3f; font-size:20px; }
+.policy-document p,.policy-document li { color:#415a75; font-size:14px; line-height:1.85; }
+.policy-document ul { padding-left:20px; }
+.policy-table { display:grid; border:1px solid rgba(7,29,63,.14); }
+.policy-table > div { display:grid; grid-template-columns:180px 1fr; gap:20px; padding:16px; background:white; border-bottom:1px solid rgba(7,29,63,.1); font-size:13px; line-height:1.6; }
+.policy-table > div:last-child { border-bottom:0; }
+.policy-table span { color:#415a75; }
+.refund-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+.refund-grid div { display:grid; gap:12px; padding:18px 12px; background:white; border:1px solid rgba(7,29,63,.14); text-align:center; }
+.refund-grid b { color:#647080; font-size:11px; }
+.refund-grid strong { color:#071d3f; font-size:24px; }
+@media(max-width:700px){.policy-header{margin:0 20px}.policy-document h1{font-size:36px}.policy-table>div{grid-template-columns:1fr;gap:5px}.refund-grid{grid-template-columns:1fr 1fr}.refund-grid div:last-child{grid-column:1/-1}}

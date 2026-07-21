@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: project-sos-booking
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.14.0
+      - key: SOS_DB_PATH
+        value: /tmp/project-sos-booking.db
+      - key: SOLAPI_API_KEY
+        sync: false
+      - key: SOLAPI_API_SECRET
+        sync: false
+      - key: SOLAPI_SENDER
+        sync: false
+      - key: SOS_ADDRESS
+        sync: false
+      - key: SOS_WIFI_PASSWORD
+        sync: false
+      - key: SOS_SUPPORT_PHONE
+        sync: false
