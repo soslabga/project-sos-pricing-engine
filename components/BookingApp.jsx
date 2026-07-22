@@ -204,7 +204,7 @@ export default function BookingApp() {
         <div className="hero-copy">
           <p className="kicker">24H · SMART WORKSPACE</p>
           <h1>일할 공간이 필요할 때,<br /><em>바로 집중하세요.</em></h1>
-          <p className="hero-description">계약도, 보증금도 없이 필요한 만큼만.<br />무인·1인 업무공간 Project SOS입니다.</p>
+          <p className="hero-description">계약도, 보증금도 없이 필요한 만큼만.<br />필요할 때 예약하고 비대면으로 이용하는 1인·소규모 업무공간 Project SOS입니다.</p>
           <div className="hero-actions">
             <a className="button primary" href="#booking">공간 예약하기 <span>→</span></a>
             <a className="text-link" href="#space">공간 먼저 보기</a>

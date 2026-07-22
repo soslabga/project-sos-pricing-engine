@@ -6,8 +6,8 @@ import "./codes.css";
 import "./my-bookings.css";
 
 export const metadata = {
-  title: "Project SOS | 무인 업무공간",
-  description: "필요한 시간만큼, 온전히 집중하는 무인 업무공간",
+  title: "Project SOS | 비대면 예약 업무공간",
+  description: "필요한 시간만큼 이용하는 1인·소규모 업무공간",
 };
 
 export default function RootLayout({ children }) {
