@@ -7,6 +7,17 @@ test("전체 예약 플로우와 mock SMS 토스트", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /일할 공간이 필요할 때/ })).toBeVisible();
   await page.locator("#booking").scrollIntoViewIfNeeded();
   await page.getByTestId("room-next").click();
+  await expect(page.getByTestId("floor-plan")).toBeVisible();
+  await page.getByTestId("floor-booth-8").click();
+  await expect(page.getByTestId("room-select")).toHaveValue("8");
+  await expect(page.getByTestId("floor-booth-8")).toHaveAttribute("aria-pressed", "true");
+  await page.getByTestId("room-select").selectOption("3");
+  await expect(page.getByTestId("floor-booth-3")).toHaveAttribute("aria-pressed", "true");
+  await page.getByTestId("floor-booth-8").click();
+  await page.getByRole("button", { name: "배치도 크게 보기" }).click();
+  await expect(page.getByRole("dialog", { name: /배치도 크게 보기/ })).toBeVisible();
+  await page.screenshot({ path: `evidence/floor-plan-${runId}.png`, fullPage: false });
+  await page.getByRole("button", { name: "배치도 닫기" }).click();
   await expect(page.getByTestId("calculated-price")).toHaveText("25,000원");
   const dayEnd = await page.getByTestId("estimated-end").innerText();
   await page.getByTestId("unit-week").click();

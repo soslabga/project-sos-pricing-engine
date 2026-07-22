@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { calculateEnd, PRICE_TABLE } from "../lib/pricing";
 import MyBookings from "./MyBookings";
+import FloorPlan from "./FloorPlan";
 
 const roomTypes = [
   {
@@ -282,11 +283,14 @@ export default function BookingApp() {
                 <h3>언제 이용하시나요?</h3>
                 <div className="form-grid">
                   {category === "private" && (
-                    <label className="field full-width"><span>부스 선택</span>
-                      <select value={roomId} onChange={(event) => setRoomId(Number(event.target.value))} data-testid="room-select">
-                        {visibleRooms.map((room) => <option value={room.id} key={room.id}>{room.name}</option>)}
-                      </select>
-                    </label>
+                    <>
+                      <label className="field full-width"><span>부스 선택</span>
+                        <select value={roomId} onChange={(event) => setRoomId(Number(event.target.value))} data-testid="room-select">
+                          {visibleRooms.map((room) => <option value={room.id} key={room.id}>{room.name}</option>)}
+                        </select>
+                      </label>
+                      <FloorPlan rooms={visibleRooms} selectedRoomId={roomId} onSelect={(id) => setRoomId(Number(id))} />
+                    </>
                   )}
                   <label className="field"><span>이용 시작일</span><input type="date" min={tomorrow()} value={date} onChange={(event) => setDate(event.target.value)} data-testid="date-input" /></label>
                   {category === "multi_a" && <label className="field"><span>시작 시간</span><input type="time" min="06:00" max="23:00" value={time} onChange={(event) => setTime(event.target.value)} data-testid="time-input" /></label>}
