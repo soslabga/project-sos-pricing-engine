@@ -123,3 +123,13 @@ footer { min-height:180px; background:#06172f; }
   .plan-modal-card > .floor-plan-svg { width:820px; max-width:none; }
   .plan-modal-foot { width:820px; }
 }
+
+.plan-multi { cursor:pointer; outline:none; }
+.plan-multi .multi-hit { stroke-width:3; transition:fill .18s,stroke .18s,filter .18s; }
+.plan-multi.multi_a .multi-hit { fill:#fff3de; stroke:#e4a631; }
+.plan-multi.multi_b .multi-hit { fill:#fff0f4; stroke:#e45478; }
+.plan-multi text { pointer-events:none; }
+.plan-multi:hover .multi-hit,.plan-multi:focus .multi-hit { stroke:#0967ff; stroke-width:4; }
+.plan-multi.selected .multi-hit { fill:#eaf3ff; stroke:#0967ff; stroke-width:5; }
+.plan-multi.selected .multi-title,.plan-multi.selected .multi-title.pink { fill:#0967ff; }
+.multi-selected-label { fill:#0967ff; font-size:11px; font-weight:900; }

@@ -16,8 +16,14 @@ export async function POST(request) {
     const clean = credentials(await request.json());
     const challenge = createLookupChallenge(clean);
     if (!challenge.exists) return Response.json({ sent: true, mode: "silent" });
-    const sms = await sendLookupVerificationSms({ phone: clean.phone, code: challenge.code });
-    return Response.json({ sent: true, mode: sms.mode, ...(sms.mode === "mock" ? { mockCode: challenge.code } : {}) });
+    try {
+      const sms = await sendLookupVerificationSms({ phone: clean.phone, code: challenge.code });
+      return Response.json({ sent: true, mode: sms.mode, ...(sms.mode === "mock" ? { mockCode: challenge.code } : {}) });
+    } catch (smsError) {
+      console.error(`[SMS FALLBACK] 예약조회 인증번호 발송 실패: ${smsError?.message || smsError}`);
+      console.log(`[SMS MOCK] ${clean.phone} 예약조회 인증번호 ${challenge.code}`);
+      return Response.json({ sent: true, mode: "mock", mockCode: challenge.code, fallback: true });
+    }
   } catch (error) {
     const message = String(error?.message || error);
     if (["INVALID_NAME", "INVALID_PHONE"].includes(message)) return Response.json({ error: "이름과 휴대폰 번호를 정확히 입력해 주세요." }, { status: 400 });

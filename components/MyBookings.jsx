@@ -52,7 +52,8 @@ export default function MyBookings() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
       setCodeSent(true);
-      setNotice(data.mode === "mock" ? `[모의] 인증번호 ${data.mockCode}` : "입력한 휴대폰 번호로 인증번호를 보냈습니다.");
+      if (data.mode === "mock") setCode(String(data.mockCode || ""));
+      setNotice(data.mode === "mock" ? `[모의 인증] 인증번호 ${data.mockCode} 자동 입력 · 아래 버튼을 눌러 조회하세요.` : "입력한 휴대폰 번호로 인증번호를 보냈습니다.");
     } catch (requestError) {
       setError(requestError.message || "인증번호를 보내지 못했습니다.");
     } finally {

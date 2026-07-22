@@ -105,7 +105,6 @@ export default function BookingApp() {
     return () => clearTimeout(timer);
   }, [toast]);
 
-  const visibleRooms = rooms.filter((room) => room.category === category);
   const selectedRoom = rooms.find((room) => Number(room.id) === Number(roomId));
   const units = category === "multi_a" ? ["hour"] : category === "multi_b" ? ["day", "week"] : ["day", "week", "month"];
   const amount = useMemo(() => {
@@ -134,6 +133,17 @@ export default function BookingApp() {
     const firstUnit = nextCategory === "multi_a" ? "hour" : "day";
     setUnit(firstUnit);
     setQuantity(1);
+  }
+
+  function selectRoom(nextRoomId) {
+    const nextRoom = rooms.find((room) => Number(room.id) === Number(nextRoomId));
+    if (!nextRoom) return;
+    setRoomId(nextRoom.id);
+    if (nextRoom.category !== category) {
+      setCategory(nextRoom.category);
+      setUnit(nextRoom.category === "multi_a" ? "hour" : "day");
+      setQuantity(1);
+    }
   }
 
   function goTo(next) {
@@ -192,9 +202,9 @@ export default function BookingApp() {
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="kicker">PANGYO · 24H SMART WORKSPACE</p>
+          <p className="kicker">24H · SMART WORKSPACE</p>
           <h1>일할 공간이 필요할 때,<br /><em>바로 집중하세요.</em></h1>
-          <p className="hero-description">계약도, 보증금도 없이 필요한 만큼만.<br />판교의 무인·1인 업무공간 Project SOS입니다.</p>
+          <p className="hero-description">계약도, 보증금도 없이 필요한 만큼만.<br />무인·1인 업무공간 Project SOS입니다.</p>
           <div className="hero-actions">
             <a className="button primary" href="#booking">공간 예약하기 <span>→</span></a>
             <a className="text-link" href="#space">공간 먼저 보기</a>
@@ -202,7 +212,7 @@ export default function BookingApp() {
           <div className="hero-stats" aria-label="공간 요약">
             <div><strong>24H</strong><span>무인 운영</span></div>
             <div><strong>12</strong><span>독립 공간</span></div>
-            <div><strong>24평</strong><span>판교점</span></div>
+            <div><strong>24평</strong><span>오픈 예정</span></div>
           </div>
         </div>
         <div className="hero-visual" aria-label="Project SOS 공간 이미지 영역">
@@ -218,7 +228,7 @@ export default function BookingApp() {
       <section className="space-section" id="space">
         <div className="section-heading">
           <div><p className="kicker">OUR SPACE</p><h2>혼자도, 함께도<br />일에 맞는 공간</h2></div>
-          <p>1인 집중 업무부터 팀 회의까지.<br />판교점 24평 안에 꼭 필요한 공간만 담았습니다.</p>
+          <p>1인 집중 업무부터 팀 회의까지.<br />24평 안에 꼭 필요한 공간만 담았습니다.</p>
         </div>
         <div className="feature-strip">
           <span>✓ 별도 계약 없음</span><span>✓ 24시간 비대면 출입</span><span>✓ 초고속 Wi-Fi</span><span>✓ 주차 1일 2시간</span>
@@ -240,7 +250,7 @@ export default function BookingApp() {
 
       <section className="guide-section" id="guide">
         <div className="section-heading"><div><p className="kicker">BEFORE YOU BOOK</p><h2>예약 전에 알아둘<br />이용 안내</h2></div><p>입실부터 퇴실까지 직원 호출 없이 이용할 수 있습니다.<br />필요한 안내는 예약 직후 문자로 보내드립니다.</p></div>
-        <div className="guide-grid"><article><span>01</span><h3>24시간 비대면 출입</h3><p>예약 시작 시간부터 6자리 출입코드를 사용할 수 있습니다. 코드는 예약자 본인만 사용합니다.</p></article><article><span>02</span><h3>주차 1일 2시간</h3><p>라운지에 있는 태블릿에서 차량번호를 등록하면 됩니다.</p></article><article><span>03</span><h3>업무에 필요한 기본 설비</h3><p>SOS_guest Wi-Fi, 정수기와 커피머신을 이용할 수 있습니다.</p></article><article><span>04</span><h3>조용한 업무 환경</h3><p>스피커폰 대신 이어폰을 사용하고 음료 외 음식물은 반입하지 않습니다.</p></article></div>
+        <div className="guide-grid"><article><span>01</span><h3>24시간 비대면 출입</h3><p>예약 시작 시간부터 6자리 출입코드를 사용할 수 있습니다. 코드는 예약자 본인만 사용합니다.</p></article><article><span>02</span><h3>주차 1일 2시간</h3><p>라운지에 있는 태블릿에서 차량번호를 등록하면 됩니다.</p></article><article><span>03</span><h3>업무에 필요한 기본 설비</h3><p>SOS_guest Wi-Fi, 정수기와 커피머신을 이용할 수 있습니다.</p></article></div>
         <div className="guide-links"><a href="/terms">전체 이용약관 →</a><a href="/refund">취소·환불 기준 →</a><a href="/privacy">개인정보처리방침 →</a></div>
       </section>
 
@@ -282,16 +292,17 @@ export default function BookingApp() {
                 <p className="step-label">STEP 02</p>
                 <h3>언제 이용하시나요?</h3>
                 <div className="form-grid">
-                  {category === "private" && (
-                    <>
-                      <label className="field full-width"><span>부스 선택</span>
-                        <select value={roomId} onChange={(event) => setRoomId(Number(event.target.value))} data-testid="room-select">
-                          {visibleRooms.map((room) => <option value={room.id} key={room.id}>{room.name}</option>)}
-                        </select>
-                      </label>
-                      <FloorPlan rooms={visibleRooms} selectedRoomId={roomId} onSelect={(id) => setRoomId(Number(id))} />
-                    </>
-                  )}
+                  <label className="field full-width"><span>공간 선택</span>
+                    <select value={roomId} onChange={(event) => selectRoom(Number(event.target.value))} data-testid="room-select">
+                      <optgroup label="1인실">
+                        {rooms.filter((room) => room.category === "private").map((room) => <option value={room.id} key={room.id}>{room.name}</option>)}
+                      </optgroup>
+                      <optgroup label="멀티룸">
+                        {rooms.filter((room) => room.category !== "private").map((room) => <option value={room.id} key={room.id}>{room.name}</option>)}
+                      </optgroup>
+                    </select>
+                  </label>
+                  <FloorPlan rooms={rooms} selectedRoomId={roomId} onSelect={selectRoom} />
                   <label className="field"><span>이용 시작일</span><input type="date" min={tomorrow()} value={date} onChange={(event) => setDate(event.target.value)} data-testid="date-input" /></label>
                   {category === "multi_a" && <label className="field"><span>시작 시간</span><input type="time" min="06:00" max="23:00" value={time} onChange={(event) => setTime(event.target.value)} data-testid="time-input" /></label>}
                   <div className="field full-width"><span>예약 단위</span><div className="segment">
@@ -341,7 +352,7 @@ export default function BookingApp() {
       </section>
 
       <MyBookings />
-      <footer><div className="brand light"><span className="brand-mark">S</span><span>PROJECT <b>SOS</b></span></div><div className="footer-links"><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">취소·환불</a></div><span>© 2026 PROJECT SOS · 판교점</span></footer>
+      <footer><div className="brand light"><span className="brand-mark">S</span><span>PROJECT <b>SOS</b></span></div><div className="footer-links"><a href="/terms">이용약관</a><a href="/privacy">개인정보처리방침</a><a href="/refund">취소·환불</a></div><span>© 2026 PROJECT SOS</span></footer>
       {toast && <div className="toast" role="status" data-testid="sms-toast"><span>✓</span>{toast}</div>}
     </main>
   );

@@ -1,11 +1,11 @@
-﻿import PolicyLayout from "../../components/PolicyLayout";
+import PolicyLayout from "../../components/PolicyLayout";
 
 export const metadata = { title: "이용약관 | Project SOS" };
 
 export default function TermsPage() {
   return (
     <PolicyLayout eyebrow="TERMS OF SERVICE" title="Project SOS 이용약관">
-      <section><h2>1. 서비스</h2><p>Project SOS는 판교점 1인실과 멀티룸을 날짜·시간 단위로 예약하고 비대면 출입코드를 받아 이용하는 업무공간 서비스입니다.</p></section>
+      <section><h2>1. 서비스</h2><p>Project SOS는 1인실과 멀티룸을 날짜·시간 단위로 예약하고 비대면 출입코드를 받아 이용하는 업무공간 서비스입니다.</p></section>
       <section><h2>2. 예약 성립</h2><p>고객이 공간, 이용일시, 예약자 정보를 입력하고 결제를 마친 뒤 예약 완료 화면과 안내 문자를 받으면 예약이 성립합니다. 같은 공간과 시간이 겹치면 먼저 완료된 예약이 우선합니다.</p></section>
       <section><h2>3. 이용자 의무</h2><ul><li>출입코드를 다른 사람에게 양도하거나 공개하지 않습니다.</li><li>예약 인원과 이용시간을 지키고 퇴실할 때 출입문을 닫습니다.</li><li>스피커폰 대신 이어폰을 사용하고 음료 외 음식물을 반입하지 않습니다.</li><li>주차등록은 1일 2시간까지 가능하며 라운지 태블릿에서 직접 등록합니다.</li><li>흡연, 숙박, 위험물 반입, 불법행위, 다른 이용자의 업무를 방해하는 행위를 금지합니다.</li></ul></section>
       <section><h2>4. 이용 제한과 손해</h2><p>운영자는 안전과 시설 보호를 위해 이용수칙 위반자의 이용을 중단할 수 있습니다. 고의 또는 과실로 시설·비품을 훼손하거나 다른 이용자에게 손해를 입힌 경우 실제 발생한 손해를 부담합니다.</p></section>

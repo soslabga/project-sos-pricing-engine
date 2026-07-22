@@ -8,6 +8,19 @@ test("전체 예약 플로우와 mock SMS 토스트", async ({ page }) => {
   await page.locator("#booking").scrollIntoViewIfNeeded();
   await page.getByTestId("room-next").click();
   await expect(page.getByTestId("floor-plan")).toBeVisible();
+  await page.getByTestId("floor-multi-a").click();
+  await expect(page.getByTestId("room-select")).toHaveValue("11");
+  await expect(page.getByTestId("floor-multi-a")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByTestId("unit-hour")).toHaveClass(/selected/);
+  await expect(page.getByTestId("time-input")).toBeVisible();
+  await expect(page.getByTestId("calculated-price")).toHaveText("13,400원");
+  await page.screenshot({ path: `evidence/multi-room-selection-${runId}.png`, fullPage: false });
+  await page.getByTestId("floor-multi-b").click();
+  await expect(page.getByTestId("room-select")).toHaveValue("12");
+  await expect(page.getByTestId("floor-multi-b")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByTestId("unit-day")).toHaveClass(/selected/);
+  await expect(page.getByTestId("time-input")).toHaveCount(0);
+  await expect(page.getByTestId("calculated-price")).toHaveText("80,000원");
   await page.getByTestId("floor-booth-8").click();
   await expect(page.getByTestId("room-select")).toHaveValue("8");
   await expect(page.getByTestId("floor-booth-8")).toHaveAttribute("aria-pressed", "true");
@@ -65,7 +78,7 @@ test("SMS 인증 후 내 예약 조회·생활안내·취소", async ({ page, re
   const notice = await page.getByTestId("lookup-notice").innerText();
   const code = notice.match(/\d{6}/)?.[0];
   expect(code).toBeTruthy();
-  await page.getByTestId("verification-code").fill(code);
+  await expect(page.getByTestId("verification-code")).toHaveValue(code);
   await page.getByTestId("verify-code-button").click();
   await expect(page.getByTestId("booking-history-card")).toContainText("매일 저녁 6시에 청소가 진행됩니다.");
   await expect(page.getByTestId("booking-history-card")).toContainText("환불 예정");
