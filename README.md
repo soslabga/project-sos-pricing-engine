@@ -24,6 +24,7 @@ SOLAPI_SENDER=
 SOS_ADDRESS=TBD
 SOS_WIFI_PASSWORD=현장 비밀번호
 SOS_SUPPORT_PHONE=원격관제 번호
+SOS_DEMO_AUTH=true # 데모: 인증번호 화면 자동 입력, 운영 전환 시 false
 ```
 
 문자 본문은 `lib/sms-solapi.js`에 있으며 예약자명, 예약일, 사무실, 결제금액, 공용·개인실 출입코드에 맞춰 생성합니다. 내 예약은 이름과 휴대폰 번호 입력 후 5분 유효 SMS 인증번호를 확인해야 열리며, 인증 세션은 30분 유지됩니다.
